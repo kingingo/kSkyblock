@@ -46,7 +46,7 @@ public class kSkyBlock extends JavaPlugin {
 	private StatsManager statsManager;
 	@Getter
 	private SkyBlockManager manager;
-	
+	//TEST
 	public void onEnable(){
 		long time = System.currentTimeMillis();
 		loadConfig();
