@@ -53,8 +53,8 @@ public class kSkyBlock extends JavaPlugin {
 		this.Updater=new Updater(this);
 		this.c = new Client(getFConfig().getString("Config.Client.Host"),getFConfig().getInt("Config.Client.Port"),"SkyBlock",this,Updater);
 		this.mysql=new MySQL(getFConfig().getString("Config.MySQL.User"),getFConfig().getString("Config.MySQL.Password"),getFConfig().getString("Config.MySQL.Host"),getFConfig().getString("Config.MySQL.DB"),this);
-		this.permissionManager=new PermissionManager(this,mysql);
 		this.PacketManager=new PacketManager(this,c);
+		this.permissionManager=new PermissionManager(this,PacketManager,mysql);
 		new MemoryFix(this);
 		this.statsManager=new StatsManager(this,this.mysql,GameType.SKYBLOCK);
 		new SignShop(this, this.statsManager);
