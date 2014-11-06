@@ -22,6 +22,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.world.ChunkEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.InventoryHolder;
@@ -38,16 +39,36 @@ public class SkyBlockWorld extends kListener{
 	private int radius;
 	@Getter
 	private String schematic;
+	int creature_limit;
 	
-	public SkyBlockWorld(SkyBlockManager manager,String schematic,World world,int radius,int anzahl) {
+	public SkyBlockWorld(SkyBlockManager manager,String schematic,World world,int radius,int anzahl,int creature_limit) {
 		super(manager.getInstance(),"[SkyBlockWorld:"+world.getName()+"]");
 		this.manager=manager;
 		this.world=world;
+		this.creature_limit=creature_limit;
 		this.schematic=schematic;
 		this.radius=radius;
 		loadIslands();
 		addIslands(anzahl);
 		Log(islands.size()+" Inseln wurden Geladen!");
+	}
+	
+	@EventHandler
+	public void CreatureSpawn(CreatureSpawnEvent ev){
+		for(String player : islands.keySet()){
+			if(player.charAt(0)!='!'){
+				if(isInIsland(player,ev.getLocation())){
+					int a = 0;
+					for(Entity e : world.getEntities()){
+						if(!(e instanceof Player)){
+							if(isInIsland(player,e.getLocation()))a++;
+						}
+					}
+					if(a>=creature_limit)ev.setCancelled(true);
+					break;
+				}
+			}
+		}
 	}
 	
 	public void loadIslandPlayer(Player player){
@@ -219,6 +240,35 @@ public class SkyBlockWorld extends kListener{
 		islands.put(player.toLowerCase(), new Location(world,X,0,Z));
 		getManager().getInstance().getMysql().Update("INSERT INTO list_skyblock_worlds (player,UUID,worldName,X,Z) VALUES ('"+player.toLowerCase()+"','"+uuid+"','"+getWorld().getName()+"','"+X+"','"+Z+"');");
 		Log("Die Insel von den Spieler "+player+"(X:"+X+",Z:"+Z+") wurde erstellt.");
+	}
+	
+	public boolean isInIsland(Player player,Location loc){
+		return isInIsland(player.getName(),loc);
+	}
+	
+	public boolean isInIsland(String player,Location loc){
+		player=player.toLowerCase();
+		if(islands.containsKey(player)){
+			return isInIsland(islands.get(player),loc);
+		}
+		return false;
+	}
+	
+	public boolean isInIsland(Location loc,Location loc1){
+		if(MinLoc(loc).getX() < loc1.getX() && MinLoc(loc).getZ() < loc1.getZ() && MaxLoc(loc).getBlockX() > loc1.getBlockX() && MaxLoc(loc).getBlockZ() > loc1.getBlockZ()){
+			return true;
+		}
+		return false;
+	}
+	
+	public Location MinLoc(Location loc){
+		loc=loc.clone();
+		loc.add(loc.getBlockX()-radius,0,loc.getBlockZ()-radius);
+		return loc;
+	}
+	
+	public Location MaxLoc(Location loc){
+		return loc.clone();
 	}
 	
 	public void setBiome(String player){

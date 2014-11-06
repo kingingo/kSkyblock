@@ -139,13 +139,14 @@ public class SkyBlockManager extends kListener{
 		if(!FileUtil.existPath(new File(worldName))){
 			setConifg("Config.World."+worldName+".Radius", radius);
 			setConifg("Config.World."+worldName+".GenerateIsland", generate);
+			setConifg("Config.World."+worldName+".CreatureLimit", 50);
 			WorldCreator wc = new WorldCreator(worldName);
 			wc.generator(new CleanroomChunkGenerator(".0,AIR"));
-			worlds.add(new SkyBlockWorld(this,worldName,Bukkit.createWorld(wc),radius,generate));
+			worlds.add(new SkyBlockWorld(this,worldName,Bukkit.createWorld(wc),radius,generate,50));
 		}else{
 			WorldCreator wc = new WorldCreator(worldName);
 			wc.generator(new CleanroomChunkGenerator(".0,AIR"));
-			worlds.add(new SkyBlockWorld(this,worldName,WorldUtil.LoadWorld(wc),radius,generate));
+			worlds.add(new SkyBlockWorld(this,worldName,WorldUtil.LoadWorld(wc),radius,generate,getInstance().getConfig().getInt("Config.World."+worldName+".CreatureLimit")));
 		}
 	}
 	
