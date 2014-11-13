@@ -17,11 +17,13 @@ import me.kingingo.kcore.Permission.PermissionManager;
 import me.kingingo.kcore.PlayerStats.StatsManager;
 import me.kingingo.kcore.SignShop.SignShop;
 import me.kingingo.kcore.Update.Updater;
+import me.kingingo.kcore.Util.UtilException;
 import me.kingingo.kcore.Util.UtilTime;
 import me.kingingo.kcore.YAML.API.file.FileConfiguration;
 import me.kingingo.kcore.YAML.API.file.YamlConfiguration;
 import me.kingingo.kcore.memory.MemoryFix;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class kSkyBlock extends JavaPlugin {
@@ -48,6 +50,7 @@ public class kSkyBlock extends JavaPlugin {
 	private SkyBlockManager manager;
 	
 	public void onEnable(){
+		try{
 		long time = System.currentTimeMillis();
 		loadConfig();
 		this.Updater=new Updater(this);
@@ -64,6 +67,9 @@ public class kSkyBlock extends JavaPlugin {
 		this.manager=new SkyBlockManager(this);
 		this.cmd.register(CommadSkyBlock.class, new CommadSkyBlock(this));	
 		DebugLog(time, 45, this.getClass().getName());
+		}catch(Exception e){
+			UtilException.catchException(e, "skyblock", Bukkit.getIp(), mysql);
+		}
 	}
 	
 	public void onDisable(){
