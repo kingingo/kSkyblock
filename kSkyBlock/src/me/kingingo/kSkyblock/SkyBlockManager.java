@@ -10,6 +10,7 @@ import me.kingingo.kSkyblock.Util.UtilSchematic;
 import me.kingingo.kSkyblock.World.SkyBlockWorld;
 import me.kingingo.kcore.kListener;
 import me.kingingo.kcore.ChunkGenerator.CleanroomChunkGenerator;
+import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Util.FileUtil;
 import me.kingingo.kcore.Util.WorldUtil;
 
@@ -83,6 +84,7 @@ public class SkyBlockManager extends kListener{
 	@EventHandler
 	public void Join(PlayerJoinEvent ev){
 		ev.setJoinMessage(null);
+		ev.getPlayer().sendMessage(Text.PREFIX.getText()+Text.WHEREIS_TEXT.getText("SkyBlock"));
 		for(SkyBlockWorld world : worlds)world.loadIslandPlayer(ev.getPlayer());
 		ev.getPlayer().teleport(Bukkit.getWorld("world").getSpawnLocation());
 	}
