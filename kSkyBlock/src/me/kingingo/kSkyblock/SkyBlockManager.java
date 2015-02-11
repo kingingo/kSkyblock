@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import lombok.Getter;
 import me.kingingo.kSkyblock.Util.UtilSchematic;
@@ -11,7 +12,10 @@ import me.kingingo.kSkyblock.World.SkyBlockWorld;
 import me.kingingo.kcore.kListener;
 import me.kingingo.kcore.ChunkGenerator.CleanroomChunkGenerator;
 import me.kingingo.kcore.Enum.Text;
+import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
+import me.kingingo.kcore.Packet.Packets.WORLD_CHANGE_DATA;
 import me.kingingo.kcore.Util.FileUtil;
+import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.WorldUtil;
 
 import org.bukkit.Bukkit;
@@ -19,6 +23,7 @@ import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -41,7 +46,7 @@ public class SkyBlockManager extends kListener{
 		this.instance=instance;
 		this.schematic=new UtilSchematic();
 		loadSchematics();
-		getInstance().getMysql().Update("CREATE TABLE IF NOT EXISTS list_skyblock_worlds(player varchar(17),UUID varchar(100),worldName varchar(30),X int,Z int)");
+		getInstance().getMysql().Update("CREATE TABLE IF NOT EXISTS list_skyblock_worlds(UUID varchar(100),worldName varchar(30),X int,Z int)");
 		addWorld("normal", 100, 300);
 	}
 	
@@ -82,20 +87,33 @@ public class SkyBlockManager extends kListener{
 	}
 	
 	@EventHandler
+	public void PacketReceive(PacketReceiveEvent ev){
+		if(ev.getPacket() instanceof WORLD_CHANGE_DATA){
+			WORLD_CHANGE_DATA packet = (WORLD_CHANGE_DATA)ev.getPacket();
+			UtilPlayer.PermissionExChangeUUID(packet.getOld_uuid(), packet.getNew_uuid());
+			for(World world : Bukkit.getWorlds())UtilPlayer.setWorldChangeUUID(world, packet.getOld_uuid(), packet.getNew_uuid());
+		}
+	}
+	
+	@EventHandler
+	public void AsyncLogin(AsyncPlayerPreLoginEvent ev){
+		for(SkyBlockWorld world : worlds)world.loadIslandPlayer(UtilPlayer.getRealUUID(ev.getName(),ev.getUniqueId()));
+	}
+	
+	@EventHandler
 	public void Join(PlayerJoinEvent ev){
 		ev.setJoinMessage(null);
 		ev.getPlayer().sendMessage(Text.PREFIX.getText()+Text.WHEREIS_TEXT.getText("SkyBlock"));
-		for(SkyBlockWorld world : worlds)world.loadIslandPlayer(ev.getPlayer());
 		ev.getPlayer().teleport(Bukkit.getWorld("world").getSpawnLocation());
 	}
 	
 	public SkyBlockWorld getIsland(Player player){
-		return getIsland(player.getName());
+		return getIsland(UtilPlayer.getRealUUID(player));
 	}
 	
-	public SkyBlockWorld getIsland(String player){
+	public SkyBlockWorld getIsland(UUID uuid){
 		for(SkyBlockWorld world : worlds){
-			if(world.haveIsland(player)){
+			if(world.haveIsland(uuid)){
 				return world;
 			}
 		}
@@ -103,10 +121,10 @@ public class SkyBlockManager extends kListener{
 	}
 	
 	public boolean haveIsland(Player player){
-		return haveIsland(player.getName());
+		return haveIsland(UtilPlayer.getRealUUID(player));
 	}
 	
-	public boolean haveIsland(String player){
+	public boolean haveIsland(UUID player){
 		for(SkyBlockWorld world : worlds){
 			if(world.haveIsland(player)){
 				return true;
