@@ -12,6 +12,7 @@ import me.kingingo.kcore.Command.CommandHandler;
 import me.kingingo.kcore.Command.Admin.CommandChatMute;
 import me.kingingo.kcore.Command.Admin.CommandMute;
 import me.kingingo.kcore.Command.Admin.CommandToggle;
+import me.kingingo.kcore.Command.Admin.CommandkFly;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
@@ -65,6 +66,7 @@ public class kSkyBlock extends JavaPlugin {
 		new SignShop(this, this.statsManager);
 		this.cmd=new CommandHandler(this);
 		this.cmd.register(CommandMute.class, new CommandMute(permissionManager));	
+		this.cmd.register(CommandkFly.class, new CommandkFly(permissionManager));
 		this.cmd.register(CommandChatMute.class, new CommandChatMute(permissionManager));
 		this.cmd.register(CommandToggle.class, new CommandToggle(permissionManager));
 		this.antiLogout=new AntiLogoutManager(this,AntiLogoutType.KILL,5);
