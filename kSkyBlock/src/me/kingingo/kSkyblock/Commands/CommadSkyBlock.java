@@ -34,7 +34,7 @@ public class CommadSkyBlock implements CommandExecutor{
 			}else{
 				if(args[0].equalsIgnoreCase("erstellen")){
 					if(getInstance().getManager().haveIsland(p)){
-						p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_HAVE_ISLAND);
+						p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_HAVE_ISLAND.getText());
 					}else{
 						SkyBlockWorld world = getInstance().getManager().addIsland(p);
 						p.teleport(world.getIslandHome(p));

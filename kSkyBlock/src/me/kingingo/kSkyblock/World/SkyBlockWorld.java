@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import lombok.Getter;
 import me.kingingo.kSkyblock.SkyBlockManager;
-import me.kingingo.kcore.kListener;
+import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.MySQL.MySQLErr;
 import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
 import me.kingingo.kcore.Util.UtilPlayer;
@@ -229,7 +229,9 @@ public class SkyBlockWorld extends kListener{
 		}else{
 			Z+=radius;
 		}
-		getManager().getSchematic().pastePlate(new Location(getWorld(), (X-(radius/2)) ,90, (Z-(radius/2)) ), new File("plugins/kSkyBlock/schematics/"+schematic+".schematic"));
+		Location loc = new Location(getWorld(), (X-(radius/2)) ,90, (Z-(radius/2)) );
+		loc.getWorld().loadChunk(loc.getChunk());
+		getManager().getSchematic().pastePlate(loc, new File("plugins/kSkyBlock/schematics/"+schematic+".schematic"));
 		String u = "";
 		if(uuid==null){
 			u="!"+uuid.randomUUID();
@@ -238,7 +240,7 @@ public class SkyBlockWorld extends kListener{
 		}
 		islands.put(u, new Location(world,X,0,Z));
 		getManager().getInstance().getMysql().Update("INSERT INTO list_skyblock_worlds (uuid,worldName,X,Z) VALUES ('"+u+"','"+getWorld().getName()+"','"+X+"','"+Z+"');");
-		Log("Die Insel von den Spieler "+u+"(X:"+X+",Z:"+Z+") wurde erstellt.");
+		Log("Die Insel von den Spieler "+u+"(X:"+(X-(radius/2))+",Z:"+(Z-(radius/2))+") wurde erstellt.");
 	}
 	
 	public boolean isInIsland(Player player,Location loc){
