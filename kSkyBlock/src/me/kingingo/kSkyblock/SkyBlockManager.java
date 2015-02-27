@@ -132,6 +132,34 @@ public class SkyBlockManager extends kListener{
 		return false;
 	}
 	
+	public SkyBlockWorld getParty(Player player){
+		for(SkyBlockWorld world : worlds){
+			if(world.getPartys().containsKey(player)){
+				return world;
+			}
+			for(ArrayList<String> list : world.getPartys().values()){
+				if(list.contains(player.getName().toLowerCase())){
+					return world;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public boolean isInParty(Player player){
+		for(SkyBlockWorld world : worlds){
+			if(world.getPartys().containsKey(player)){
+				return true;
+			}
+			for(ArrayList<String> list : world.getPartys().values()){
+				if(list.contains(player.getName().toLowerCase())){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	public void loadWorld(String worldName){
 		addWorld(worldName,getInstance().getFConfig().getInt("Config.World."+worldName+".Radius"),getInstance().getFConfig().getInt("Config.World."+worldName+".GenerateIsland"));
 	}
