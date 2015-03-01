@@ -41,23 +41,23 @@ public class SkyBlockManager extends kListener{
 	private boolean whitelist = false;
 	
 	public SkyBlockManager(kSkyBlock instance){
-		super(instance,"[SkyBlockManager]");
+		super(instance,"SkyBlockManager");
 		this.instance=instance;
 		this.schematic=new UtilSchematic();
-		loadSchematics();
 		getInstance().getMysql().Update("CREATE TABLE IF NOT EXISTS list_skyblock_worlds(UUID varchar(100),worldName varchar(30),X int,Z int)");
-		addWorld("normal", 100, 300);
+		loadSchematics();	
 	}
 	
 	public void loadSchematics(){
 		File folder = new File("plugins/kSkyBlock/schematics");
-		Log("Schamtics: ");
+		Log("Schemtics: ");
 		if(!folder.exists())folder.mkdirs();
 		for(File file : folder.listFiles()){
 			if(file.isFile()){
 				if(file.getName().contains(".schematic")){
 					schematics.add(file.getName().replaceAll(".schematic", ""));
 					Log(file.getName().replaceAll(".schematic", ""));
+					addWorld(file.getName().replaceAll(".schematic", ""), 100, 0);
 				}
 			}
 		}
@@ -161,7 +161,7 @@ public class SkyBlockManager extends kListener{
 	}
 	
 	public void loadWorld(String worldName){
-		addWorld(worldName,getInstance().getFConfig().getInt("Config.World."+worldName+".Radius"),getInstance().getFConfig().getInt("Config.World."+worldName+".GenerateIsland"));
+		addWorld(worldName,100,0);
 	}
 	
 	public void setConifg(String path,int paste){
@@ -193,7 +193,7 @@ public class SkyBlockManager extends kListener{
 		}else{
 			WorldCreator wc = new WorldCreator(worldName);
 			wc.generator(new CleanroomChunkGenerator(".0,AIR"));
-			worlds.add(new SkyBlockWorld(this,worldName,WorldUtil.LoadWorld(wc),radius,generate,getInstance().getConfig().getInt("Config.World."+worldName+".CreatureLimit")));
+			worlds.add(new SkyBlockWorld(this,worldName,WorldUtil.LoadWorld(wc),getInstance().getFConfig().getInt("Config.World."+worldName+".Radius"),getInstance().getFConfig().getInt("Config.World."+worldName+".GenerateIsland"),getInstance().getConfig().getInt("Config.World."+worldName+".CreatureLimit")));
 		}
 	}
 	

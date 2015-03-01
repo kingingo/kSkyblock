@@ -16,7 +16,6 @@ import me.kingingo.kcore.Command.Admin.CommandToggle;
 import me.kingingo.kcore.Command.Admin.CommandURang;
 import me.kingingo.kcore.Command.Admin.CommandkFly;
 import me.kingingo.kcore.Enum.GameType;
-import me.kingingo.kcore.Enum.ServerType;
 import me.kingingo.kcore.Listener.Chat.ChatListener;
 import me.kingingo.kcore.Listener.Spawn.SpawnListener;
 import me.kingingo.kcore.MySQL.MySQL;

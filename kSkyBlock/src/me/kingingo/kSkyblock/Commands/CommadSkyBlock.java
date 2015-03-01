@@ -9,7 +9,6 @@ import me.kingingo.kcore.Util.UtilFirework;
 import me.kingingo.kcore.Util.UtilMath;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -40,6 +39,7 @@ public class CommadSkyBlock implements CommandExecutor{
 					if(args.length==1){
 						p.sendMessage(Text.SKYBLOCK_PARTY_PREFIX.getText());
 						p.sendMessage("§6/skyblock party erstellen §8|§7 Erstellt eine Party.");
+						p.sendMessage("§6/skyblock party home §8|§7 Teleportiere dich zur Party.");
 						p.sendMessage("§6/skyblock party verlassen §8|§7 Party verlassen.");
 						p.sendMessage("§6/skyblock party annehmen §8|§7 Annehmen von Einladungen.");
 						p.sendMessage("§6/skyblock party einladen [Player] §8|§7 Einladen zur Party.");
@@ -56,7 +56,7 @@ public class CommadSkyBlock implements CommandExecutor{
 									UtilFirework.start(p.getLocation().add(UtilMath.r(4),UtilMath.RandomInt(10, 5),UtilMath.r(4)), UtilFirework.RandomColor(), UtilFirework.RandomType());
 									p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_ERSTELLT.getText());
 								}else{
-									p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_NO.getText());
+									p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_IN.getText());
 								}
 							}else{
 								p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_NO_ISLAND.getText());
@@ -89,6 +89,13 @@ public class CommadSkyBlock implements CommandExecutor{
 							}else{
 								p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_NO.getText());
 							}
+						}else if(args[1].equalsIgnoreCase("home")){
+							SkyBlockWorld world = getInstance().getManager().getParty(p);
+							if(world!=null){
+								world.homeParty(p);
+							}else{
+								p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_NO.getText());
+							}
 						}else if(args[1].equalsIgnoreCase("kicken")){
 							if(args.length==3){
 								SkyBlockWorld world = getInstance().getManager().getParty(p);
@@ -109,7 +116,11 @@ public class CommadSkyBlock implements CommandExecutor{
 						p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_HAVE_ISLAND.getText());
 					}else{
 						SkyBlockWorld world = getInstance().getManager().addIsland(p);
-						p.teleport(world.getIslandHome(p));
+						if(world!=null){
+							p.teleport(world.getIslandHome(p));
+						}else{
+							System.out.println("[SkyBlock] WORLD == NULL");
+						}
 						p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_CREATE_ISLAND.getText());
 					}
 				}else if(args[0].equalsIgnoreCase("entfernen")){

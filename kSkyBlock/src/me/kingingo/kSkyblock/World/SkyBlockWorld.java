@@ -4,7 +4,6 @@ import java.io.File;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 import lombok.Getter;
@@ -14,6 +13,8 @@ import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.MySQL.MySQLErr;
 import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
+import me.kingingo.kcore.Scoreboard.PlayerScoreboard;
+import me.kingingo.kcore.Util.C;
 import me.kingingo.kcore.Util.UtilPlayer;
 
 import org.bukkit.Bukkit;
@@ -29,6 +30,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.scoreboard.DisplaySlot;
 
 public class SkyBlockWorld extends kListener{
 
@@ -46,6 +48,8 @@ public class SkyBlockWorld extends kListener{
 	@Getter
 	private HashMap<Player,ArrayList<String>> partys = new HashMap<>();
 	@Getter
+	private HashMap<Player,PlayerScoreboard> partys_board = new HashMap<>();
+	@Getter
 	private HashMap<String,Player> party_einladungen = new HashMap<>();
 	
 	public SkyBlockWorld(SkyBlockManager manager,String schematic,World world,int radius,int anzahl,int creature_limit) {
@@ -57,7 +61,6 @@ public class SkyBlockWorld extends kListener{
 		this.radius=radius;
 		loadIslands();
 		addIslands(anzahl);
-		Log(islands.size()+" Inseln wurden Geladen!");
 	}
 	
 	@EventHandler
@@ -93,13 +96,18 @@ public class SkyBlockWorld extends kListener{
 			}
 			getPartys().get(player).clear();
 			getPartys().remove(player);
+			getPartys_board().get(player).resetScoreboard();
+			getPartys_board().remove(player);
 			return true;
 		}else{
 			boolean b = false;
-			for(ArrayList<String> list : getPartys().values()){
-				if(list.contains(player.getName().toLowerCase())){
+			for(Player owner : getPartys().keySet()){
+				if(getPartys().get(owner).contains(player.getName().toLowerCase())){
 					b=true;
-					list.remove(player.getName().toLowerCase());
+					getPartys().get(owner).remove(player.getName().toLowerCase());
+					getPartys_board().get(owner).resetScore(player.getName(), DisplaySlot.SIDEBAR);
+					getPartys_board().get(owner).removePlayer(player);
+					player.teleport(Bukkit.getWorld("world").getSpawnLocation());
 					if(withMSG)player.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_VERLASSEN.getText());
 					break;
 				}
@@ -119,7 +127,9 @@ public class SkyBlockWorld extends kListener{
 				sendChatParty(owner, Text.SKYBLOCK_PARTY_KICKEN.getText(kicken));
 				list.remove(kicken.toLowerCase());
 				if(UtilPlayer.isOnline(kicken)){
-					Bukkit.getPlayer(kicken).teleport(Bukkit.getWorld(kicken).getSpawnLocation());
+					getPartys_board().get(owner).resetScore(Bukkit.getPlayer(kicken).getName(), DisplaySlot.SIDEBAR);
+					getPartys_board().get(owner).removePlayer(Bukkit.getPlayer(kicken));
+					Bukkit.getPlayer(kicken).teleport(Bukkit.getWorld("world").getSpawnLocation());
 				}
 				return true;
 			}else{
@@ -143,6 +153,26 @@ public class SkyBlockWorld extends kListener{
 		}
 	}
 	
+	public boolean homeParty(Player player){
+		if(getPartys().containsKey(player)){
+			player.teleport(getIslandHome(player));
+			return true;
+		}else{
+			boolean b = false;
+			for(Player owner : getPartys().keySet()){
+				if(getPartys().get(owner).contains(player.getName().toLowerCase())){
+					b=true;
+					player.teleport(getIslandHome(owner));
+					break;
+				}
+			}
+			if(!b){
+				return false;
+			}
+			return true;
+		}
+	}
+	
 	public boolean annehmenParty(Player p){
 		if(getParty_einladungen().containsKey(p.getName().toLowerCase())){
 			if(!isInParty(p)){
@@ -155,6 +185,8 @@ public class SkyBlockWorld extends kListener{
 					return false;
 				}else{
 					getPartys().get(owner).add(p.getName().toLowerCase());
+					getPartys_board().get(owner).setScore(p.getName(), DisplaySlot.SIDEBAR, -1);
+					getPartys_board().get(owner).setBoard(p);
 					sendChatParty(owner, Text.SKYBLOCK_PARTY_ENTER_BY.getText(p.getName()));
 					return true;
 				}
@@ -174,13 +206,13 @@ public class SkyBlockWorld extends kListener{
 			if(UtilPlayer.isOnline(einladen)){
 				Player invite = Bukkit.getPlayer(einladen);
 				if(!isInParty(invite)){
-					if(!getParty_einladungen().containsKey(einladen)&&getParty_einladungen().get(einladen).getName().equalsIgnoreCase(owner.getName())){
+					if(!getParty_einladungen().containsKey(einladen.toLowerCase())||getParty_einladungen().containsKey(einladen.toLowerCase())&&getParty_einladungen().get(einladen).getName().equalsIgnoreCase(owner.getName())){
 						if(getPartys().get(owner).size()>=8){
 							owner.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_SIZE.getText(8));
 							return false;
 						}else{
-							getParty_einladungen().remove(einladen);
-							getParty_einladungen().put(einladen, owner);
+							getParty_einladungen().remove(einladen.toLowerCase());
+							getParty_einladungen().put(einladen.toLowerCase(), owner);
 							owner.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_EINLADEN.getText(invite.getName()));
 							invite.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_EINLADEN_INVITE.getText(owner.getName()));
 							return true;
@@ -206,6 +238,12 @@ public class SkyBlockWorld extends kListener{
 	public boolean createParty(Player player){
 		if(!getPartys().containsKey(player)){
 			getPartys().put(player, new ArrayList<String>());
+			getPartys_board().put(player, new PlayerScoreboard(player));
+			
+			getPartys_board().get(player).addBoard(DisplaySlot.SIDEBAR, C.cAqua+C.Bold+player.getName()+" "+C.cGray+"-"+C.cAqua+C.Bold+" Party");
+			getPartys_board().get(player).setScore(C.cGray+"Spieler: ", DisplaySlot.SIDEBAR, 0);
+			getPartys_board().get(player).setScore(player.getName(), DisplaySlot.SIDEBAR, -1);
+			getPartys_board().get(player).setBoard();
 			return true;
 		}else{
 			return false;
@@ -369,6 +407,7 @@ public class SkyBlockWorld extends kListener{
 			for(int i = 0; i< (anzahl-a) ;i++){
 				addIsland(null,schematic,false);
 			}
+			Log((anzahl-a)+" Inseln wurden hinzugefügt!");
 		}
 	}
 	
@@ -381,7 +420,7 @@ public class SkyBlockWorld extends kListener{
 				islands.remove(island);
 				islands.put(uuid.toString(), new Location(world,x,0,z));
 				getManager().getInstance().getMysql().Update("UPDATE list_skyblock_worlds SET uuid='"+uuid+"' WHERE worldName='"+world.getName()+"' AND uuid='"+island+"'");
-				Log("Die Insel von den Spieler "+uuid+"(X:"+x+",Z:"+z+") wurde erstellt.");
+				Log("Die Insel von den Spieler "+uuid+"(X:"+x+",Z:"+z+") wurde recycelt.");
 				return;
 			}
 		}
@@ -458,30 +497,57 @@ public class SkyBlockWorld extends kListener{
 		}
 	}
 	
+	public int getCount(){
+		try
+	    {
+	      ResultSet rs = getManager().getInstance().getMysql().Query("SELECT COUNT(*) FROM list_skyblock_worlds WHERE worldName='"+world.getName().toLowerCase()+"';");
+	      while (rs.next()) {
+	    	  return rs.getInt(1);
+	      }
+	      rs.close();
+	    } catch (Exception err) {
+	    	Bukkit.getPluginManager().callEvent(new MySQLErrorEvent(MySQLErr.QUERY,err,getManager().getInstance().getMysql()));
+	    }
+		return 0;
+	}
+	
 	public void solveXandZ(){
-		if(!islands.isEmpty()){
-			for(Location loc : islands.values()){
-				X=loc.getBlockX();
-				Z=loc.getBlockZ();
-				for(Location loc1 : islands.values()){
-					if(loc1.getBlockX()>X&&loc1.getBlockZ()>Z){
-						X=-1;
-						Z=-1;
-						break;
-					}
-				}
-				if(X!=-1&&Z!=-1)break;
-			}
+		if(getCount()!=0){
+			try
+		    {
+		      ResultSet rs = getManager().getInstance().getMysql().Query("SELECT `X` FROM `list_skyblock_worlds` WHERE worldName='"+world.getName().toLowerCase()+"' ORDER BY X DESC LIMIT 1;");
+		      while (rs.next()) {
+		    	  X=rs.getInt(1);
+		      }
+		      rs.close();
+		    } catch (Exception err) {
+		    	Bukkit.getPluginManager().callEvent(new MySQLErrorEvent(MySQLErr.QUERY,err,getManager().getInstance().getMysql()));
+		    }
+			
+			try
+		    {
+		      ResultSet rs = getManager().getInstance().getMysql().Query("SELECT `Z` FROM `list_skyblock_worlds` WHERE X='"+X+"' AND worldName='"+world.getName().toLowerCase()+"' ORDER BY Z DESC LIMIT 1;");
+		      while (rs.next()) {
+		    	  Z=rs.getInt(1);
+		      }
+		      rs.close();
+		    } catch (Exception err) {
+		    	Bukkit.getPluginManager().callEvent(new MySQLErrorEvent(MySQLErr.QUERY,err,getManager().getInstance().getMysql()));
+		    }
+			Log("X: "+X+" Z:"+Z);
 		}else{
 			X=radius;
 			Z=0;
+			Log("X: "+X+" Z:"+Z);
 		}
+		
+		
 	}
 	
 	public void loadIslands(){
 		try
 	    {
-	      ResultSet rs = getManager().getInstance().getMysql().Query("SELECT `uuid`,`X`,`Z` FROM `list_skyblock_worlds` WHERE worldName='"+world.getName().toLowerCase()+"'");
+	      ResultSet rs = getManager().getInstance().getMysql().Query("SELECT `uuid`,`X`,`Z` FROM `list_skyblock_worlds` WHERE worldName='"+world.getName().toLowerCase()+"';");
 	      while (rs.next()) {
 	    	if(rs.getString(1).charAt(0)!='!')continue;
 	    	islands.put(rs.getString(1), new Location(world,rs.getInt(2),0,rs.getInt(3)));
@@ -490,6 +556,7 @@ public class SkyBlockWorld extends kListener{
 	    } catch (Exception err) {
 	    	Bukkit.getPluginManager().callEvent(new MySQLErrorEvent(MySQLErr.QUERY,err,getManager().getInstance().getMysql()));
 	    }
+		Log(islands.size()+" Inseln wurden Geladen!");
 		solveXandZ();
 	}
 	
