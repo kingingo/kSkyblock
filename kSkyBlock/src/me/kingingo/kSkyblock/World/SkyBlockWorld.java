@@ -15,6 +15,8 @@ import me.kingingo.kcore.MySQL.MySQLErr;
 import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
 import me.kingingo.kcore.Scoreboard.PlayerScoreboard;
 import me.kingingo.kcore.Util.C;
+import me.kingingo.kcore.Util.UtilEvent;
+import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilPlayer;
 
 import org.bukkit.Bukkit;
@@ -28,6 +30,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -268,6 +271,18 @@ public class SkyBlockWorld extends kListener{
 		}
 	}
 	
+	@EventHandler
+	public void InteractEvent(PlayerInteractEvent ev){
+		if(ev.getPlayer().getWorld()==getWorld()&&UtilEvent.isAction(ev, ActionType.BLOCK)){
+			if(islands.containsKey(ev.getPlayer().getUniqueId().toString())){
+				if(isInIsland(ev.getPlayer(), ev.getClickedBlock().getLocation())){
+					return;
+				}
+			}
+			ev.setCancelled(true);
+		}
+	}
+	
 	public void loadIslandPlayer(Player player){
 		loadIslandPlayer(UtilPlayer.getRealUUID(player));
 	}
@@ -277,8 +292,7 @@ public class SkyBlockWorld extends kListener{
 	}
 	
 	public boolean haveIsland(UUID uuid){
-		if(islands.containsKey(uuid.toString()))return true;
-		return false;
+		return islands.containsKey(uuid.toString());
 	}
 	
 	public void loadIslandPlayer(UUID uuid){
