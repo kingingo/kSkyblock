@@ -274,11 +274,7 @@ public class SkyBlockWorld extends kListener{
 	@EventHandler
 	public void InteractEvent(PlayerInteractEvent ev){
 		if(ev.getPlayer().getWorld()==getWorld()&&UtilEvent.isAction(ev, ActionType.BLOCK)){
-			if(islands.containsKey(ev.getPlayer().getUniqueId().toString())){
-				if(isInIsland(ev.getPlayer(), ev.getClickedBlock().getLocation())){
-					return;
-				}
-			}
+			if(islands.containsKey(ev.getPlayer().getUniqueId().toString()))if(isInIsland(ev.getPlayer().getUniqueId(), ev.getClickedBlock().getLocation()))return;
 			ev.setCancelled(true);
 		}
 	}
@@ -478,20 +474,15 @@ public class SkyBlockWorld extends kListener{
 	}
 	
 	public boolean isInIsland(Location loc,Location loc1){
-		if(MinLoc(loc).getX() < loc1.getX() && MinLoc(loc).getZ() < loc1.getZ() && MaxLoc(loc).getBlockX() > loc1.getBlockX() && MaxLoc(loc).getBlockZ() > loc1.getBlockZ()){
-			return true;
-		}
-		return false;
+		return MinLoc(loc).getX() <= loc1.getX() && MinLoc(loc).getZ() <= loc1.getZ() && MaxLoc(loc).getBlockX() >= loc1.getBlockX() && MaxLoc(loc).getBlockZ() >= loc1.getBlockZ();
 	}
 	
 	public Location MinLoc(Location loc){
-		loc=loc.clone();
-		loc.add(loc.getBlockX()-radius,0,loc.getBlockZ()-radius);
-		return loc;
+		return new Location(loc.getWorld(),loc.getBlockX()-radius,0,loc.getBlockZ()-radius);
 	}
 	
 	public Location MaxLoc(Location loc){
-		return loc.clone();
+		return loc;
 	}
 	
 	public void setBiome(String player){

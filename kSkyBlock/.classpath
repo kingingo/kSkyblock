@@ -6,6 +6,6 @@
 	<classpathentry kind="lib" path="C:/Dev/kCore.jar"/>
 	<classpathentry kind="lib" path="C:/Dev/lombok.jar"/>
 	<classpathentry kind="lib" path="C:/Dev/WorldEdit.jar"/>
-	<classpathentry kind="lib" path="C:/Dev/PermissionsEx.jar"/>
+	<classpathentry kind="lib" path="C:/Dev/WorldGuard.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

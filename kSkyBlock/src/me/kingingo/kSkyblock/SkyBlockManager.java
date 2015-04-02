@@ -89,7 +89,7 @@ public class SkyBlockManager extends kListener{
 	public void PacketReceive(PacketReceiveEvent ev){
 		if(ev.getPacket() instanceof WORLD_CHANGE_DATA){
 			WORLD_CHANGE_DATA packet = (WORLD_CHANGE_DATA)ev.getPacket();
-			UtilPlayer.PermissionExChangeUUID(packet.getOld_uuid(), packet.getNew_uuid());
+			//UtilPlayer.PermissionExChangeUUID(packet.getOld_uuid(), packet.getNew_uuid());
 			for(World world : Bukkit.getWorlds())UtilPlayer.setWorldChangeUUID(world, packet.getOld_uuid(), packet.getNew_uuid());
 		}
 	}

@@ -5,7 +5,7 @@ import me.kingingo.kSkyblock.kSkyBlock;
 import me.kingingo.kcore.Command.CommandHandler.Sender;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.Enum.Text;
-import me.kingingo.kcore.Permission.Permission;
+import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.PlayerStats.Stats;
 
 import org.bukkit.command.Command;
@@ -27,9 +27,9 @@ public class CommandMoney implements CommandExecutor{
 		if(cs instanceof Player){
 			Player p = (Player)cs;
 			if(args.length==0){
-				p.sendMessage(Text.PREFIX_GAME.getText(GameType.SKYBLOCK.getTyp())+"Dein Kontostand beträgt:§3 " + instance.getStatsManager().getInt(Stats.MONEY, p));
-			}else if(p.isOp()||instance.getPermissionManager().hasPermission(p, Permission.ADMIN_SERVICE)){
-				p.sendMessage(Text.PREFIX_GAME.getText(GameType.SKYBLOCK.getTyp())+"Der Kontostand von "+args[0]+" beträgt:§3 " + instance.getStatsManager().getIntWithUUID(Stats.MONEY, args[0]));
+				p.sendMessage(Text.PREFIX_GAME.getText(GameType.SKYBLOCK.getTyp())+"Dein Kontostand beträgt:§3 " + instance.getStatsManager().getDouble(Stats.MONEY, p));
+			}else if(p.isOp()||instance.getPermissionManager().hasPermission(p, kPermission.ADMIN_SERVICE)){
+				p.sendMessage(Text.PREFIX_GAME.getText(GameType.SKYBLOCK.getTyp())+"Der Kontostand von "+args[0]+" beträgt:§3 " + instance.getStatsManager().getDoubleWithUUID(Stats.MONEY, args[0]));
 			}
 		}
 		return false;
