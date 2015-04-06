@@ -10,6 +10,7 @@ import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.RestartScheduler;
 import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilWorldGuard;
+import net.minecraft.server.v1_7_R4.InventoryEnderChest;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -18,7 +19,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
@@ -48,6 +51,16 @@ public class kSkyBlockListener extends kListener{
 	@EventHandler
 	public void Kick(PlayerKickEvent ev){
 		System.out.println("[EpicPvP] "+ev.getPlayer().getName()+" L:"+ev.getLeaveMessage()+" R:"+ev.getReason());
+	}
+	
+	
+	
+	@EventHandler
+	public void Death(PlayerDeathEvent ev){
+		ev.setDeathMessage(null);
+		if(ev.getEntity() instanceof Player){
+			UtilPlayer.RespawnNow(((Player)ev.getEntity()), manager);
+		}
 	}
 	
 	Player fall;

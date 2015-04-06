@@ -334,10 +334,11 @@ public class SkyBlockWorld extends kListener{
 	}
 	
 	public boolean removeIsland(Player player){
-		return removeIsland(player.getName(),UtilPlayer.getRealUUID(player));
-	}
-	
-	public boolean removeIsland(String playerName,UUID uuid){
+		if(getManager().getDelete().contains(player.getName().toLowerCase())){
+			player.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_REMOVE_ISLAND_ONE.getText());
+			return false;
+		}
+		UUID uuid = UtilPlayer.getRealUUID(player);
 		if(islands.containsKey(uuid.toString())){
 			Location loc = islands.get(uuid.toString());
 			int min_x = loc.getBlockX()-radius;
@@ -378,7 +379,7 @@ public class SkyBlockWorld extends kListener{
 				}
 			}
 			islands.remove(uuid.toString());
-			Log("Die Insel von den Spieler "+playerName+"(Entities:"+count+"/Bloecke:"+b_count+") wurde resetet.");
+			Log("Die Insel von den Spieler "+player.getName()+"(Entities:"+count+"/Bloecke:"+b_count+") wurde resetet.");
 			uuid = UUID.randomUUID();
 			getManager().getInstance().getMysql().Update("UPDATE list_skyblock_worlds SET uuid='!"+uuid+"' WHERE X='"+loc.getBlockX()+"' AND Z='"+loc.getBlockZ()+"' AND worldName='"+world.getName()+"'");
 			islands.put("!"+uuid.toString(), loc);

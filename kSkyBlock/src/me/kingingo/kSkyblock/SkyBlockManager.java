@@ -6,10 +6,12 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import lombok.Getter;
+import me.kingingo.kSkyblock.Gilden.SkyBlockGildenWorld;
 import me.kingingo.kSkyblock.Util.UtilSchematic;
 import me.kingingo.kSkyblock.World.SkyBlockWorld;
 import me.kingingo.kcore.ChunkGenerator.CleanroomChunkGenerator;
 import me.kingingo.kcore.Enum.Text;
+import me.kingingo.kcore.Gilden.GildenManager;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
 import me.kingingo.kcore.Packet.Packets.WORLD_CHANGE_DATA;
@@ -38,7 +40,11 @@ public class SkyBlockManager extends kListener{
 	private UtilSchematic schematic;
 	@Getter
 	private ArrayList<String> schematics = new ArrayList<>();
+	@Getter
+	private ArrayList<String> delete = new ArrayList<>();
 	private boolean whitelist = false;
+	@Getter
+	private SkyBlockGildenWorld gilden_world;
 	
 	public SkyBlockManager(kSkyBlock instance){
 		super(instance,"SkyBlockManager");
@@ -57,9 +63,31 @@ public class SkyBlockManager extends kListener{
 				if(file.getName().contains(".schematic")){
 					schematics.add(file.getName().replaceAll(".schematic", ""));
 					Log(file.getName().replaceAll(".schematic", ""));
-					addWorld(file.getName().replaceAll(".schematic", ""), 100, 0);
+					if(!file.getName().replaceAll(".schematic","").equalsIgnoreCase("gilde")){
+						addWorld(file.getName().replaceAll(".schematic", ""), 100, 0);
+					}
 				}
 			}
+		}
+	}
+	
+	public SkyBlockGildenWorld addGildenIsland(Player player,String gilde){
+		gilden_world.addIsland(player, gilde);
+		return gilden_world;
+	}
+	
+	public void addGildenWorld(String worldName,GildenManager gilde){
+		if(!UtilFile.existPath(new File(worldName))){
+			setConifg("Config.World."+worldName+".Radius", 100);
+			setConifg("Config.World."+worldName+".GenerateIsland", 0);
+			setConifg("Config.World."+worldName+".CreatureLimit", 50);
+			WorldCreator wc = new WorldCreator(worldName);
+			wc.generator(new CleanroomChunkGenerator(".0,AIR"));
+			gilden_world=new SkyBlockGildenWorld(this,gilde,Bukkit.createWorld(wc),100,0,50);
+		}else{
+			WorldCreator wc = new WorldCreator(worldName);
+			wc.generator(new CleanroomChunkGenerator(".0,AIR"));
+			gilden_world=new SkyBlockGildenWorld(this,gilde,WorldUtil.LoadWorld(wc),getInstance().getFConfig().getInt("Config.World."+worldName+".Radius"),getInstance().getFConfig().getInt("Config.World."+worldName+".GenerateIsland"),getInstance().getConfig().getInt("Config.World."+worldName+".CreatureLimit"));
 		}
 	}
 	

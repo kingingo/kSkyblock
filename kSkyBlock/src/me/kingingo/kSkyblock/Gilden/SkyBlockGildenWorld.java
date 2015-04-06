@@ -1,0 +1,360 @@
+package me.kingingo.kSkyblock.Gilden;
+
+import java.io.File;
+import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.UUID;
+
+import lombok.Getter;
+import me.kingingo.kSkyblock.SkyBlockManager;
+import me.kingingo.kcore.Gilden.GildenManager;
+import me.kingingo.kcore.Gilden.Events.GildeLoadEvent;
+import me.kingingo.kcore.Listener.kListener;
+import me.kingingo.kcore.MySQL.MySQLErr;
+import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
+import me.kingingo.kcore.Permission.kPermission;
+import me.kingingo.kcore.Util.UtilEvent;
+import me.kingingo.kcore.Util.UtilEvent.ActionType;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.InventoryHolder;
+
+public class SkyBlockGildenWorld extends kListener{
+
+	@Getter
+	private SkyBlockManager manager;
+	@Getter
+	private World world;
+	private HashMap<String,Location> islands = new HashMap<>();
+	private int X=0;
+	private int Z=0;
+	private int radius;
+	@Getter
+	private String schematic;
+	private int creature_limit;
+	@Getter
+	private GildenManager gilde;
+	
+	public SkyBlockGildenWorld(SkyBlockManager manager,GildenManager gilde,World world,int radius,int anzahl,int creature_limit) {
+		super(manager.getInstance(),"SkyBlockGildenWorld:"+world.getName());
+		manager.getInstance().getMysql().Update("CREATE TABLE IF NOT EXISTS list_gilden_Sky_world(gilde varchar(100),X int,Z int)");
+		this.manager=manager;
+		this.gilde=gilde;
+		this.world=world;
+		this.creature_limit=creature_limit;
+		this.schematic="gilde";
+		this.radius=radius;
+		loadIslands();
+		addIslands(anzahl);
+	}
+	
+	@EventHandler
+	public void Load(GildeLoadEvent ev){
+		loadIslandGilde(ev.getGilde());
+	}
+	
+	@EventHandler
+	public void CreatureSpawn(CreatureSpawnEvent ev){
+		for(String gilde : islands.keySet()){
+			if(gilde.charAt(0)!='!'){
+				if(isInIsland(gilde,ev.getLocation())){
+					int a = 0;
+					for(Entity e : world.getEntities()){
+						if(!(e instanceof Player)){
+							if(isInIsland(gilde,e.getLocation()))a++;
+						}
+					}
+					if(a>=creature_limit)ev.setCancelled(true);
+					break;
+				}
+			}
+		}
+	}
+	
+	@EventHandler
+	public void InteractEvent(PlayerInteractEvent ev){
+		if(ev.getPlayer().getWorld()==getWorld()&&UtilEvent.isAction(ev, ActionType.BLOCK)){
+			if(gilde.isPlayerInGilde(ev.getPlayer())){
+				if(islands.containsKey(gilde.getPlayerGilde(ev.getPlayer())))if(isInIsland(ev.getPlayer(), ev.getClickedBlock().getLocation()))return;
+			}
+			ev.setCancelled(true);
+		}
+	}
+	
+	public void loadIslandGilde(String gilde){
+		gilde=gilde.toLowerCase();
+		if(!islands.containsKey(gilde)){
+			try
+		    {
+		      ResultSet rs = getManager().getInstance().getMysql().Query("SELECT `X`,`Z` FROM `list_gilden_Sky_world` WHERE gilde='"+gilde+"';");
+		      while (rs.next()) {
+		    	islands.put(gilde, new Location(world,rs.getInt(1),0,rs.getInt(2)));
+		      }
+		      rs.close();
+		    } catch (Exception err) {
+		    	Bukkit.getPluginManager().callEvent(new MySQLErrorEvent(MySQLErr.QUERY,err,getManager().getInstance().getMysql()));
+		    }
+		}
+	}
+	
+	public Location getIslandFixHome(String gilde){
+		gilde=gilde.toLowerCase();
+		Location loc = getIslandHome(gilde);
+		loc.getBlock().setType(Material.AIR);
+		loc.clone().add(0,-1,0).getBlock().setType(Material.AIR);
+		loc.clone().add(0,-2,0).getBlock().setType(Material.GLASS);
+		return loc;
+	}
+	
+	public Location getIslandHome(String gilde){
+		gilde=gilde.toLowerCase();
+		if(islands.containsKey(gilde)){
+			return new Location(getWorld(), (islands.get(gilde).getBlockX()-(radius/2)) ,93, (islands.get(gilde).getBlockZ()-(radius/2)) );
+		}
+		return null;
+	}
+	
+	public boolean addIsland(Player player,String gilde){
+		gilde=gilde.toLowerCase();
+		if(player.hasPermission(kPermission.SKYBLOCK_GILDEN_ISLAND.getPermissionToString())){
+			addIsland(gilde, schematic,true);
+			return true;
+		}
+		return true;
+	}
+	
+	public boolean removeIsland(String gilde){
+		gilde=gilde.toLowerCase();
+		
+		if(islands.containsKey(gilde)){
+			Location loc = islands.get(gilde);
+			int min_x = loc.getBlockX()-radius;
+			int max_x = loc.getBlockX();
+			
+			int min_z = loc.getBlockZ()-radius;
+			int max_z = loc.getBlockZ();
+			
+			int count=0;
+			for(Entity e : world.getEntities()){
+				if(!(e instanceof Player)){
+					if(e.getLocation().getBlockX() > min_x&&e.getLocation().getBlockX()<max_x&&e.getLocation().getBlockZ()>min_z&&e.getLocation().getBlockZ()<max_z){
+						e.remove();
+						count++;
+					}
+				}
+			}
+			
+			Block block;
+			BlockState state;
+			InventoryHolder invHolder;
+			int b_count=0;
+			for(int x = min_x; x < max_x; x++){
+				for(int z = min_z; z < max_z; z++){
+					for(int y = 0; y < 256; y++){
+						block=world.getBlockAt(x,y,z);
+						if(block!=null&&(!block.isEmpty())){
+							block.getDrops().clear();
+							state=block.getState();
+							if(state instanceof InventoryHolder){
+								invHolder=(InventoryHolder)state;
+								invHolder.getInventory().clear();
+							}
+							block.setType(Material.AIR);
+							b_count++;
+						}
+					}
+				}
+			}
+			islands.remove(gilde);
+			Log("Die Insel von der Gilde "+gilde+"(Entities:"+count+"/Bloecke:"+b_count+") wurde resetet.");
+			
+			getManager().getInstance().getMysql().Update("UPDATE list_gilden_Sky_world SET gilde='!"+gilde+"' WHERE X='"+loc.getBlockX()+"' AND Z='"+loc.getBlockZ()+"'");
+			islands.put("!"+gilde, loc);
+			Location loc1 = new Location(getWorld(), (max_x-(radius/2)) ,90, (max_z-(radius/2)) );
+			loc1.getWorld().loadChunk(loc1.getChunk());
+			getManager().getSchematic().pastePlate(loc1, new File("plugins/kSkyBlock/schematics/"+schematic+".schematic"));
+			return true;
+		}
+		return false;
+	}
+	
+	public int recycelnIslandAnzahl(){
+		int count = 0;
+		for(String player : islands.keySet()){
+			if(player.charAt(0)=='!'){
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	public String recycelnIsland(){
+		String island = null;
+		for(String player : islands.keySet()){
+			if(player.charAt(0)=='!'){
+				island=player;
+				break;
+			}
+		}
+		return island;
+	}
+	
+	public void addIslands(int anzahl){
+		int a = recycelnIslandAnzahl();
+		if(a<anzahl){
+			for(int i = 0; i< (anzahl-a) ;i++){
+				addIsland(null,schematic,false);
+			}
+			Log((anzahl-a)+" Inseln wurden hinzugefügt!");
+		}
+	}
+	
+	public void addIsland(String gilde,String schematic,boolean recyceln){
+		if(gilde!=null)gilde=gilde.toLowerCase();
+		if(recyceln){
+			String island = recycelnIsland();
+			if(island!=null){
+				int x = islands.get(island).getBlockX();
+				int z = islands.get(island).getBlockZ();
+				islands.remove(island);
+				islands.put(gilde, new Location(world,x,0,z));
+				getManager().getInstance().getMysql().Update("UPDATE list_gilden_Sky_world SET gilde='"+gilde+"' WHERE gilde='"+island+"'");
+				Log("Die Insel von der Gilde "+gilde+"(X:"+x+",Z:"+z+") wurde recycelt.");
+				return;
+			}
+		}
+			
+		if( Z == (radius*100)){
+			X+=radius;
+			Z=0;
+		}else{
+			Z+=radius;
+		}
+		Location loc = new Location(getWorld(), (X-(radius/2)) ,90, (Z-(radius/2)) );
+		loc.getWorld().loadChunk(loc.getChunk());
+		getManager().getSchematic().pastePlate(loc, new File("plugins/kSkyBlock/schematics/"+schematic+".schematic"));
+		if(gilde==null){
+			gilde="!"+UUID.randomUUID();
+		}
+		islands.put(gilde, new Location(world,X,0,Z));
+		getManager().getInstance().getMysql().Update("INSERT INTO list_gilden_Sky_world (gilde,X,Z) VALUES ('"+gilde+"','"+X+"','"+Z+"');");
+		Log("Die Insel von der Gilde "+gilde+"(X:"+(X-(radius/2))+",Z:"+(Z-(radius/2))+") wurde erstellt.");
+	}
+	
+	public boolean isInIsland(Player player,Location loc){
+		String gilde=this.gilde.getPlayerGilde(player);
+		return isInIsland(gilde,loc);
+	}
+	
+	public boolean isInIsland(String gilde,Location loc){
+		gilde=gilde.toLowerCase();
+		if(islands.containsKey(gilde)){
+			return isInIsland(islands.get(gilde),loc);
+		}
+		return false;
+	}
+	
+	public boolean isInIsland(Location loc,Location loc1){
+		return MinLoc(loc).getX() <= loc1.getX() && MinLoc(loc).getZ() <= loc1.getZ() && MaxLoc(loc).getBlockX() >= loc1.getBlockX() && MaxLoc(loc).getBlockZ() >= loc1.getBlockZ();
+	}
+	
+	public Location MinLoc(Location loc){
+		return new Location(loc.getWorld(),loc.getBlockX()-radius,0,loc.getBlockZ()-radius);
+	}
+	
+	public Location MaxLoc(Location loc){
+		return loc;
+	}
+	
+	public void setBiome(String gilde){
+		gilde=gilde.toLowerCase();
+		if(islands.containsKey(gilde)){
+			int min_x = islands.get(gilde).getBlockX()-radius;
+			int max_x = islands.get(gilde).getBlockX();
+			
+			int min_z = islands.get(gilde).getBlockZ()-radius;
+			int max_z = islands.get(gilde).getBlockZ();
+			
+			for(int x = min_x; x < max_x; x++){
+				for(int z = min_z; z < max_z; z++){
+					getWorld().setBiome(x, z, Biome.JUNGLE);
+				}
+			}
+		}
+	}
+	
+	public int getCount(){
+		try
+	    {
+	      ResultSet rs = getManager().getInstance().getMysql().Query("SELECT COUNT(*) FROM list_gilden_Sky_world");
+	      while (rs.next()) {
+	    	  return rs.getInt(1);
+	      }
+	      rs.close();
+	    } catch (Exception err) {
+	    	Bukkit.getPluginManager().callEvent(new MySQLErrorEvent(MySQLErr.QUERY,err,getManager().getInstance().getMysql()));
+	    }
+		return 0;
+	}
+	
+	public void solveXandZ(){
+		if(getCount()!=0){
+			try
+		    {
+		      ResultSet rs = getManager().getInstance().getMysql().Query("SELECT `X` FROM `list_gilden_Sky_world` ORDER BY X DESC LIMIT 1;");
+		      while (rs.next()) {
+		    	  X=rs.getInt(1);
+		      }
+		      rs.close();
+		    } catch (Exception err) {
+		    	Bukkit.getPluginManager().callEvent(new MySQLErrorEvent(MySQLErr.QUERY,err,getManager().getInstance().getMysql()));
+		    }
+			
+			try
+		    {
+		      ResultSet rs = getManager().getInstance().getMysql().Query("SELECT `Z` FROM `list_gilden_Sky_world` WHERE X='"+X+"' ORDER BY Z DESC LIMIT 1;");
+		      while (rs.next()) {
+		    	  Z=rs.getInt(1);
+		      }
+		      rs.close();
+		    } catch (Exception err) {
+		    	Bukkit.getPluginManager().callEvent(new MySQLErrorEvent(MySQLErr.QUERY,err,getManager().getInstance().getMysql()));
+		    }
+			Log("X: "+X+" Z:"+Z);
+		}else{
+			X=radius;
+			Z=0;
+			Log("X: "+X+" Z:"+Z);
+		}
+		
+		
+	}
+	
+	public void loadIslands(){
+		try
+	    {
+	      ResultSet rs = getManager().getInstance().getMysql().Query("SELECT `gilde`,`X`,`Z` FROM `list_gilden_Sky_world`");
+	      while (rs.next()) {
+	    	if(rs.getString(1).charAt(0)!='!')continue;
+	    	islands.put(rs.getString(1), new Location(world,rs.getInt(2),0,rs.getInt(3)));
+	      }
+	      rs.close();
+	    } catch (Exception err) {
+	    	Bukkit.getPluginManager().callEvent(new MySQLErrorEvent(MySQLErr.QUERY,err,getManager().getInstance().getMysql()));
+	    }
+		Log(islands.size()+" Inseln wurden Geladen!");
+		solveXandZ();
+	}
+	
+}

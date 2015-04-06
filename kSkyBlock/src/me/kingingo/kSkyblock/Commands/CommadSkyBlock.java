@@ -127,8 +127,7 @@ public class CommadSkyBlock implements CommandExecutor{
 					if(getInstance().getManager().haveIsland(p)){
 						p.teleport(Bukkit.getWorld("world").getSpawnLocation());
 						SkyBlockWorld world = getInstance().getManager().getIsland(p);
-						world.removeIsland(p);
-						p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_REMOVE_ISLAND.getText());
+						if(world.removeIsland(p))p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_REMOVE_ISLAND.getText());
 					}else{
 						p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_NO_ISLAND.getText());
 					}
