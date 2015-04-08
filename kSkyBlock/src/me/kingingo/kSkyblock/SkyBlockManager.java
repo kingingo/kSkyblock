@@ -10,6 +10,7 @@ import me.kingingo.kSkyblock.Gilden.SkyBlockGildenWorld;
 import me.kingingo.kSkyblock.Util.UtilSchematic;
 import me.kingingo.kSkyblock.World.SkyBlockWorld;
 import me.kingingo.kcore.ChunkGenerator.CleanroomChunkGenerator;
+import me.kingingo.kcore.Command.Commands.Events.PlayerHomeEvent;
 import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Gilden.GildenManager;
 import me.kingingo.kcore.Listener.kListener;
@@ -112,12 +113,11 @@ public class SkyBlockManager extends kListener{
 	public void Quit(PlayerQuitEvent ev){
 		ev.setQuitMessage(null);
 	}
-	
+
 	@EventHandler
 	public void PacketReceive(PacketReceiveEvent ev){
 		if(ev.getPacket() instanceof WORLD_CHANGE_DATA){
 			WORLD_CHANGE_DATA packet = (WORLD_CHANGE_DATA)ev.getPacket();
-			//UtilPlayer.PermissionExChangeUUID(packet.getOld_uuid(), packet.getNew_uuid());
 			for(World world : Bukkit.getWorlds())UtilPlayer.setWorldChangeUUID(world, packet.getOld_uuid(), packet.getNew_uuid());
 		}
 	}

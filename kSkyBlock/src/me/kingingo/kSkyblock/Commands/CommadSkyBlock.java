@@ -9,10 +9,12 @@ import me.kingingo.kcore.Util.UtilFirework;
 import me.kingingo.kcore.Util.UtilMath;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class CommadSkyBlock implements CommandExecutor{
 	
@@ -117,6 +119,21 @@ public class CommadSkyBlock implements CommandExecutor{
 					}else{
 						SkyBlockWorld world = getInstance().getManager().addIsland(p);
 						if(world!=null){
+							p.getInventory().addItem(new ItemStack(Material.LAVA_BUCKET));
+							p.getInventory().addItem(new ItemStack(Material.WATER_BUCKET,2));
+							p.getInventory().addItem(new ItemStack(61,2));
+							p.getInventory().addItem(new ItemStack(362,2));
+							p.getInventory().addItem(new ItemStack(295,2));
+							p.getInventory().addItem(new ItemStack(351,1,(byte)3));
+							p.getInventory().addItem(new ItemStack(6,1));
+							p.getInventory().addItem(new ItemStack(6,1,(byte)2));
+							p.getInventory().addItem(new ItemStack(40,2));
+							p.getInventory().addItem(new ItemStack(32,2));
+							p.getInventory().addItem(new ItemStack(260,10));
+							p.getInventory().addItem(new ItemStack(141,10));
+							p.getInventory().addItem(new ItemStack(360,15));
+							p.getInventory().addItem(new ItemStack(287,10));
+							p.getInventory().addItem(new ItemStack(352,10));
 							p.teleport(world.getIslandHome(p));
 						}else{
 							System.out.println("[SkyBlock] WORLD == NULL");

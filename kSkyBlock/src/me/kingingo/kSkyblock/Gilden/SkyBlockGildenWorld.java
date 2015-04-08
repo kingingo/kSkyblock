@@ -13,7 +13,10 @@ import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.MySQL.MySQLErr;
 import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
 import me.kingingo.kcore.Permission.kPermission;
+import me.kingingo.kcore.Update.UpdateType;
+import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.UtilEvent;
+import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 
 import org.bukkit.Bukkit;
@@ -23,11 +26,13 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.InventoryHolder;
 
 public class SkyBlockGildenWorld extends kListener{
@@ -78,6 +83,27 @@ public class SkyBlockGildenWorld extends kListener{
 					if(a>=creature_limit)ev.setCancelled(true);
 					break;
 				}
+			}
+		}
+	}
+	
+	@EventHandler
+	public void PickUp(PlayerPickupItemEvent ev){
+		if(ev.getPlayer().getWorld()==getWorld()){
+			if(gilde.isPlayerInGilde(ev.getPlayer())){
+				if(islands.containsKey(gilde.getPlayerGilde(ev.getPlayer())))if(isInIsland(ev.getPlayer(), ev.getItem().getLocation()))return;
+			}
+			ev.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void Fall(UpdateEvent ev){
+		if(ev.getType()!=UpdateType.SEC_3)return;
+		for(Player player : getWorld().getPlayers()){
+			if(!player.isOnGround()&&player.getLocation().getBlockY()<=15){
+				player.teleport(Bukkit.getWorld("world").getSpawnLocation());
+				player.setHealth( ((CraftPlayer)player).getMaxHealth() );
 			}
 		}
 	}

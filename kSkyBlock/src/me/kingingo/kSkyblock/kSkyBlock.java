@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import lombok.Getter;
 import me.kingingo.kSkyblock.Commands.CommadSkyBlock;
-import me.kingingo.kSkyblock.Commands.CommandMoney;
+import me.kingingo.kSkyblock.Commands.CommandHomeaccept;
 import me.kingingo.kcore.AntiLogout.AntiLogoutManager;
 import me.kingingo.kcore.AntiLogout.AntiLogoutType;
 import me.kingingo.kcore.Client.Client;
@@ -16,26 +16,37 @@ import me.kingingo.kcore.Command.Admin.CommandMute;
 import me.kingingo.kcore.Command.Admin.CommandPermissionsExConverter;
 import me.kingingo.kcore.Command.Admin.CommandToggle;
 import me.kingingo.kcore.Command.Admin.CommandURang;
+import me.kingingo.kcore.Command.Commands.CommandClearInventory;
 import me.kingingo.kcore.Command.Commands.CommandDelHome;
+import me.kingingo.kcore.Command.Commands.CommandEnderchest;
 import me.kingingo.kcore.Command.Commands.CommandFeed;
 import me.kingingo.kcore.Command.Commands.CommandHeal;
 import me.kingingo.kcore.Command.Commands.CommandHome;
+import me.kingingo.kcore.Command.Commands.CommandInvsee;
 import me.kingingo.kcore.Command.Commands.CommandKit;
+import me.kingingo.kcore.Command.Commands.CommandMoney;
+import me.kingingo.kcore.Command.Commands.CommandMsg;
 import me.kingingo.kcore.Command.Commands.CommandNacht;
+import me.kingingo.kcore.Command.Commands.CommandR;
+import me.kingingo.kcore.Command.Commands.CommandRenameItem;
 import me.kingingo.kcore.Command.Commands.CommandRepair;
 import me.kingingo.kcore.Command.Commands.CommandSetHome;
+import me.kingingo.kcore.Command.Commands.CommandSocialspy;
 import me.kingingo.kcore.Command.Commands.CommandSonne;
 import me.kingingo.kcore.Command.Commands.CommandSpawn;
 import me.kingingo.kcore.Command.Commands.CommandSpawner;
 import me.kingingo.kcore.Command.Commands.CommandSpawnmob;
 import me.kingingo.kcore.Command.Commands.CommandTag;
 import me.kingingo.kcore.Command.Commands.CommandWarp;
+import me.kingingo.kcore.Command.Commands.CommandXP;
 import me.kingingo.kcore.Command.Commands.CommandkFly;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.Gilden.GildenType;
 import me.kingingo.kcore.Gilden.SkyBlockGildenManager;
 import me.kingingo.kcore.JumpPad.CommandJump;
 import me.kingingo.kcore.Listener.Chat.ChatListener;
+import me.kingingo.kcore.Listener.EnderChest.EnderChestListener;
+import me.kingingo.kcore.Listener.Enderpearl.EnderpearlListener;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Permission.GroupTyp;
@@ -53,6 +64,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.sk89q.bukkit.util.CommandInfo;
 
 public class kSkyBlock extends JavaPlugin {
 	
@@ -80,6 +93,8 @@ public class kSkyBlock extends JavaPlugin {
 	private UserDataConfig userData;
 	@Getter
 	private TeleportManager teleport;
+	@Getter
+	private CommandHomeaccept ha;
 	
 	public void onEnable(){
 		try{
@@ -98,7 +113,10 @@ public class kSkyBlock extends JavaPlugin {
 		teleport=new TeleportManager(getCmd(), getPermissionManager(), 5);
 		this.cmd.register(CommandMute.class, new CommandMute(permissionManager));	
 		this.cmd.register(CommandURang.class, new CommandURang(permissionManager,mysql));	
-		this.cmd.register(CommandMoney.class, new CommandMoney(this));	
+		this.cmd.register(CommandMoney.class, new CommandMoney(getStatsManager()));
+		this.cmd.register(CommandMsg.class, new CommandMsg());
+		this.cmd.register(CommandR.class, new CommandR(this));
+		this.cmd.register(CommandSocialspy.class, new CommandSocialspy(this));
 		this.cmd.register(CommandkFly.class, new CommandkFly(permissionManager));
 		this.cmd.register(CommandChatMute.class, new CommandChatMute(permissionManager));
 		this.cmd.register(CommandToggle.class, new CommandToggle(permissionManager));
@@ -119,12 +137,20 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommandWarp.class, new CommandWarp(getTeleport()));
 		this.cmd.register(CommandKit.class, new CommandKit(getUserData(),cmd));
 		this.cmd.register(CommandSpawn.class, new CommandSpawn(getTeleport()));
+		this.cmd.register(CommandClearInventory.class, new CommandClearInventory());
+		this.cmd.register(CommadSkyBlock.class, new CommadSkyBlock(this));	
+		this.cmd.register(CommandRenameItem.class, new CommandRenameItem());
+		this.cmd.register(CommandXP.class, new CommandXP());
+		this.cmd.register(CommandInvsee.class, new CommandInvsee());
+		this.cmd.register(CommandEnderchest.class, new CommandEnderchest());
 		this.antiLogout=new AntiLogoutManager(this,AntiLogoutType.KILL,5);
 		this.manager=new SkyBlockManager(this);
-		this.cmd.register(CommadSkyBlock.class, new CommadSkyBlock(this));	
+		this.ha=new CommandHomeaccept(manager);
 		new kSkyBlockListener(this);
+		new EnderpearlListener(this);
+		new EnderChestListener(getUserData());
 		Bukkit.getWorld("world").setStorm(false);
-		new ChatListener(this,new SkyBlockGildenManager(manager, mysql, GildenType.SKY, cmd),permissionManager);
+		new ChatListener(this,new SkyBlockGildenManager(manager, mysql, GildenType.SKY, cmd,getStatsManager()),permissionManager);
 		DebugLog(time, 45, this.getClass().getName());
 		}catch(Exception e){
 			UtilException.catchException(e, "skyblock", Bukkit.getIp(), mysql);

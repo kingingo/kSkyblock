@@ -3,6 +3,7 @@ package me.kingingo.kSkyblock;
 import java.util.HashMap;
 
 import lombok.Getter;
+import me.kingingo.kcore.Command.Commands.Events.PlayerHomeEvent;
 import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Update.UpdateType;
@@ -16,13 +17,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
@@ -44,8 +48,27 @@ public class kSkyBlockListener extends kListener{
 	}
 	
 	@EventHandler
+	public void Explosion(ExplosionPrimeEvent ev){
+		ev.setCancelled(true);
+	}
+	
+	@EventHandler
+	public void Sign(SignChangeEvent ev){
+		ev.setLine(0, ev.getLine(0).replaceAll("&", "§"));
+		ev.setLine(1, ev.getLine(1).replaceAll("&", "§"));
+		ev.setLine(2, ev.getLine(2).replaceAll("&", "§"));
+		ev.setLine(3, ev.getLine(3).replaceAll("&", "§"));
+	}
+	
+	@EventHandler
 	public void Create(CreatureSpawnEvent ev){
 		if(ev.getLocation().getWorld().getName().equalsIgnoreCase("world"))ev.setCancelled(true);
+	}
+	
+	@EventHandler
+	public void Quit(PlayerQuitEvent ev){
+		ev.setQuitMessage(null);
+		getManager().getStatsManager().SaveAllPlayerData(ev.getPlayer());
 	}
 	
 	@EventHandler
