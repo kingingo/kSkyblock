@@ -3,7 +3,6 @@ package me.kingingo.kSkyblock;
 import java.util.HashMap;
 
 import lombok.Getter;
-import me.kingingo.kcore.Command.Commands.Events.PlayerHomeEvent;
 import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Update.UpdateType;
@@ -11,7 +10,6 @@ import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.RestartScheduler;
 import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilWorldGuard;
-import net.minecraft.server.v1_7_R4.InventoryEnderChest;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -24,7 +22,6 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
@@ -134,6 +131,14 @@ public class kSkyBlockListener extends kListener{
 	      cmd = ev.getMessage();
 	    }
 	     
+	    if(cmd.startsWith("/me")){
+			ev.setCancelled(true);
+			return;
+		}else if(cmd.startsWith("/bukkit")){
+			ev.setCancelled(true);
+			return;
+		}
+	    
 		if(ev.getPlayer().isOp()){
 			if(cmd.equalsIgnoreCase("/reload")){
 				ev.setCancelled(true);

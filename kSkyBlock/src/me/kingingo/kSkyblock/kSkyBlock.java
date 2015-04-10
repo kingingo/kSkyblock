@@ -6,16 +6,23 @@ import java.io.IOException;
 import lombok.Getter;
 import me.kingingo.kSkyblock.Commands.CommadSkyBlock;
 import me.kingingo.kSkyblock.Commands.CommandHomeaccept;
+import me.kingingo.kSkyblock.Commands.CommandParty;
 import me.kingingo.kcore.AntiLogout.AntiLogoutManager;
 import me.kingingo.kcore.AntiLogout.AntiLogoutType;
 import me.kingingo.kcore.Client.Client;
 import me.kingingo.kcore.Command.CommandHandler;
+import me.kingingo.kcore.Command.Admin.CommandBroadcast;
 import me.kingingo.kcore.Command.Admin.CommandChatMute;
+import me.kingingo.kcore.Command.Admin.CommandFly;
 import me.kingingo.kcore.Command.Admin.CommandGroup;
 import me.kingingo.kcore.Command.Admin.CommandMute;
 import me.kingingo.kcore.Command.Admin.CommandPermissionsExConverter;
 import me.kingingo.kcore.Command.Admin.CommandToggle;
+import me.kingingo.kcore.Command.Admin.CommandTp;
+import me.kingingo.kcore.Command.Admin.CommandTpHere;
+import me.kingingo.kcore.Command.Admin.CommandTppos;
 import me.kingingo.kcore.Command.Admin.CommandURang;
+import me.kingingo.kcore.Command.Admin.CommandVanish;
 import me.kingingo.kcore.Command.Commands.CommandClearInventory;
 import me.kingingo.kcore.Command.Commands.CommandDelHome;
 import me.kingingo.kcore.Command.Commands.CommandEnderchest;
@@ -39,11 +46,23 @@ import me.kingingo.kcore.Command.Commands.CommandSpawnmob;
 import me.kingingo.kcore.Command.Commands.CommandTag;
 import me.kingingo.kcore.Command.Commands.CommandWarp;
 import me.kingingo.kcore.Command.Commands.CommandXP;
-import me.kingingo.kcore.Command.Commands.CommandkFly;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.Gilden.GildenType;
 import me.kingingo.kcore.Gilden.SkyBlockGildenManager;
 import me.kingingo.kcore.JumpPad.CommandJump;
+import me.kingingo.kcore.Kit.Perk;
+import me.kingingo.kcore.Kit.PerkManager;
+import me.kingingo.kcore.Kit.Command.CommandPerk;
+import me.kingingo.kcore.Kit.Perks.PerkDoubleJump;
+import me.kingingo.kcore.Kit.Perks.PerkDoubleXP;
+import me.kingingo.kcore.Kit.Perks.PerkDropper;
+import me.kingingo.kcore.Kit.Perks.PerkGetXP;
+import me.kingingo.kcore.Kit.Perks.PerkHealPotion;
+import me.kingingo.kcore.Kit.Perks.PerkItemName;
+import me.kingingo.kcore.Kit.Perks.PerkNoFiredamage;
+import me.kingingo.kcore.Kit.Perks.PerkNoHunger;
+import me.kingingo.kcore.Kit.Perks.PerkPotionClear;
+import me.kingingo.kcore.Kit.Perks.PerkRunner;
 import me.kingingo.kcore.Listener.Chat.ChatListener;
 import me.kingingo.kcore.Listener.EnderChest.EnderChestListener;
 import me.kingingo.kcore.Listener.Enderpearl.EnderpearlListener;
@@ -64,8 +83,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import com.sk89q.bukkit.util.CommandInfo;
 
 public class kSkyBlock extends JavaPlugin {
 	
@@ -95,6 +112,7 @@ public class kSkyBlock extends JavaPlugin {
 	private TeleportManager teleport;
 	@Getter
 	private CommandHomeaccept ha;
+	private PerkManager perkManager;
 	
 	public void onEnable(){
 		try{
@@ -117,7 +135,7 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommandMsg.class, new CommandMsg());
 		this.cmd.register(CommandR.class, new CommandR(this));
 		this.cmd.register(CommandSocialspy.class, new CommandSocialspy(this));
-		this.cmd.register(CommandkFly.class, new CommandkFly(permissionManager));
+		this.cmd.register(CommandFly.class, new CommandFly());
 		this.cmd.register(CommandChatMute.class, new CommandChatMute(permissionManager));
 		this.cmd.register(CommandToggle.class, new CommandToggle(permissionManager));
 		this.cmd.register(CommandPermissionsExConverter.class, new CommandPermissionsExConverter(permissionManager));
@@ -143,6 +161,15 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommandXP.class, new CommandXP());
 		this.cmd.register(CommandInvsee.class, new CommandInvsee());
 		this.cmd.register(CommandEnderchest.class, new CommandEnderchest());
+		this.cmd.register(CommandParty.class, new CommandParty(this));
+		this.cmd.register(CommandBroadcast.class, new CommandBroadcast());
+		this.cmd.register(CommandTppos.class, new CommandTppos());
+		this.cmd.register(CommandTp.class, new CommandTp());
+		this.cmd.register(CommandTpHere.class, new CommandTpHere());
+		this.cmd.register(CommandVanish.class, new CommandVanish(this));
+		this.perkManager=new PerkManager(getPermissionManager(),userData,new Perk[]{new PerkNoHunger(),new PerkHealPotion(1),new PerkNoFiredamage(),new PerkRunner(0.35F),new PerkDoubleJump(),new PerkDoubleXP(),new PerkDropper(),new PerkGetXP(),new PerkPotionClear(),new PerkItemName(cmd)});
+		new PerkListener(perkManager);
+		cmd.register(CommandPerk.class, new CommandPerk(perkManager));
 		this.antiLogout=new AntiLogoutManager(this,AntiLogoutType.KILL,5);
 		this.manager=new SkyBlockManager(this);
 		this.ha=new CommandHomeaccept(manager);

@@ -7,10 +7,8 @@ import java.util.UUID;
 
 import lombok.Getter;
 import me.kingingo.kSkyblock.Gilden.SkyBlockGildenWorld;
-import me.kingingo.kSkyblock.Util.UtilSchematic;
 import me.kingingo.kSkyblock.World.SkyBlockWorld;
 import me.kingingo.kcore.ChunkGenerator.CleanroomChunkGenerator;
-import me.kingingo.kcore.Command.Commands.Events.PlayerHomeEvent;
 import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Gilden.GildenManager;
 import me.kingingo.kcore.Listener.kListener;
@@ -38,8 +36,6 @@ public class SkyBlockManager extends kListener{
 	@Getter
 	private ArrayList<SkyBlockWorld> worlds = new ArrayList<>();
 	@Getter
-	private UtilSchematic schematic;
-	@Getter
 	private ArrayList<String> schematics = new ArrayList<>();
 	@Getter
 	private ArrayList<String> delete = new ArrayList<>();
@@ -50,7 +46,6 @@ public class SkyBlockManager extends kListener{
 	public SkyBlockManager(kSkyBlock instance){
 		super(instance,"SkyBlockManager");
 		this.instance=instance;
-		this.schematic=new UtilSchematic();
 		getInstance().getMysql().Update("CREATE TABLE IF NOT EXISTS list_skyblock_worlds(UUID varchar(100),worldName varchar(30),X int,Z int)");
 		loadSchematics();	
 	}
@@ -64,7 +59,7 @@ public class SkyBlockManager extends kListener{
 				if(file.getName().contains(".schematic")){
 					schematics.add(file.getName().replaceAll(".schematic", ""));
 					Log(file.getName().replaceAll(".schematic", ""));
-					if(!file.getName().replaceAll(".schematic","").equalsIgnoreCase("gilde")){
+					if(!file.getName().replaceAll(".schematic", "").equalsIgnoreCase("gilde")){
 						addWorld(file.getName().replaceAll(".schematic", ""), 100, 0);
 					}
 				}

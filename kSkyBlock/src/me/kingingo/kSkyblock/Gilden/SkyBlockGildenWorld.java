@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import lombok.Getter;
 import me.kingingo.kSkyblock.SkyBlockManager;
+import me.kingingo.kSkyblock.Util.UtilSchematic;
 import me.kingingo.kcore.Gilden.GildenManager;
 import me.kingingo.kcore.Gilden.Events.GildeLoadEvent;
 import me.kingingo.kcore.Listener.kListener;
@@ -15,9 +16,6 @@ import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
 import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
-import me.kingingo.kcore.Util.UtilEvent;
-import me.kingingo.kcore.Util.UtilPlayer;
-import me.kingingo.kcore.Util.UtilEvent.ActionType;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -26,14 +24,29 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.BrewingStand;
+import org.bukkit.block.Chest;
+import org.bukkit.block.Dispenser;
+import org.bukkit.block.DoubleChest;
+import org.bukkit.block.Furnace;
+import org.bukkit.block.Hopper;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.InventoryHolder;
+
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.bukkit.BukkitWorld;
 
 public class SkyBlockGildenWorld extends kListener{
 
@@ -41,6 +54,7 @@ public class SkyBlockGildenWorld extends kListener{
 	private SkyBlockManager manager;
 	@Getter
 	private World world;
+	@Getter
 	private HashMap<String,Location> islands = new HashMap<>();
 	private int X=0;
 	private int Z=0;
@@ -50,6 +64,7 @@ public class SkyBlockGildenWorld extends kListener{
 	private int creature_limit;
 	@Getter
 	private GildenManager gilde;
+	private EditSession session;
 	
 	public SkyBlockGildenWorld(SkyBlockManager manager,GildenManager gilde,World world,int radius,int anzahl,int creature_limit) {
 		super(manager.getInstance(),"SkyBlockGildenWorld:"+world.getName());
@@ -60,6 +75,7 @@ public class SkyBlockGildenWorld extends kListener{
 		this.creature_limit=creature_limit;
 		this.schematic="gilde";
 		this.radius=radius;
+		this.session=new EditSession(new BukkitWorld(getWorld()), 999999999);
 		loadIslands();
 		addIslands(anzahl);
 	}
@@ -70,10 +86,19 @@ public class SkyBlockGildenWorld extends kListener{
 	}
 	
 	@EventHandler
+	public void Damage(EntityDamageByEntityEvent ev){
+		if(ev.getDamager().getWorld()==getWorld()){
+			if(ev.getDamager() instanceof Player && ev.getEntity() instanceof Player){
+				ev.setCancelled(true);
+			}
+		}
+	}
+	
+	@EventHandler
 	public void CreatureSpawn(CreatureSpawnEvent ev){
 		for(String gilde : islands.keySet()){
 			if(gilde.charAt(0)!='!'){
-				if(isInIsland(gilde,ev.getLocation())){
+				if(isInIsland(gilde.toLowerCase(),ev.getLocation())){
 					int a = 0;
 					for(Entity e : world.getEntities()){
 						if(!(e instanceof Player)){
@@ -88,32 +113,83 @@ public class SkyBlockGildenWorld extends kListener{
 	}
 	
 	@EventHandler
-	public void PickUp(PlayerPickupItemEvent ev){
-		if(ev.getPlayer().getWorld()==getWorld()){
-			if(gilde.isPlayerInGilde(ev.getPlayer())){
-				if(islands.containsKey(gilde.getPlayerGilde(ev.getPlayer())))if(isInIsland(ev.getPlayer(), ev.getItem().getLocation()))return;
-			}
-			ev.setCancelled(true);
-		}
-	}
-	
-	@EventHandler
 	public void Fall(UpdateEvent ev){
 		if(ev.getType()!=UpdateType.SEC_3)return;
 		for(Player player : getWorld().getPlayers()){
-			if(!player.isOnGround()&&player.getLocation().getBlockY()<=15){
+			if(!player.isOnGround()&&player.getLocation().getBlockY()<=12){
 				player.teleport(Bukkit.getWorld("world").getSpawnLocation());
 				player.setHealth( ((CraftPlayer)player).getMaxHealth() );
 			}
 		}
 	}
 	
-	@EventHandler
-	public void InteractEvent(PlayerInteractEvent ev){
-		if(ev.getPlayer().getWorld()==getWorld()&&UtilEvent.isAction(ev, ActionType.BLOCK)){
-			if(gilde.isPlayerInGilde(ev.getPlayer())){
-				if(islands.containsKey(gilde.getPlayerGilde(ev.getPlayer())))if(isInIsland(ev.getPlayer(), ev.getClickedBlock().getLocation()))return;
+	Player player;
+    Location loc;
+	 @EventHandler(priority=EventPriority.LOWEST)
+	 public void onInventoryOpenEvent(InventoryOpenEvent event){
+		 if (event.getPlayer().getWorld()!=getWorld() || (event.isCancelled()) || (event.getInventory() == null) || (event.getInventory().getHolder() == null) || event.getPlayer().isOp())return;
+		    
+		    if (((event.getInventory().getHolder() instanceof Hopper)) ||((event.getInventory().getHolder() instanceof BrewingStand)) ||((event.getInventory().getHolder() instanceof Chest)) || ((event.getInventory().getHolder() instanceof DoubleChest)) || ((event.getInventory().getHolder() instanceof Furnace)) || ((event.getInventory().getHolder() instanceof Dispenser))) {
+			    player = (Player)event.getPlayer();
+			    loc = player.getLocation();
+			    
+			      if ((event.getInventory().getHolder() instanceof Chest)){
+			        loc = ((Chest)event.getInventory().getHolder()).getLocation();
+			      }
+			      else if ((event.getInventory().getHolder() instanceof Furnace)){
+			        loc = ((Furnace)event.getInventory().getHolder()).getLocation();
+			      }
+			      else if ((event.getInventory().getHolder() instanceof DoubleChest)){
+			        loc = ((DoubleChest)event.getInventory().getHolder()).getLocation();
+			      }
+			      else if ((event.getInventory().getHolder() instanceof Dispenser)){
+			        loc = ((Dispenser)event.getInventory().getHolder()).getLocation();
+			      }
+			      else if ((event.getInventory().getHolder() instanceof BrewingStand)){
+				        loc = ((BrewingStand)event.getInventory().getHolder()).getLocation();
+			      }
+			      else if ((event.getInventory().getHolder() instanceof Hopper)){
+				        loc = ((Hopper)event.getInventory().getHolder()).getLocation();
+			      }
+
+			      if(gilde.isPlayerInGilde(player)&&islands.containsKey(gilde.getPlayerGilde(player).toLowerCase()))if(isInIsland(player,loc))return;
+			      event.setCancelled(true);
+		    }
+	 }
+	 
+	 @EventHandler
+		public void Damage(EntityDamageEvent ev){
+			if(ev.getEntity().getWorld()==getWorld()){
+				if(ev.getEntity() instanceof Player && ev.getCause() == DamageCause.FALL&& ev.getCause() == DamageCause.LAVA){
+					ev.setCancelled(true);
+				}
 			}
+		}
+	
+	@EventHandler
+	public void PickUp(PlayerPickupItemEvent ev){
+		if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()){
+			if(gilde.isPlayerInGilde(ev.getPlayer())&&islands.containsKey(gilde.getPlayerGilde(ev.getPlayer()).toLowerCase())){
+				if(isInIsland(ev.getPlayer(), ev.getItem().getLocation()))return;
+			}
+			ev.setCancelled(true);
+		}
+	}
+	
+	@EventHandler(priority=EventPriority.HIGHEST)
+	public void Place(BlockPlaceEvent ev){
+		if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()){
+			if(ev.getBlock()==null)return;
+			if(gilde.isPlayerInGilde(ev.getPlayer())&&islands.containsKey(gilde.getPlayerGilde(ev.getPlayer()).toLowerCase()))if(isInIsland(ev.getPlayer(), ev.getBlock().getLocation()))return;
+			ev.setCancelled(true);
+		}
+	}
+	
+	@EventHandler(priority=EventPriority.HIGHEST)
+	public void Break(BlockBreakEvent ev){
+		if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()){
+			if(ev.getBlock()==null)return;
+			if(gilde.isPlayerInGilde(ev.getPlayer())&&islands.containsKey(gilde.getPlayerGilde(ev.getPlayer()).toLowerCase()))if(isInIsland(ev.getPlayer(), ev.getBlock().getLocation()))return;
 			ev.setCancelled(true);
 		}
 	}
@@ -146,7 +222,7 @@ public class SkyBlockGildenWorld extends kListener{
 	public Location getIslandHome(String gilde){
 		gilde=gilde.toLowerCase();
 		if(islands.containsKey(gilde)){
-			return new Location(getWorld(), (islands.get(gilde).getBlockX()-(radius/2)) ,93, (islands.get(gilde).getBlockZ()-(radius/2)) );
+			return new Location(getWorld(), (islands.get(gilde).getBlockX()-(radius/2)) ,32, (islands.get(gilde).getBlockZ()-(radius/2)) );
 		}
 		return null;
 	}
@@ -160,9 +236,58 @@ public class SkyBlockGildenWorld extends kListener{
 		return true;
 	}
 	
+	public boolean newIsland(String gilde){
+		gilde=gilde.toLowerCase();
+		if(islands.containsKey(gilde)){
+			Location loc = islands.get(gilde);
+			int min_x = loc.getBlockX()-radius;
+			int max_x = loc.getBlockX();
+			
+			int min_z = loc.getBlockZ()-radius;
+			int max_z = loc.getBlockZ();
+			
+			int count=0;
+			for(Entity e : world.getEntities()){
+				if(!(e instanceof Player)){
+					if(e.getLocation().getBlockX() > min_x&&e.getLocation().getBlockX()<max_x&&e.getLocation().getBlockZ()>min_z&&e.getLocation().getBlockZ()<max_z){
+						e.remove();
+						count++;
+					}
+				}
+			}
+			
+			Block block;
+			BlockState state;
+			InventoryHolder invHolder;
+			int b_count=0;
+			for(int x = min_x; x < max_x; x++){
+				for(int z = min_z; z < max_z; z++){
+					for(int y = 0; y < 256; y++){
+						block=world.getBlockAt(x,y,z);
+						if(block!=null&&(!block.isEmpty())){
+							block.getDrops().clear();
+							state=block.getState();
+							if(state instanceof InventoryHolder){
+								invHolder=(InventoryHolder)state;
+								invHolder.getInventory().clear();
+							}
+							block.setType(Material.AIR);
+							b_count++;
+						}
+					}
+				}
+			}
+			Location loc1 = new Location(getWorld(), (max_x-(radius/2)) ,30, (max_z-(radius/2)) );
+			loc1.getWorld().loadChunk(loc1.getChunk());
+			UtilSchematic.pastePlate(session,loc1, new File("plugins/kSkyBlock/schematics/"+schematic+".schematic"));
+			Log("Die Insel von der Gilde "+gilde+"(Entities:"+count+"/Bloecke:"+b_count+"/X:"+(max_x-(radius/2))+"/Z:"+(max_z-(radius/2))+") wurde erneuert.");
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean removeIsland(String gilde){
 		gilde=gilde.toLowerCase();
-		
 		if(islands.containsKey(gilde)){
 			Location loc = islands.get(gilde);
 			int min_x = loc.getBlockX()-radius;
@@ -203,13 +328,12 @@ public class SkyBlockGildenWorld extends kListener{
 				}
 			}
 			islands.remove(gilde);
-			Log("Die Insel von der Gilde "+gilde+"(Entities:"+count+"/Bloecke:"+b_count+") wurde resetet.");
-			
 			getManager().getInstance().getMysql().Update("UPDATE list_gilden_Sky_world SET gilde='!"+gilde+"' WHERE X='"+loc.getBlockX()+"' AND Z='"+loc.getBlockZ()+"'");
 			islands.put("!"+gilde, loc);
-			Location loc1 = new Location(getWorld(), (max_x-(radius/2)) ,90, (max_z-(radius/2)) );
+			Location loc1 = new Location(getWorld(), (max_x-(radius/2)) ,30, (max_z-(radius/2)) );
 			loc1.getWorld().loadChunk(loc1.getChunk());
-			getManager().getSchematic().pastePlate(loc1, new File("plugins/kSkyBlock/schematics/"+schematic+".schematic"));
+			UtilSchematic.pastePlate(session,loc1, new File("plugins/kSkyBlock/schematics/"+schematic+".schematic"));
+			Log("Die Insel von der Gilde "+gilde+"(Entities:"+count+"/Bloecke:"+b_count+"/X:"+(max_x-(radius/2))+"/Z:"+(max_z-(radius/2))+") wurde resetet.");
 			return true;
 		}
 		return false;
@@ -228,7 +352,7 @@ public class SkyBlockGildenWorld extends kListener{
 	public String recycelnIsland(){
 		String island = null;
 		for(String player : islands.keySet()){
-			if(player.charAt(0)=='!'){
+			if(player.startsWith("!")){
 				island=player;
 				break;
 			}
@@ -267,9 +391,9 @@ public class SkyBlockGildenWorld extends kListener{
 		}else{
 			Z+=radius;
 		}
-		Location loc = new Location(getWorld(), (X-(radius/2)) ,90, (Z-(radius/2)) );
+		Location loc = new Location(getWorld(), (X-(radius/2)) ,30, (Z-(radius/2)) );
 		loc.getWorld().loadChunk(loc.getChunk());
-		getManager().getSchematic().pastePlate(loc, new File("plugins/kSkyBlock/schematics/"+schematic+".schematic"));
+		UtilSchematic.pastePlate(session,loc, new File("plugins/kSkyBlock/schematics/"+schematic+".schematic"));
 		if(gilde==null){
 			gilde="!"+UUID.randomUUID();
 		}
@@ -279,8 +403,7 @@ public class SkyBlockGildenWorld extends kListener{
 	}
 	
 	public boolean isInIsland(Player player,Location loc){
-		String gilde=this.gilde.getPlayerGilde(player);
-		return isInIsland(gilde,loc);
+		return isInIsland(this.gilde.getPlayerGilde(player).toLowerCase(),loc);
 	}
 	
 	public boolean isInIsland(String gilde,Location loc){
@@ -372,8 +495,8 @@ public class SkyBlockGildenWorld extends kListener{
 	    {
 	      ResultSet rs = getManager().getInstance().getMysql().Query("SELECT `gilde`,`X`,`Z` FROM `list_gilden_Sky_world`");
 	      while (rs.next()) {
-	    	if(rs.getString(1).charAt(0)!='!')continue;
-	    	islands.put(rs.getString(1), new Location(world,rs.getInt(2),0,rs.getInt(3)));
+	    	if(!rs.getString(1).startsWith("!"))continue;
+	    	islands.put(rs.getString(1).toLowerCase(), new Location(world,rs.getInt(2),0,rs.getInt(3)));
 	      }
 	      rs.close();
 	    } catch (Exception err) {
