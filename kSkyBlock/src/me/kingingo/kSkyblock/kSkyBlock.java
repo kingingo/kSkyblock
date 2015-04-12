@@ -129,15 +129,15 @@ public class kSkyBlock extends JavaPlugin {
 		new SignShop(this, this.statsManager);
 		this.cmd=new CommandHandler(this);
 		teleport=new TeleportManager(getCmd(), getPermissionManager(), 5);
-		this.cmd.register(CommandMute.class, new CommandMute(permissionManager));	
+		this.cmd.register(CommandMute.class, new CommandMute(this));	
 		this.cmd.register(CommandURang.class, new CommandURang(permissionManager,mysql));	
 		this.cmd.register(CommandMoney.class, new CommandMoney(getStatsManager()));
 		this.cmd.register(CommandMsg.class, new CommandMsg());
 		this.cmd.register(CommandR.class, new CommandR(this));
 		this.cmd.register(CommandSocialspy.class, new CommandSocialspy(this));
 		this.cmd.register(CommandFly.class, new CommandFly());
-		this.cmd.register(CommandChatMute.class, new CommandChatMute(permissionManager));
-		this.cmd.register(CommandToggle.class, new CommandToggle(permissionManager));
+		this.cmd.register(CommandChatMute.class, new CommandChatMute(this));
+		this.cmd.register(CommandToggle.class, new CommandToggle(this));
 		this.cmd.register(CommandPermissionsExConverter.class, new CommandPermissionsExConverter(permissionManager));
 		this.cmd.register(CommandJump.class, new CommandJump(this));
 		this.cmd.register(CommandFeed.class, new CommandFeed());
@@ -167,7 +167,7 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommandTp.class, new CommandTp());
 		this.cmd.register(CommandTpHere.class, new CommandTpHere());
 		this.cmd.register(CommandVanish.class, new CommandVanish(this));
-		this.perkManager=new PerkManager(getPermissionManager(),userData,new Perk[]{new PerkNoHunger(),new PerkHealPotion(1),new PerkNoFiredamage(),new PerkRunner(0.35F),new PerkDoubleJump(),new PerkDoubleXP(),new PerkDropper(),new PerkGetXP(),new PerkPotionClear(),new PerkItemName(cmd)});
+		this.perkManager=new PerkManager(this,userData,new Perk[]{new PerkNoHunger(),new PerkHealPotion(1),new PerkNoFiredamage(),new PerkRunner(0.35F),new PerkDoubleJump(),new PerkDoubleXP(),new PerkDropper(),new PerkGetXP(),new PerkPotionClear(),new PerkItemName(cmd)});
 		new PerkListener(perkManager);
 		cmd.register(CommandPerk.class, new CommandPerk(perkManager));
 		this.antiLogout=new AntiLogoutManager(this,AntiLogoutType.KILL,5);

@@ -15,7 +15,7 @@ public class PerkListener extends kListener{
 	public PerkManager perkManager;
 	
 	public PerkListener(PerkManager perkManager){
-		super(perkManager.getManager().getInstance(),"PerkListener");
+		super(perkManager.getInstance(),"PerkListener");
 		this.perkManager=perkManager;
 	}
 	
