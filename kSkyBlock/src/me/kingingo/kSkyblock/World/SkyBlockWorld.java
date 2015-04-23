@@ -38,6 +38,7 @@ import org.bukkit.block.Hopper;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -47,6 +48,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.InventoryHolder;
@@ -327,6 +330,32 @@ public class SkyBlockWorld extends kListener{
 			}
 		}
 	}
+
+	@EventHandler
+	public void onPlayerBucketFill(PlayerBucketFillEvent ev) {
+		if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()){
+			if(islands.containsKey(UtilPlayer.getRealUUID(ev.getPlayer()).toString())&&isInIsland(UtilPlayer.getRealUUID(ev.getPlayer()), ev.getBlockClicked().getLocation())) {
+				return;
+			}
+			if(getParty_island().containsKey(ev.getPlayer().getName().toLowerCase())&&isInIsland(getParty_island().get(ev.getPlayer().getName().toLowerCase()), ev.getBlockClicked().getLocation())){
+				return;
+			}
+			ev.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerBucketEmpty(PlayerBucketEmptyEvent ev) {
+		if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()){
+			if(islands.containsKey(UtilPlayer.getRealUUID(ev.getPlayer()).toString())&&isInIsland(UtilPlayer.getRealUUID(ev.getPlayer()), ev.getBlockClicked().getLocation())) {
+				return;
+			}
+			if(getParty_island().containsKey(ev.getPlayer().getName().toLowerCase())&&isInIsland(getParty_island().get(ev.getPlayer().getName().toLowerCase()), ev.getBlockClicked().getLocation())){
+				return;
+			}
+			ev.setCancelled(true);
+		}
+	}
 	
 	@EventHandler
 	public void Damage(EntityDamageEvent ev){
@@ -337,10 +366,47 @@ public class SkyBlockWorld extends kListener{
 		}
 	}
 	
+//	Player move;
+//	World move_world;
+//	boolean result;
+//	Location newLoc;
+//	@EventHandler(priority=EventPriority.HIGH)
+//    public void onPlayerMove(PlayerMoveEvent event){
+//      move = event.getPlayer();
+//      
+//      if(move.isOp()||move.hasPermission(kPermission.SKYBLOCK_ISLAND_BYPASS.getPermissionToString())){
+//    	  return;
+//      }
+//      
+//      world = move.getWorld();
+//      if (move.getVehicle() != null||move_world!=getWorld()) {
+//        return;
+//      }
+//      
+//        if ((event.getFrom().getBlockX() != event.getTo().getBlockX()) || 
+//          (event.getFrom().getBlockY() != event.getTo().getBlockY()) || 
+//          (event.getFrom().getBlockZ() != event.getTo().getBlockZ())) {
+//          result = isInIsland(event.getPlayer(), event.getTo());
+//          if (!result) {  
+//        	 if(getParty_island().containsKey(event.getPlayer().getName().toLowerCase())&&isInIsland(getParty_island().get(event.getPlayer().getName().toLowerCase()), event.getTo())){
+//  				return;
+//  			 }
+//        	  
+//            newLoc = event.getFrom();
+//            newLoc.setX(newLoc.getBlockX() + 0.5D);
+//            newLoc.setY(newLoc.getBlockY());
+//            newLoc.setZ(newLoc.getBlockZ() + 0.5D);
+//            event.setTo(newLoc);
+//          }
+//      }
+//    }
+	
 	@EventHandler
 	public void Damage(EntityDamageByEntityEvent ev){
 		if(ev.getDamager().getWorld()==getWorld()){
 			if(ev.getDamager() instanceof Player && ev.getEntity() instanceof Player){
+				ev.setCancelled(true);
+			}else if(ev.getDamager() instanceof Projectile && ev.getEntity() instanceof Player){
 				ev.setCancelled(true);
 			}
 		}

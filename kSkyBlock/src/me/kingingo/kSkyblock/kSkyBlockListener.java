@@ -5,6 +5,7 @@ import java.util.HashMap;
 import lombok.Getter;
 import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Listener.kListener;
+import me.kingingo.kcore.PlayerStats.Stats;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.RestartScheduler;
@@ -13,16 +14,24 @@ import me.kingingo.kcore.Util.UtilWorldGuard;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
@@ -48,6 +57,53 @@ public class kSkyBlockListener extends kListener{
 	public void Explosion(ExplosionPrimeEvent ev){
 		ev.setCancelled(true);
 	}
+	@EventHandler
+	public void soilChangeEntity(EntityInteractEvent event){
+	    if ((event.getEntityType() != EntityType.PLAYER) && (event.getBlock().getType() == Material.SOIL)) event.setCancelled(true);
+	}
+	
+	@EventHandler(priority=EventPriority.LOWEST)
+	public void Pickup(PlayerPickupItemEvent ev){
+		if(ev.getItem().getItemStack().getAmount()<0||ev.getItem().getItemStack().getAmount()>64){
+			ev.getItem().remove();
+	        ev.getPlayer().sendMessage("§cFEHLER: BuggUsing ist verboten!");
+		}
+	}
+	
+	@EventHandler(priority=EventPriority.LOWEST)
+	public void Drop(InventoryClickEvent ev){
+		if(ev.getWhoClicked() instanceof Player){
+			if(ev.getInventory()!=null&&ev.getCurrentItem()!=null){
+				
+				if(ev.getCurrentItem().getAmount()<0||ev.getCurrentItem().getAmount()>64){
+					ev.getCurrentItem().setAmount(1);
+					ev.getCurrentItem().setType(Material.AIR);
+					((Player)ev.getWhoClicked()).sendMessage("§cFEHLER: BuggUsing ist verboten!");
+				}
+			}
+		}
+	}
+	
+	@EventHandler(priority=EventPriority.LOWEST)
+	public void Drop(PlayerDropItemEvent ev){
+		if(ev.getItemDrop().getItemStack().getAmount()<0||ev.getItemDrop().getItemStack().getAmount()>64){
+			ev.getItemDrop().remove();
+	        ev.getPlayer().sendMessage("§cFEHLER: BuggUsing ist verboten!");
+		}
+	}
+	
+	@EventHandler
+	public void onClickinAnvil(InventoryClickEvent e){
+	    try{
+	      if ((e.getInventory().getType() == InventoryType.ANVIL) && 
+	        (e.getCurrentItem().getAmount() > 1)){
+	        e.setCancelled(true);
+	        Player ps = (Player)e.getWhoClicked();
+	        ps.sendMessage("§cFEHLER: BuggUsing ist verboten!");
+	      }
+	    }
+	    catch (Exception localException){}
+	  }
 	
 	@EventHandler
 	public void Sign(SignChangeEvent ev){
@@ -74,12 +130,15 @@ public class kSkyBlockListener extends kListener{
 	}
 	
 	
-	
+	Player death;
 	@EventHandler
 	public void Death(PlayerDeathEvent ev){
 		ev.setDeathMessage(null);
 		if(ev.getEntity() instanceof Player){
-			UtilPlayer.RespawnNow(((Player)ev.getEntity()), manager);
+			death=(Player)ev.getEntity();;
+			UtilPlayer.RespawnNow(death, manager);
+			getManager().getStatsManager().setInt(death, getManager().getStatsManager().getInt(Stats.DEATHS, death)+1, Stats.DEATHS);
+			if(ev.getEntity().getKiller() instanceof Player)getManager().getStatsManager().setInt(ev.getEntity().getKiller(), getManager().getStatsManager().getInt(Stats.KILLS, ev.getEntity().getKiller())+1, Stats.KILLS);
 		}
 	}
 	
@@ -120,7 +179,7 @@ public class kSkyBlockListener extends kListener{
 			}
 		}
 	}
-
+	
 	@EventHandler
 	public void Command(PlayerCommandPreprocessEvent ev){
 		String cmd = "";

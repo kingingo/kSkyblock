@@ -33,6 +33,7 @@ import org.bukkit.block.Hopper;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -42,6 +43,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.InventoryHolder;
 
@@ -89,6 +92,8 @@ public class SkyBlockGildenWorld extends kListener{
 	public void Damage(EntityDamageByEntityEvent ev){
 		if(ev.getDamager().getWorld()==getWorld()){
 			if(ev.getDamager() instanceof Player && ev.getEntity() instanceof Player){
+				ev.setCancelled(true);
+			}else if(ev.getDamager() instanceof Projectile && ev.getEntity() instanceof Player){
 				ev.setCancelled(true);
 			}
 		}
@@ -156,6 +161,26 @@ public class SkyBlockGildenWorld extends kListener{
 			      event.setCancelled(true);
 		    }
 	 }
+		
+		@EventHandler
+		public void onPlayerBucketFill(PlayerBucketFillEvent ev) {
+			if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()){
+				if(gilde.isPlayerInGilde(ev.getPlayer())&&islands.containsKey(gilde.getPlayerGilde(ev.getPlayer()).toLowerCase())){
+					if(isInIsland(ev.getPlayer(), ev.getBlockClicked().getLocation()))return;
+				}
+				ev.setCancelled(true);
+			}
+		}
+		
+		@EventHandler
+		public void onPlayerBucketEmpty(PlayerBucketEmptyEvent ev) {
+			if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()){
+				if(gilde.isPlayerInGilde(ev.getPlayer())&&islands.containsKey(gilde.getPlayerGilde(ev.getPlayer()).toLowerCase())){
+					if(isInIsland(ev.getPlayer(), ev.getBlockClicked().getLocation()))return;
+				}
+				ev.setCancelled(true);
+			}
+		}
 	 
 	 @EventHandler
 		public void Damage(EntityDamageEvent ev){

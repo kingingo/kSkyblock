@@ -22,6 +22,7 @@ public class CommadSkyBlock implements CommandExecutor{
 	@Getter
 	private kSkyBlock instance;
 	private Player p;
+	private Player target;
 	
 	public CommadSkyBlock(kSkyBlock instance){
 		this.instance=instance;
@@ -37,6 +38,10 @@ public class CommadSkyBlock implements CommandExecutor{
 				p.sendMessage("§6/skyblock entfernen §8|§7 Lösche deine Insel.");
 				p.sendMessage("§6/skyblock home §8|§7 Teleportiere dich zu deiner Insel.");
 				p.sendMessage("§6/skyblock fixhome §8|§7 Teleportiere dich zu deiner Insel.");
+				p.sendMessage("§6/skyblock kick [Player] §8|§7 Kicke Spieler von deiner Insel");
+				p.sendMessage("§6/homedelete [Player] §8|§7 Löschen von Homes auf deiner Insel.");
+				p.sendMessage("§6/homeaccept §8|§7 Annehmen von Homes.");
+				p.sendMessage("§6/homedeny §8|§7 Ablehnen von Homes.");
 				p.sendMessage("§6/party §8|§7 Party Menue.");
 			}else{
 				if(args[0].equalsIgnoreCase("erstellen")){
@@ -66,6 +71,29 @@ public class CommadSkyBlock implements CommandExecutor{
 						}
 						p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_CREATE_ISLAND.getText());
 					}
+				}else if(args[0].equalsIgnoreCase("kick")){
+					if(args.length>=2){
+						if(UtilPlayer.isOnline(args[1])){
+							if(getInstance().getManager().haveIsland(p)){
+								SkyBlockWorld world = getInstance().getManager().getIsland(p);
+								target=Bukkit.getPlayer(args[1]);
+								
+								if(world.isInIsland(p, target.getLocation())){
+									target.teleport(Bukkit.getWorld("world").getSpawnLocation());
+									target.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PLAYER_KICKED.getText(p.getName()));
+									p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PLAYER_KICK.getText(target.getName()));
+								}else{
+									p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PLAYER_NOT_ON_YOUR_ISLAND.getText(target.getName()));
+								}
+							}else{
+								p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_NO_ISLAND.getText());
+							}
+						}else{
+							p.sendMessage(Text.PREFIX.getText()+Text.PLAYER_IS_OFFLINE.getText(args[1]));
+						}
+					}else{
+						p.sendMessage(Text.PREFIX.getText()+"§6/skyblock kick [Player]");
+					}
 				}else if(args[0].equalsIgnoreCase("entfernen")){
 					if(getInstance().getManager().haveIsland(p)){
 						p.teleport(Bukkit.getWorld("world").getSpawnLocation());
@@ -94,7 +122,7 @@ public class CommadSkyBlock implements CommandExecutor{
 								p.sendMessage(Text.PREFIX.getText()+"Er hat keine Insel.");
 							}
 						}else{
-							p.sendMessage(Text.PREFIX.getText()+Text.PLAYER_IS_OFFLINE.getText());
+							p.sendMessage(Text.PREFIX.getText()+Text.PLAYER_IS_OFFLINE.getText(args[1]));
 						}
 					}
 				}else if(args[0].equalsIgnoreCase("fixhome")){
@@ -125,7 +153,7 @@ public class CommadSkyBlock implements CommandExecutor{
 								p.sendMessage(Text.PREFIX.getText()+"Er hat keine Insel.");
 							}
 						}else{
-							p.sendMessage(Text.PREFIX.getText()+Text.PLAYER_IS_OFFLINE.getText());
+							p.sendMessage(Text.PREFIX.getText()+Text.PLAYER_IS_OFFLINE.getText(args[1]));
 						}
 					}
 				}else if(args[0].equalsIgnoreCase("check")&&p.isOp()){

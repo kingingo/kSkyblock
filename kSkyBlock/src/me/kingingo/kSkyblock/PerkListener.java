@@ -2,8 +2,6 @@ package me.kingingo.kSkyblock;
 
 import me.kingingo.kcore.Kit.PerkManager;
 import me.kingingo.kcore.Listener.kListener;
-import me.kingingo.kcore.Permission.kPermission;
-import me.kingingo.kcore.UserDataConfig.UserDataConfig;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

@@ -44,6 +44,8 @@ public class CommandHomedelete implements CommandExecutor{
 					cmda.userData.getConfig(target).save();
 					player.sendMessage(Text.PREFIX.getText()+Text.HOME_SKYBLOCK_DELETE.getText(target.getName()));
 				}
+			}else{
+				player.sendMessage(Text.PREFIX.getText()+Text.PLAYER_IS_OFFLINE.getText());
 			}
 		}
 		return false;
