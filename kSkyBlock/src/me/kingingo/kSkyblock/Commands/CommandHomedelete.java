@@ -35,7 +35,7 @@ public class CommandHomedelete implements CommandExecutor{
 					target=Bukkit.getPlayer(args[0]);
 					for(String path : cmda.userData.getConfig(target).getPathList("homes").keySet()){
 						loc=cmda.userData.getConfig(target).getLocation("homes."+path);
-						if(loc.getWorld()==world.getWorld() ){
+						if(loc.getWorld().getName().equalsIgnoreCase(world.getWorld().getName())){
 							if(world.isInIsland(player, loc)){
 								cmda.userData.getConfig(target).set("homes."+path, null);
 							}

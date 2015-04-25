@@ -8,6 +8,7 @@ import java.util.UUID;
 import lombok.Getter;
 import me.kingingo.kSkyblock.SkyBlockManager;
 import me.kingingo.kSkyblock.Util.UtilSchematic;
+import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Gilden.GildenManager;
 import me.kingingo.kcore.Gilden.Events.GildeLoadEvent;
 import me.kingingo.kcore.Listener.kListener;
@@ -255,10 +256,9 @@ public class SkyBlockGildenWorld extends kListener{
 	public boolean addIsland(Player player,String gilde){
 		gilde=gilde.toLowerCase();
 		if(player.hasPermission(kPermission.SKYBLOCK_GILDEN_ISLAND.getPermissionToString())){
-			addIsland(gilde, schematic,true);
-			return true;
+			return addIsland(player,gilde, schematic,true);
 		}
-		return true;
+		return false;
 	}
 	
 	public boolean newIsland(String gilde){
@@ -311,7 +311,7 @@ public class SkyBlockGildenWorld extends kListener{
 		return false;
 	}
 	
-	public boolean removeIsland(String gilde){
+	public boolean removeIsland(Player player,String gilde){
 		gilde=gilde.toLowerCase();
 		if(islands.containsKey(gilde)){
 			Location loc = islands.get(gilde);
@@ -359,6 +359,7 @@ public class SkyBlockGildenWorld extends kListener{
 			loc1.getWorld().loadChunk(loc1.getChunk());
 			UtilSchematic.pastePlate(session,loc1, new File("plugins/kSkyBlock/schematics/"+schematic+".schematic"));
 			Log("Die Insel von der Gilde "+gilde+"(Entities:"+count+"/Bloecke:"+b_count+"/X:"+(max_x-(radius/2))+"/Z:"+(max_z-(radius/2))+") wurde resetet.");
+			getManager().getDelete().add(player.getName().toLowerCase());
 			return true;
 		}
 		return false;
@@ -389,13 +390,19 @@ public class SkyBlockGildenWorld extends kListener{
 		int a = recycelnIslandAnzahl();
 		if(a<anzahl){
 			for(int i = 0; i< (anzahl-a) ;i++){
-				addIsland(null,schematic,false);
+				addIsland(null,null,schematic,false);
 			}
 			Log((anzahl-a)+" Inseln wurden hinzugefügt!");
 		}
 	}
 	
-	public void addIsland(String gilde,String schematic,boolean recyceln){
+	public boolean addIsland(Player player,String gilde,String schematic,boolean recyceln){
+		if(player!=null){
+			if(getManager().getDelete().contains(player.getName().toLowerCase())){
+				player.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_REMOVE_ISLAND_ONE.getText());
+				return false;
+			}
+		}
 		if(gilde!=null)gilde=gilde.toLowerCase();
 		if(recyceln){
 			String island = recycelnIsland();
@@ -406,7 +413,7 @@ public class SkyBlockGildenWorld extends kListener{
 				islands.put(gilde, new Location(world,x,0,z));
 				getManager().getInstance().getMysql().Update("UPDATE list_gilden_Sky_world SET gilde='"+gilde+"' WHERE gilde='"+island+"'");
 				Log("Die Insel von der Gilde "+gilde+"(X:"+x+",Z:"+z+") wurde recycelt.");
-				return;
+				return true;
 			}
 		}
 			
@@ -425,6 +432,7 @@ public class SkyBlockGildenWorld extends kListener{
 		islands.put(gilde, new Location(world,X,0,Z));
 		getManager().getInstance().getMysql().Update("INSERT INTO list_gilden_Sky_world (gilde,X,Z) VALUES ('"+gilde+"','"+X+"','"+Z+"');");
 		Log("Die Insel von der Gilde "+gilde+"(X:"+(X-(radius/2))+",Z:"+(Z-(radius/2))+") wurde erstellt.");
+		return true;
 	}
 	
 	public boolean isInIsland(Player player,Location loc){
