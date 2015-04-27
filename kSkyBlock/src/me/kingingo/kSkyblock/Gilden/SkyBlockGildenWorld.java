@@ -17,6 +17,9 @@ import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
 import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
+import me.kingingo.kcore.Util.UtilEvent;
+import me.kingingo.kcore.Util.UtilPlayer;
+import me.kingingo.kcore.Util.UtilEvent.ActionType;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -46,6 +49,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.InventoryHolder;
 
@@ -208,6 +212,16 @@ public class SkyBlockGildenWorld extends kListener{
 			if(ev.getBlock()==null)return;
 			if(gilde.isPlayerInGilde(ev.getPlayer())&&islands.containsKey(gilde.getPlayerGilde(ev.getPlayer()).toLowerCase()))if(isInIsland(ev.getPlayer(), ev.getBlock().getLocation()))return;
 			ev.setCancelled(true);
+		}
+	}
+	
+	@EventHandler(priority=EventPriority.HIGHEST)
+	public void interact(PlayerInteractEvent ev){
+		if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()&&UtilEvent.isAction(ev, ActionType.BLOCK)){
+			if(ev.getClickedBlock().getType()==Material.CACTUS||ev.getClickedBlock().getType()==Material.SUGAR_CANE){
+				if(gilde.isPlayerInGilde(ev.getPlayer())&&islands.containsKey(gilde.getPlayerGilde(ev.getPlayer()).toLowerCase()))if(isInIsland(ev.getPlayer(), ev.getClickedBlock().getLocation()))return;
+				ev.setCancelled(true);
+			}
 		}
 	}
 	

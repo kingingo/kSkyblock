@@ -19,6 +19,8 @@ import me.kingingo.kcore.Scoreboard.PlayerScoreboard;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.C;
+import me.kingingo.kcore.Util.UtilEvent;
+import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilServer;
 
@@ -50,6 +52,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.InventoryHolder;
@@ -498,6 +501,22 @@ public class SkyBlockWorld extends kListener{
 	}
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
+	public void interact(PlayerInteractEvent ev){
+		if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()&&UtilEvent.isAction(ev, ActionType.BLOCK)){
+			if(ev.getClickedBlock().getType()==Material.CACTUS||ev.getClickedBlock().getType()==Material.SUGAR_CANE){
+				if(islands.containsKey(UtilPlayer.getRealUUID(ev.getPlayer()).toString())&&isInIsland(UtilPlayer.getRealUUID(ev.getPlayer()), ev.getClickedBlock().getLocation())) {
+					return;
+				}
+				if(getParty_island().containsKey(ev.getPlayer().getName().toLowerCase())&&isInIsland(getParty_island().get(ev.getPlayer().getName().toLowerCase()), ev.getClickedBlock().getLocation())){
+					return;
+				}
+				
+				ev.setCancelled(true);
+			}
+		}
+	}
+	
+	@EventHandler(priority=EventPriority.HIGHEST)
 	public void Break(BlockBreakEvent ev){
 		if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()){
 			if(ev.getBlock()==null)return;
@@ -507,6 +526,7 @@ public class SkyBlockWorld extends kListener{
 			if(getParty_island().containsKey(ev.getPlayer().getName().toLowerCase())&&isInIsland(getParty_island().get(ev.getPlayer().getName().toLowerCase()), ev.getBlock().getLocation())){
 				return;
 			}
+			
 			ev.setCancelled(true);
 		}
 	}
