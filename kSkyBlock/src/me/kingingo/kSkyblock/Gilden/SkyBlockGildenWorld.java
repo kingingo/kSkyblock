@@ -17,6 +17,7 @@ import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
 import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
+import me.kingingo.kcore.Util.UtilBlock;
 import me.kingingo.kcore.Util.UtilEvent;
 import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
@@ -218,7 +219,7 @@ public class SkyBlockGildenWorld extends kListener{
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void interact(PlayerInteractEvent ev){
 		if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()&&UtilEvent.isAction(ev, ActionType.BLOCK)){
-			if(ev.getClickedBlock().getType()==Material.CACTUS||ev.getClickedBlock().getType()==Material.SUGAR_CANE){
+			if(ev.getPlayer().getItemInHand()!=null&&UtilBlock.isBlock(ev.getPlayer().getItemInHand())){
 				if(gilde.isPlayerInGilde(ev.getPlayer())&&islands.containsKey(gilde.getPlayerGilde(ev.getPlayer()).toLowerCase()))if(isInIsland(ev.getPlayer(), ev.getClickedBlock().getLocation()))return;
 				ev.setCancelled(true);
 			}

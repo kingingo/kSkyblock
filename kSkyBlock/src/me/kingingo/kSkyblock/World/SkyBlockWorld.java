@@ -19,7 +19,9 @@ import me.kingingo.kcore.Scoreboard.PlayerScoreboard;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.C;
+import me.kingingo.kcore.Util.UtilBlock;
 import me.kingingo.kcore.Util.UtilEvent;
+import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilServer;
@@ -508,7 +510,7 @@ public class SkyBlockWorld extends kListener{
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void interact(PlayerInteractEvent ev){
 		if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()&&UtilEvent.isAction(ev, ActionType.BLOCK)){
-			if(ev.getClickedBlock().getType()==Material.CACTUS||ev.getClickedBlock().getType()==Material.SUGAR_CANE){
+			if(ev.getPlayer().getItemInHand()!=null&&UtilBlock.isBlock(ev.getPlayer().getItemInHand())){
 				if(islands.containsKey(UtilPlayer.getRealUUID(ev.getPlayer()).toString())&&isInIsland(UtilPlayer.getRealUUID(ev.getPlayer()), ev.getClickedBlock().getLocation())) {
 					return;
 				}
