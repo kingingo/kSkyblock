@@ -320,6 +320,11 @@ public class SkyBlockWorld extends kListener{
 					break;
 				}
 			}
+			
+			if(ev.getReason()==null){
+				ev.setCancelled(true);
+				ev.setReason("Der Spieler der Insel ist nicht Online!");
+			}
 		}
 	}
 	
