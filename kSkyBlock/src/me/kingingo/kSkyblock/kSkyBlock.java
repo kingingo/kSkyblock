@@ -16,6 +16,7 @@ import me.kingingo.kcore.Command.Admin.CommandChatMute;
 import me.kingingo.kcore.Command.Admin.CommandFly;
 import me.kingingo.kcore.Command.Admin.CommandFlyspeed;
 import me.kingingo.kcore.Command.Admin.CommandGroup;
+import me.kingingo.kcore.Command.Admin.CommandItem;
 import me.kingingo.kcore.Command.Admin.CommandMore;
 import me.kingingo.kcore.Command.Admin.CommandMute;
 import me.kingingo.kcore.Command.Admin.CommandToggle;
@@ -165,6 +166,7 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommandParty.class, new CommandParty(this));
 		this.cmd.register(CommandBroadcast.class, new CommandBroadcast());
 		this.cmd.register(CommandTppos.class, new CommandTppos());
+		this.cmd.register(CommandItem.class, new CommandItem());
 		this.cmd.register(CommandTp.class, new CommandTp());
 		this.cmd.register(CommandTpHere.class, new CommandTpHere());
 		this.cmd.register(CommandVanish.class, new CommandVanish(this));

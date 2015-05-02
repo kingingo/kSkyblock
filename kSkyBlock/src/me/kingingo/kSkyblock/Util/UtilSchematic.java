@@ -25,6 +25,8 @@ public class UtilSchematic {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (com.sk89q.worldedit.world.DataException e) {
+			e.printStackTrace();
 		}
 	}
 }

@@ -9,6 +9,7 @@ import me.kingingo.kcore.PlayerStats.Stats;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.RestartScheduler;
+import me.kingingo.kcore.Util.TabTitle;
 import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilWorldGuard;
 
@@ -30,6 +31,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -157,6 +159,11 @@ public class kSkyBlockListener extends kListener{
 				ev.setCancelled(true);
 			}
 		}
+	}
+	
+	@EventHandler
+	public void Join(PlayerJoinEvent ev){
+		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7-§e SkyBlock Server", "§eShop.EpicPvP.de");
 	}
 	
 	@EventHandler
