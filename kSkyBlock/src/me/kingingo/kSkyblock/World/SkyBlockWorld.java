@@ -15,12 +15,12 @@ import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.MySQL.MySQLErr;
 import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
-import me.kingingo.kcore.Scoreboard.PlayerScoreboard;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.C;
 import me.kingingo.kcore.Util.UtilBlock;
 import me.kingingo.kcore.Util.UtilEvent;
+import me.kingingo.kcore.Util.UtilScoreboard;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilServer;
@@ -58,6 +58,7 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Scoreboard;
 
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
@@ -80,8 +81,6 @@ public class SkyBlockWorld extends kListener{
 	private HashMap<Player,ArrayList<String>> partys = new HashMap<>();
 	@Getter
 	private HashMap<String,Location> party_island = new HashMap<>();
-	@Getter
-	private HashMap<Player,PlayerScoreboard> partys_board = new HashMap<>();
 	@Getter
 	private HashMap<String,Player> party_einladungen = new HashMap<>();
 	private EditSession session;
@@ -127,13 +126,13 @@ public class SkyBlockWorld extends kListener{
 			for(String p : getPartys().get(player)){
 				getParty_island().remove(p.toLowerCase());
 				if(UtilPlayer.isOnline(p)){
+					getManager().getInstance().getPermissionManager().setTabList(Bukkit.getPlayer(p));
 					Bukkit.getPlayer(p).teleport(Bukkit.getWorld("world").getSpawnLocation());
 				}
 			}
 			getPartys().get(player).clear();
 			getPartys().remove(player);
-			getPartys_board().get(player).resetScoreboard();
-			getPartys_board().remove(player);
+			getManager().getInstance().getPermissionManager().setTabList(player);
 			return true;
 		}else{
 			boolean b = false;
@@ -142,8 +141,8 @@ public class SkyBlockWorld extends kListener{
 					b=true;
 					getParty_island().remove(player.getName().toLowerCase());
 					getPartys().get(owner).remove(player.getName().toLowerCase());
-					getPartys_board().get(owner).resetScore(player.getName(), DisplaySlot.SIDEBAR);
-					getPartys_board().get(owner).removePlayer(player);
+					UtilScoreboard.resetScore(owner.getScoreboard(),player.getName(), DisplaySlot.SIDEBAR);
+					getManager().getInstance().getPermissionManager().setTabList(player);
 					player.teleport(Bukkit.getWorld("world").getSpawnLocation());
 					if(withMSG)player.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_VERLASSEN.getText());
 					break;
@@ -165,8 +164,8 @@ public class SkyBlockWorld extends kListener{
 				list.remove(kicken.toLowerCase());
 				getParty_island().remove(kicken.toLowerCase());
 				if(UtilPlayer.isOnline(kicken)){
-					getPartys_board().get(owner).resetScore(Bukkit.getPlayer(kicken).getName(), DisplaySlot.SIDEBAR);
-					getPartys_board().get(owner).removePlayer(Bukkit.getPlayer(kicken));
+					UtilScoreboard.resetScore(owner.getScoreboard(),Bukkit.getPlayer(kicken).getName(), DisplaySlot.SIDEBAR);
+					getManager().getInstance().getPermissionManager().setTabList(Bukkit.getPlayer(kicken));
 					Bukkit.getPlayer(kicken).teleport(Bukkit.getWorld("world").getSpawnLocation());
 				}
 				return true;
@@ -224,8 +223,8 @@ public class SkyBlockWorld extends kListener{
 				}else{
 					getPartys().get(owner).add(p.getName().toLowerCase());
 					getParty_island().put(p.getName().toLowerCase(), islands.get(UtilPlayer.getRealUUID(owner).toString()));
-					getPartys_board().get(owner).setScore(p.getName(), DisplaySlot.SIDEBAR, -1);
-					getPartys_board().get(owner).setBoard(p);
+					UtilScoreboard.setScore(owner.getScoreboard(),p.getName(), DisplaySlot.SIDEBAR, -1);
+					p.setScoreboard(owner.getScoreboard());
 					sendChatParty(owner, Text.SKYBLOCK_PARTY_ENTER_BY.getText(p.getName()));
 					return true;
 				}
@@ -277,7 +276,7 @@ public class SkyBlockWorld extends kListener{
 	public boolean createParty(Player player){
 		if(!getPartys().containsKey(player)){
 			getPartys().put(player, new ArrayList<String>());
-			getPartys_board().put(player, new PlayerScoreboard(player));
+			Scoreboard board = player.getScoreboard();
 			String scorename = C.cAqua+C.Bold+player.getName()+" "+C.cGray+"-"+C.cAqua+C.Bold+" Party";
 			
 			if(scorename.length()>=32 ){
@@ -286,10 +285,10 @@ public class SkyBlockWorld extends kListener{
 				scorename = C.cAqua+C.Bold+name+" "+C.cGray+"-"+C.cAqua+C.Bold+" Party";
 			}
 			
-			getPartys_board().get(player).addBoard(DisplaySlot.SIDEBAR, scorename);
-			getPartys_board().get(player).setScore(C.cGray+"Spieler: ", DisplaySlot.SIDEBAR, 0);
-			getPartys_board().get(player).setScore(player.getName(), DisplaySlot.SIDEBAR, -1);
-			getPartys_board().get(player).setBoard();
+			UtilScoreboard.addBoard(board,DisplaySlot.SIDEBAR, scorename);
+			UtilScoreboard.setScore(board,C.cGray+"Spieler: ", DisplaySlot.SIDEBAR, 0);
+			UtilScoreboard.setScore(board,player.getName(), DisplaySlot.SIDEBAR, -1);
+			player.setScoreboard(board);
 			return true;
 		}else{
 			return false;
