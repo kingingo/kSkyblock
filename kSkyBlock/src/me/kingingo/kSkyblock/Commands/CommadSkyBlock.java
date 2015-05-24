@@ -104,6 +104,10 @@ public class CommadSkyBlock implements CommandExecutor{
 					}
 				}else if(args[0].equalsIgnoreCase("home")){
 					if(args.length==1){
+						if(!getInstance().getAntiLogout().is(p)){
+							p.sendMessage(Text.PREFIX.getText()+"§cDu kannst den Befehl §b"+cmd+"§c nicht in Kampf ausführen!");
+							return false;
+						}
 						if(getInstance().getManager().haveIsland(p)){
 							SkyBlockWorld world = getInstance().getManager().getIsland(p);
 							p.teleport(world.getIslandHome(p));

@@ -104,5 +104,4 @@ public class CommandParty implements CommandExecutor{
 		
 		return false;
 	}
-
 }

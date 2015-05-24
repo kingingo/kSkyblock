@@ -275,6 +275,18 @@ public class SkyBlockWorld extends kListener{
 	
 	public boolean createParty(Player player){
 		if(!getPartys().containsKey(player)){
+			
+			boolean b = false;
+			for(Player owner : getPartys().keySet()){
+				if(getPartys().get(owner).contains(player.getName().toLowerCase())){
+					b=true;
+					break;
+				}
+			}
+			if(b){
+				return false;
+			}
+			
 			getPartys().put(player, new ArrayList<String>());
 			Scoreboard board = player.getScoreboard();
 			String scorename = C.cAqua+C.Bold+player.getName()+" "+C.cGray+"-"+C.cAqua+C.Bold+" Party";
