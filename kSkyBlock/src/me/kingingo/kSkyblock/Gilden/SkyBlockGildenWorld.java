@@ -19,6 +19,7 @@ import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.UtilBlock;
 import me.kingingo.kcore.Util.UtilEvent;
+import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 
 import org.bukkit.Bukkit;
@@ -35,6 +36,7 @@ import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.Hopper;
 import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -45,6 +47,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
@@ -99,6 +102,11 @@ public class SkyBlockGildenWorld extends kListener{
 			if(ev.getDamager() instanceof Player && ev.getEntity() instanceof Player){
 				ev.setCancelled(true);
 			}else if(ev.getDamager() instanceof Projectile && ev.getEntity() instanceof Player){
+				ev.setCancelled(true);
+			}else if(ev.getDamager() instanceof Player && ev.getEntity() instanceof Creature){
+				if(gilde.isPlayerInGilde(((Player)ev.getDamager()))&&islands.containsKey(gilde.getPlayerGilde(((Player)ev.getDamager())).toLowerCase())){
+					if(isInIsland(((Player)ev.getDamager()), ev.getEntity().getLocation()))return;
+				}
 				ev.setCancelled(true);
 			}
 		}
@@ -192,6 +200,20 @@ public class SkyBlockGildenWorld extends kListener{
 			if(ev.getEntity().getWorld()==getWorld()){
 				if(ev.getEntity() instanceof Player && ev.getCause() == DamageCause.FALL&& ev.getCause() == DamageCause.LAVA){
 					ev.setCancelled(true);
+				}
+			}
+		}
+	 
+	 @EventHandler
+		public void PotionSplash(PotionSplashEvent ev){
+			if(ev.getPotion().getLocation().getWorld()==getWorld()&&!ev.isCancelled()){
+				if(ev.getPotion().getShooter() instanceof Player){
+					if(!((Player)ev.getPotion().getShooter()).isOp()){
+						if(gilde.isPlayerInGilde(((Player)ev.getPotion().getShooter()))&&islands.containsKey(gilde.getPlayerGilde(((Player)ev.getPotion().getShooter())).toLowerCase())){
+							if(isInIsland(((Player)ev.getPotion().getShooter()), ev.getPotion().getLocation()))return;
+						}
+						ev.setCancelled(true);
+					}
 				}
 			}
 		}

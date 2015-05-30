@@ -17,15 +17,15 @@ import me.kingingo.kcore.MySQL.MySQLErr;
 import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
-import me.kingingo.kcore.Util.C;
 import me.kingingo.kcore.Util.UtilBlock;
 import me.kingingo.kcore.Util.UtilEvent;
-import me.kingingo.kcore.Util.UtilScoreboard;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilPlayer;
+import me.kingingo.kcore.Util.UtilScoreboard;
 import me.kingingo.kcore.Util.UtilServer;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -39,6 +39,7 @@ import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.Hopper;
 import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -49,6 +50,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
@@ -57,6 +59,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Scoreboard;
 
@@ -289,16 +292,16 @@ public class SkyBlockWorld extends kListener{
 			
 			getPartys().put(player, new ArrayList<String>());
 			Scoreboard board = player.getScoreboard();
-			String scorename = C.cAqua+C.Bold+player.getName()+" "+C.cGray+"-"+C.cAqua+C.Bold+" Party";
+			String scorename = Color.AQUA+"§l"+player.getName()+" "+Color.GRAY+"-"+Color.AQUA+"§l"+" Party";
 			
 			if(scorename.length()>=32 ){
 				String name = player.getName();
-				name = name.substring(0, 32-((C.cAqua+C.Bold+" "+C.cGray+"-"+C.cAqua+C.Bold+" Party").length()+2));
-				scorename = C.cAqua+C.Bold+name+" "+C.cGray+"-"+C.cAqua+C.Bold+" Party";
+				name = name.substring(0, 32-((Color.AQUA+"§l"+" "+Color.GRAY+"-"+Color.AQUA+"§l"+" Party").length()+2));
+				scorename = Color.AQUA+"§l"+name+" "+Color.GRAY+"-"+Color.AQUA+"§l"+" Party";
 			}
 			
 			UtilScoreboard.addBoard(board,DisplaySlot.SIDEBAR, scorename);
-			UtilScoreboard.setScore(board,C.cGray+"Spieler: ", DisplaySlot.SIDEBAR, 0);
+			UtilScoreboard.setScore(board,Color.GRAY+"Spieler: ", DisplaySlot.SIDEBAR, 0);
 			UtilScoreboard.setScore(board,player.getName(), DisplaySlot.SIDEBAR, -1);
 			player.setScoreboard(board);
 			return true;
@@ -428,6 +431,14 @@ public class SkyBlockWorld extends kListener{
 				ev.setCancelled(true);
 			}else if(ev.getDamager() instanceof Projectile && ev.getEntity() instanceof Player){
 				ev.setCancelled(true);
+			}else if(ev.getDamager() instanceof Player && ev.getEntity() instanceof Creature){
+				if(islands.containsKey(UtilPlayer.getRealUUID(((Player)ev.getDamager())).toString())&&isInIsland(UtilPlayer.getRealUUID(((Player)ev.getDamager())), ev.getEntity().getLocation())) {
+					return;
+				}
+				if(getParty_island().containsKey(((Player)ev.getDamager()).getName().toLowerCase())&&isInIsland(getParty_island().get(((Player)ev.getDamager()).getName().toLowerCase()), ev.getEntity().getLocation())){
+					return;
+				}
+				ev.setCancelled(true);
 			}
 		}
 	}
@@ -529,6 +540,20 @@ public class SkyBlockWorld extends kListener{
 				}
 				
 				ev.setCancelled(true);
+			}
+		}
+	}
+	
+	@EventHandler
+	public void PotionSplash(PotionSplashEvent ev){
+		if(ev.getPotion().getLocation().getWorld()==getWorld()&&!ev.isCancelled()){
+			if(ev.getPotion().getShooter() instanceof Player){
+				if(!((Player)ev.getPotion().getShooter()).isOp()){
+					if(islands.containsKey(UtilPlayer.getRealUUID(((Player)ev.getPotion().getShooter())).toString())&&isInIsland(UtilPlayer.getRealUUID(((Player)ev.getPotion().getShooter())), ev.getPotion().getLocation())) {
+						return;
+					}
+					ev.setCancelled(true);
+				}
 			}
 		}
 	}

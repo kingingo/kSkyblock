@@ -14,6 +14,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -183,6 +184,27 @@ public class CommadSkyBlock implements CommandExecutor{
 						getInstance().getManager().getGilden_world().getWorld().save();
 					}
 					System.out.println("[SkyBlock] Check fertig SkyBlockWorld("+sky+") / GildenWorld("+g+")");
+				}else if(args[0].equalsIgnoreCase("entities")&&p.isOp()){
+					if(args.length==2){
+						if(UtilPlayer.isOnline(args[1])){
+							Player tp = Bukkit.getPlayer(args[1]);
+							if(getInstance().getManager().haveIsland(tp)){
+								SkyBlockWorld world = getInstance().getManager().getIsland(tp);
+								int entities = 0;
+								for(Entity e : world.getIslandHome(tp).getWorld().getEntities()){
+									if(!(e instanceof Player)&&world.isInIsland(tp, e.getLocation())){
+										entities++;
+										e.remove();
+									}
+								}
+								p.sendMessage(Text.PREFIX.getText()+"§aEs wurden "+entities+" entfernt.");
+							}else{
+								p.sendMessage(Text.PREFIX.getText()+"Er hat keine Insel.");
+							}
+						}else{
+							p.sendMessage(Text.PREFIX.getText()+Text.PLAYER_IS_OFFLINE.getText(args[1]));
+						}
+					}
 				}
 			}
 		}
