@@ -16,7 +16,7 @@ import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
 import me.kingingo.kcore.Packet.Packets.WORLD_CHANGE_DATA;
 import me.kingingo.kcore.Util.UtilFile;
 import me.kingingo.kcore.Util.UtilPlayer;
-import me.kingingo.kcore.Util.WorldUtil;
+import me.kingingo.kcore.Util.UtilWorld;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -83,7 +83,7 @@ public class SkyBlockManager extends kListener{
 		}else{
 			WorldCreator wc = new WorldCreator(worldName);
 			wc.generator(new CleanroomChunkGenerator(".0,AIR"));
-			gilden_world=new SkyBlockGildenWorld(this,gilde,WorldUtil.LoadWorld(wc),getInstance().getFConfig().getInt("Config.World."+worldName+".Radius"),getInstance().getFConfig().getInt("Config.World."+worldName+".GenerateIsland"),getInstance().getConfig().getInt("Config.World."+worldName+".CreatureLimit"));
+			gilden_world=new SkyBlockGildenWorld(this,gilde,UtilWorld.LoadWorld(wc),getInstance().getFConfig().getInt("Config.World."+worldName+".Radius"),getInstance().getFConfig().getInt("Config.World."+worldName+".GenerateIsland"),getInstance().getConfig().getInt("Config.World."+worldName+".CreatureLimit"));
 		}
 	}
 	
@@ -216,7 +216,7 @@ public class SkyBlockManager extends kListener{
 		}else{
 			WorldCreator wc = new WorldCreator(worldName);
 			wc.generator(new CleanroomChunkGenerator(".0,AIR"));
-			worlds.add(new SkyBlockWorld(this,worldName,WorldUtil.LoadWorld(wc),getInstance().getFConfig().getInt("Config.World."+worldName+".Radius"),getInstance().getFConfig().getInt("Config.World."+worldName+".GenerateIsland"),getInstance().getConfig().getInt("Config.World."+worldName+".CreatureLimit")));
+			worlds.add(new SkyBlockWorld(this,worldName,UtilWorld.LoadWorld(wc),getInstance().getFConfig().getInt("Config.World."+worldName+".Radius"),getInstance().getFConfig().getInt("Config.World."+worldName+".GenerateIsland"),getInstance().getConfig().getInt("Config.World."+worldName+".CreatureLimit")));
 		}
 	}
 	
