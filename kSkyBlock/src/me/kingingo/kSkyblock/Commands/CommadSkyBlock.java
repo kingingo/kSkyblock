@@ -1,5 +1,7 @@
 package me.kingingo.kSkyblock.Commands;
 
+import java.util.UUID;
+
 import lombok.Getter;
 import me.kingingo.kSkyblock.kSkyBlock;
 import me.kingingo.kSkyblock.World.SkyBlockWorld;
@@ -128,6 +130,18 @@ public class CommadSkyBlock implements CommandExecutor{
 							}
 						}else{
 							p.sendMessage(Text.PREFIX.getText()+Text.PLAYER_IS_OFFLINE.getText(args[1]));
+							UUID uuid = UtilPlayer.getUUID(args[1], instance.getMysql());
+							if(!getInstance().getManager().haveIsland(uuid)){
+								for(SkyBlockWorld world : instance.getManager().getWorlds())world.loadIslandPlayer( uuid );
+							}
+							
+							if(getInstance().getManager().haveIsland(uuid)){
+								SkyBlockWorld world = getInstance().getManager().getIsland(uuid);
+								p.teleport(world.getIslandHome(uuid));
+								p.sendMessage(Text.PREFIX.getText()+"§aDu wurdest zur Insel teleportiert.");
+							}else{
+								p.sendMessage(Text.PREFIX.getText()+" Insel konnte nicht geladen werden.");
+							}
 						}
 					}
 				}else if(args[0].equalsIgnoreCase("fixhome")){
@@ -159,6 +173,18 @@ public class CommadSkyBlock implements CommandExecutor{
 							}
 						}else{
 							p.sendMessage(Text.PREFIX.getText()+Text.PLAYER_IS_OFFLINE.getText(args[1]));
+							UUID uuid = UtilPlayer.getUUID(args[1], instance.getMysql());
+							if(!getInstance().getManager().haveIsland(uuid)){
+								for(SkyBlockWorld world : instance.getManager().getWorlds())world.loadIslandPlayer( uuid );
+							}
+							
+							if(getInstance().getManager().haveIsland(uuid)){
+								SkyBlockWorld world = getInstance().getManager().getIsland(uuid);
+								world.newIsland(uuid);
+								p.sendMessage(Text.PREFIX.getText()+"§aDie Insel wurde erneuert.");
+							}else{
+								p.sendMessage(Text.PREFIX.getText()+" Insel konnte nicht geladen werden.");
+							}
 						}
 					}
 				}else if(args[0].equalsIgnoreCase("check")&&p.isOp()){

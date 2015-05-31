@@ -5,7 +5,9 @@ import java.util.HashMap;
 import lombok.Getter;
 import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Listener.kListener;
-import me.kingingo.kcore.PlayerStats.Stats;
+import me.kingingo.kcore.Permission.kPermission;
+import me.kingingo.kcore.SignShop.Events.SignShopUseEvent;
+import me.kingingo.kcore.StatsManager.Stats;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.RestartScheduler;
@@ -14,12 +16,15 @@ import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilWorldGuard;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -31,6 +36,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -62,6 +68,18 @@ public class kSkyBlockListener extends kListener{
 	@EventHandler
 	public void soilChangeEntity(EntityInteractEvent event){
 	    if ((event.getEntityType() != EntityType.PLAYER) && (event.getBlock().getType() == Material.SOIL)) event.setCancelled(true);
+	}
+	
+	@EventHandler
+	public void onSign(SignShopUseEvent ev){
+		if(!ev.getPlayer().getWorld().getName().equalsIgnoreCase("world")){
+			ev.getSign().setLine(0, "Nö!");
+			ev.getSign().setLine(1, "Nö!");
+			ev.getSign().setLine(2, "Nö!");
+			ev.getSign().setLine(3, "Nö!");
+			ev.getSign().update(true);
+			ev.setCancelled(true);
+		}
 	}
 	
 	@EventHandler(priority=EventPriority.LOWEST)
@@ -109,10 +127,12 @@ public class kSkyBlockListener extends kListener{
 	
 	@EventHandler
 	public void Sign(SignChangeEvent ev){
-		ev.setLine(0, ev.getLine(0).replaceAll("&", "§"));
-		ev.setLine(1, ev.getLine(1).replaceAll("&", "§"));
-		ev.setLine(2, ev.getLine(2).replaceAll("&", "§"));
-		ev.setLine(3, ev.getLine(3).replaceAll("&", "§"));
+		if(ev.getPlayer().hasPermission(kPermission.CHAT_FARBIG.getPermissionToString())){
+			ev.setLine(0, ev.getLine(0).replaceAll("&", "§"));
+			ev.setLine(1, ev.getLine(1).replaceAll("&", "§"));
+			ev.setLine(2, ev.getLine(2).replaceAll("&", "§"));
+			ev.setLine(3, ev.getLine(3).replaceAll("&", "§"));
+		}
 	}
 	
 	@EventHandler
