@@ -430,6 +430,14 @@ public class SkyBlockWorld extends kListener{
 				ev.setCancelled(true);
 			}else if(ev.getDamager() instanceof Projectile && ev.getEntity() instanceof Player){
 				ev.setCancelled(true);
+			}else if(ev.getDamager() instanceof Projectile && ev.getEntity() instanceof Creature && ((Projectile)ev.getDamager()).getShooter() instanceof Player){
+				if(islands.containsKey(UtilPlayer.getRealUUID( ((Player)((Projectile)ev.getDamager()).getShooter()) ).toString())&&isInIsland(UtilPlayer.getRealUUID(((Player)((Projectile)ev.getDamager()).getShooter())), ev.getEntity().getLocation())) {
+					return;
+				}
+				if(getParty_island().containsKey(((Player)((Projectile)ev.getDamager()).getShooter()).getName().toLowerCase())&&isInIsland(getParty_island().get(((Player)((Projectile)ev.getDamager()).getShooter()).getName().toLowerCase()), ev.getEntity().getLocation())){
+					return;
+				}
+				ev.setCancelled(true);
 			}else if(ev.getDamager() instanceof Player && ev.getEntity() instanceof Creature){
 				if(islands.containsKey(UtilPlayer.getRealUUID(((Player)ev.getDamager())).toString())&&isInIsland(UtilPlayer.getRealUUID(((Player)ev.getDamager())), ev.getEntity().getLocation())) {
 					return;

@@ -19,6 +19,7 @@ import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.UtilBlock;
 import me.kingingo.kcore.Util.UtilEvent;
+import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 
 import org.bukkit.Bukkit;
@@ -101,6 +102,11 @@ public class SkyBlockGildenWorld extends kListener{
 			if(ev.getDamager() instanceof Player && ev.getEntity() instanceof Player){
 				ev.setCancelled(true);
 			}else if(ev.getDamager() instanceof Projectile && ev.getEntity() instanceof Player){
+				ev.setCancelled(true);
+			}else if(ev.getDamager() instanceof Projectile && ev.getEntity() instanceof Creature && ((Projectile)ev.getDamager()).getShooter() instanceof Player){
+				if(gilde.isPlayerInGilde(((Player)((Projectile)ev.getDamager()).getShooter()))&&islands.containsKey(gilde.getPlayerGilde(((Player)((Projectile)ev.getDamager()).getShooter())).toLowerCase())){
+					if(isInIsland(((Player)((Projectile)ev.getDamager()).getShooter()), ev.getEntity().getLocation()))return;
+				}
 				ev.setCancelled(true);
 			}else if(ev.getDamager() instanceof Player && ev.getEntity() instanceof Creature){
 				if(gilde.isPlayerInGilde(((Player)ev.getDamager()))&&islands.containsKey(gilde.getPlayerGilde(((Player)ev.getDamager())).toLowerCase())){
