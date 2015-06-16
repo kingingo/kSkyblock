@@ -1,10 +1,14 @@
 package me.kingingo.kSkyblock;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 import lombok.Getter;
 import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Listener.kListener;
+import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
+import me.kingingo.kcore.Packet.Packets.PLAYER_VOTE;
 import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.SignShop.Events.SignShopUseEvent;
 import me.kingingo.kcore.StatsManager.Stats;
@@ -42,6 +46,7 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.inventory.ItemStack;
 
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
@@ -50,10 +55,28 @@ public class kSkyBlockListener extends kListener{
 	@Getter
 	private kSkyBlock manager;
 	private HashMap<Player,Location> player_loc = new HashMap<>();
+	private ArrayList<UUID> vote_list = new ArrayList<>();
 	
 	public kSkyBlockListener(kSkyBlock manager) {
 		super(manager.getAntiLogout().getInstance(), "Listener");
 		this.manager=manager;
+	}
+	
+	Player player;
+	@EventHandler
+	public void Receive(PacketReceiveEvent ev){
+		if(ev.getPacket() instanceof PLAYER_VOTE){
+			PLAYER_VOTE vote = (PLAYER_VOTE)ev.getPacket();
+			
+			if(UtilPlayer.isOnline(vote.getPlayer())){
+				player=Bukkit.getPlayer(vote.getPlayer());
+				manager.getStatsManager().setDouble(player, manager.getStatsManager().getDouble(Stats.MONEY, player)+500, Stats.MONEY);
+				player.getInventory().addItem(new ItemStack(Material.DIAMOND,2));
+				player.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
+			}else{
+				vote_list.add(vote.getUuid());
+			}
+		}
 	}
 	
 	@EventHandler
@@ -184,6 +207,13 @@ public class kSkyBlockListener extends kListener{
 	@EventHandler
 	public void Join(PlayerJoinEvent ev){
 		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7-§e SkyBlock Server", "§eShop.EpicPvP.de");
+		
+		if(vote_list.contains( UtilPlayer.getRealUUID(ev.getPlayer()) )){
+			vote_list.remove(UtilPlayer.getRealUUID(ev.getPlayer()));
+			manager.getStatsManager().setDouble(ev.getPlayer(), manager.getStatsManager().getDouble(Stats.MONEY, ev.getPlayer())+500, Stats.MONEY);
+			ev.getPlayer().getInventory().addItem(new ItemStack(Material.DIAMOND,2));
+			ev.getPlayer().getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
+		}
 	}
 	
 	@EventHandler

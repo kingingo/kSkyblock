@@ -295,7 +295,8 @@ public class SkyBlockWorld extends kListener{
 			
 			if(scorename.length()>=32 ){
 				String name = player.getName();
-				name = name.substring(0, 32-((Color.AQUA+"§l"+" "+Color.GRAY+"-"+Color.AQUA+"§l"+" Party").length()+2));
+				System.out.println("SCOREBOARD: "+name.length()+ " "+(31-(Color.AQUA+"§l"+" "+Color.GRAY+"-"+Color.AQUA+"§l"+" Party").length()) +" "+(Color.AQUA+"§l"+" "+Color.GRAY+"-"+Color.AQUA+"§l"+" Party").length());
+				name = name.substring(0, 31-(Color.AQUA+"§l"+" "+Color.GRAY+"-"+Color.AQUA+"§l"+" Party").length() );
 				scorename = Color.AQUA+"§l"+name+" "+Color.GRAY+"-"+Color.AQUA+"§l"+" Party";
 			}
 			
