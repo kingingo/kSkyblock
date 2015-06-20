@@ -73,6 +73,7 @@ import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Permission.GroupTyp;
 import me.kingingo.kcore.Permission.PermissionManager;
+import me.kingingo.kcore.Pet.PetManager;
 import me.kingingo.kcore.SignShop.SignShop;
 import me.kingingo.kcore.StatsManager.StatsManager;
 import me.kingingo.kcore.TeleportManager.TeleportManager;
@@ -116,6 +117,8 @@ public class kSkyBlock extends JavaPlugin {
 	@Getter
 	private CommandHomeaccept ha;
 	private PerkManager perkManager;
+	private PetManager pet;
+	private PetShop petShop;
 	
 	public void onEnable(){
 		try{
@@ -132,6 +135,9 @@ public class kSkyBlock extends JavaPlugin {
 		new SignShop(this, this.statsManager);
 		this.cmd=new CommandHandler(this);
 		teleport=new TeleportManager(getCmd(), getPermissionManager(), 5);
+//		pet=new PetManager(this);
+//		petShop=new PetShop(pet, permissionManager);
+//		this.cmd.register(CommandPet.class, new CommandPet(pet,petShop));
 		this.cmd.register(CommandCMDMute.class, new CommandCMDMute(this));	
 		this.cmd.register(CommandURang.class, new CommandURang(permissionManager,mysql));	
 		this.cmd.register(CommandMoney.class, new CommandMoney(getStatsManager()));

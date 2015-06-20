@@ -20,15 +20,12 @@ import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilWorldGuard;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Sign;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -40,7 +37,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -73,6 +69,8 @@ public class kSkyBlockListener extends kListener{
 				manager.getStatsManager().setDouble(player, manager.getStatsManager().getDouble(Stats.MONEY, player)+500, Stats.MONEY);
 				player.getInventory().addItem(new ItemStack(Material.DIAMOND,2));
 				player.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
+				player.getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
+				player.sendMessage(Text.PREFIX.getText()+"§aDanke fürs §lVoten§a du hast deine Belohnung bekommen.");
 			}else{
 				vote_list.add(vote.getUuid());
 			}
@@ -160,7 +158,9 @@ public class kSkyBlockListener extends kListener{
 	
 	@EventHandler
 	public void Create(CreatureSpawnEvent ev){
-		if(ev.getLocation().getWorld().getName().equalsIgnoreCase("world"))ev.setCancelled(true);
+		if(ev.getLocation().getWorld().getName().equalsIgnoreCase("world")){
+			ev.setCancelled(true);
+		}
 	}
 	
 	@EventHandler
@@ -213,6 +213,8 @@ public class kSkyBlockListener extends kListener{
 			manager.getStatsManager().setDouble(ev.getPlayer(), manager.getStatsManager().getDouble(Stats.MONEY, ev.getPlayer())+500, Stats.MONEY);
 			ev.getPlayer().getInventory().addItem(new ItemStack(Material.DIAMOND,2));
 			ev.getPlayer().getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
+			ev.getPlayer().getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
+			ev.getPlayer().sendMessage(Text.PREFIX.getText()+"§aDanke fürs §lVoten§a du hast deine Belohnung bekommen.");
 		}
 	}
 	
