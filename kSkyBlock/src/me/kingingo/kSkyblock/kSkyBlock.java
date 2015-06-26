@@ -20,6 +20,7 @@ import me.kingingo.kcore.Command.Admin.CommandGroup;
 import me.kingingo.kcore.Command.Admin.CommandInvsee;
 import me.kingingo.kcore.Command.Admin.CommandItem;
 import me.kingingo.kcore.Command.Admin.CommandMore;
+import me.kingingo.kcore.Command.Admin.CommandPermissionTest;
 import me.kingingo.kcore.Command.Admin.CommandSocialspy;
 import me.kingingo.kcore.Command.Admin.CommandToggle;
 import me.kingingo.kcore.Command.Admin.CommandTp;
@@ -142,6 +143,7 @@ public class kSkyBlock extends JavaPlugin {
 //		pet=new PetManager(this);
 //		petShop=new PetShop(pet, permissionManager);
 //		this.cmd.register(CommandPet.class, new CommandPet(pet,petShop));
+		this.cmd.register(CommandPermissionTest.class, new CommandPermissionTest(permissionManager));
 		this.cmd.register(CommandCMDMute.class, new CommandCMDMute(this));	
 		this.cmd.register(CommandURang.class, new CommandURang(permissionManager,mysql));	
 		this.cmd.register(CommandMoney.class, new CommandMoney(getStatsManager()));
