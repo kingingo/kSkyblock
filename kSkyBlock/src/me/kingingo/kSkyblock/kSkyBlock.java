@@ -7,6 +7,7 @@ import lombok.Getter;
 import me.kingingo.kSkyblock.Commands.CommadSkyBlock;
 import me.kingingo.kSkyblock.Commands.CommandHomeaccept;
 import me.kingingo.kSkyblock.Commands.CommandParty;
+import me.kingingo.kcore.AACHack.AACHack;
 import me.kingingo.kcore.AntiLogout.AntiLogoutManager;
 import me.kingingo.kcore.AntiLogout.AntiLogoutType;
 import me.kingingo.kcore.Client.Client;
@@ -195,6 +196,7 @@ public class kSkyBlock extends JavaPlugin {
 		new kSkyBlockListener(this);
 		new EnderpearlListener(this);
 		new EnderChestListener(getUserData());
+		new AACHack("SKYBLOCK", mysql, PacketManager);
 		Bukkit.getWorld("world").setStorm(false);
 		new ChatListener(this,new SkyBlockGildenManager(manager, mysql, GildenType.SKY, cmd,getStatsManager()),permissionManager);
 		DebugLog(time, 45, this.getClass().getName());
