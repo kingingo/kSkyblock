@@ -73,6 +73,7 @@ import me.kingingo.kcore.Kit.Perks.PerkNoWaterdamage;
 import me.kingingo.kcore.Kit.Perks.PerkPotionClear;
 import me.kingingo.kcore.Kit.Perks.PerkRunner;
 import me.kingingo.kcore.Listener.Chat.ChatListener;
+import me.kingingo.kcore.Listener.Command.ListenerCMD;
 import me.kingingo.kcore.Listener.EnderChest.EnderChestListener;
 import me.kingingo.kcore.Listener.Enderpearl.EnderpearlListener;
 import me.kingingo.kcore.MySQL.MySQL;
@@ -196,8 +197,10 @@ public class kSkyBlock extends JavaPlugin {
 		new kSkyBlockListener(this);
 		new EnderpearlListener(this);
 		new EnderChestListener(getUserData());
-		new AACHack("SKYBLOCK", mysql, PacketManager);
 		Bukkit.getWorld("world").setStorm(false);
+		AACHack a = new AACHack("SKYBLOCK", mysql, PacketManager);
+		a.setAntiLogoutManager(getAntiLogout());
+		new ListenerCMD(this);
 		new ChatListener(this,new SkyBlockGildenManager(manager, mysql, GildenType.SKY, cmd,getStatsManager()),permissionManager);
 		DebugLog(time, 45, this.getClass().getName());
 		}catch(Exception e){
