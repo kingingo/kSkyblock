@@ -29,6 +29,7 @@ import me.kingingo.kcore.Command.Admin.CommandTpHere;
 import me.kingingo.kcore.Command.Admin.CommandTppos;
 import me.kingingo.kcore.Command.Admin.CommandURang;
 import me.kingingo.kcore.Command.Admin.CommandVanish;
+import me.kingingo.kcore.Command.Admin.CommandgBroadcast;
 import me.kingingo.kcore.Command.Commands.CommandClearInventory;
 import me.kingingo.kcore.Command.Commands.CommandDelHome;
 import me.kingingo.kcore.Command.Commands.CommandEnderchest;
@@ -187,6 +188,7 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommandkSpawn.class, new CommandkSpawn());
 		this.cmd.register(CommandMore.class, new CommandMore());
 		this.cmd.register(CommandFlyspeed.class, new CommandFlyspeed());
+		this.cmd.register(CommandgBroadcast.class, new CommandgBroadcast(PacketManager));
 		this.perkManager=new PerkManager(this,userData,new Perk[]{new PerkNoWaterdamage(),new PerkArrowPotionEffect(),new PerkHat(),new PerkGoldenApple(),new PerkNoHunger(),new PerkHealPotion(1),new PerkNoFiredamage(),new PerkRunner(0.35F),new PerkDoubleJump(),new PerkDoubleXP(),new PerkDropper(),new PerkGetXP(),new PerkPotionClear(),new PerkItemName(cmd)});
 		new PerkListener(perkManager);
 		cmd.register(CommandPerk.class, new CommandPerk(perkManager));

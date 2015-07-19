@@ -41,7 +41,10 @@ public class CommadSkyBlock implements CommandExecutor{
 				p.sendMessage("§6/skyblock entfernen §8|§7 Lösche deine Insel.");
 				p.sendMessage("§6/skyblock home §8|§7 Teleportiere dich zu deiner Insel.");
 				p.sendMessage("§6/skyblock fixhome §8|§7 Teleportiere dich zu deiner Insel.");
-				p.sendMessage("§6/skyblock kick [Player] §8|§7 Kicke Spieler von deiner Insel");
+				p.sendMessage("§6/skyblock kick [Player] §8|§7 Kicke Spieler von deiner Insel.");
+				if(p.hasPermission(kPermission.GILDE_NEWISLAND.getPermissionToString()))p.sendMessage("§6/skyblock newisland [Player] §8|§7 Erneurt die Insel.");
+				if(p.isOp())p.sendMessage("§6/skyblock check §8|§7 Erneuert die alten Gilden u. Islands.");
+				if(p.isOp())p.sendMessage("§6/skyblock entities [Player] §8|§7 Die Entitys werden entfernt.");
 				p.sendMessage("§6/homedelete [Player] §8|§7 Löschen von Homes auf deiner Insel.");
 				p.sendMessage("§6/homeaccept §8|§7 Annehmen von Homes.");
 				p.sendMessage("§6/homedeny §8|§7 Ablehnen von Homes.");
@@ -230,6 +233,10 @@ public class CommadSkyBlock implements CommandExecutor{
 						}else{
 							p.sendMessage(Text.PREFIX.getText()+Text.PLAYER_IS_OFFLINE.getText(args[1]));
 						}
+					}
+				}else if(args[0].equalsIgnoreCase("info")&&p.hasPermission(kPermission.GILDE_NEWISLAND.getPermissionToString())){
+					if(args.length==1){
+						
 					}
 				}
 			}
