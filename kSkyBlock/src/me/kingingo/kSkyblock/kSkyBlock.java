@@ -78,6 +78,7 @@ import me.kingingo.kcore.Listener.Command.ListenerCMD;
 import me.kingingo.kcore.Listener.EnderChest.EnderChestListener;
 import me.kingingo.kcore.Listener.Enderpearl.EnderpearlListener;
 import me.kingingo.kcore.MySQL.MySQL;
+import me.kingingo.kcore.Nick.NickManager;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Permission.GroupTyp;
 import me.kingingo.kcore.Permission.PermissionManager;
@@ -143,9 +144,7 @@ public class kSkyBlock extends JavaPlugin {
 		new SignShop(this, this.statsManager);
 		this.cmd=new CommandHandler(this);
 		teleport=new TeleportManager(getCmd(), getPermissionManager(), 5);
-//		pet=new PetManager(this);
-//		petShop=new PetShop(pet, permissionManager);
-//		this.cmd.register(CommandPet.class, new CommandPet(pet,petShop));
+		new NickManager(this);
 		this.cmd.register(CommandPermissionTest.class, new CommandPermissionTest(permissionManager));
 		this.cmd.register(CommandCMDMute.class, new CommandCMDMute(this));	
 		this.cmd.register(CommandURang.class, new CommandURang(permissionManager,mysql));	
