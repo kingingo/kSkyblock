@@ -16,6 +16,7 @@ import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.RestartScheduler;
 import me.kingingo.kcore.Util.TabTitle;
+import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilWorldGuard;
 
@@ -27,6 +28,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -74,6 +76,14 @@ public class kSkyBlockListener extends kListener{
 			}else{
 				vote_list.add(vote.getUuid());
 			}
+		}
+	}
+	
+	@EventHandler
+	public void onClickinEnchant(EnchantItemEvent e){
+		if(e.getItem().getAmount() > 1){
+			e.setCancelled(true);
+			e.getEnchanter().sendMessage("§cFEHLER: BuggUsing ist verboten!");
 		}
 	}
 	

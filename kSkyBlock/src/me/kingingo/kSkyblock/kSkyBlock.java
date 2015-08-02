@@ -144,7 +144,7 @@ public class kSkyBlock extends JavaPlugin {
 		new SignShop(this, this.statsManager);
 		this.cmd=new CommandHandler(this);
 		teleport=new TeleportManager(getCmd(), getPermissionManager(), 5);
-		new NickManager(this);
+		new NickManager(permissionManager);
 		this.cmd.register(CommandPermissionTest.class, new CommandPermissionTest(permissionManager));
 		this.cmd.register(CommandCMDMute.class, new CommandCMDMute(this));	
 		this.cmd.register(CommandURang.class, new CommandURang(permissionManager,mysql));	

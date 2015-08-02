@@ -291,14 +291,7 @@ public class SkyBlockWorld extends kListener{
 			
 			getPartys().put(player, new ArrayList<String>());
 			Scoreboard board = player.getScoreboard();
-			String scorename = Color.AQUA+"§l"+player.getName()+" "+Color.GRAY+"-"+Color.AQUA+"§l"+" Party";
-			
-			if(scorename.length()>=32 ){
-				String name = player.getName();
-				System.out.println("SCOREBOARD: "+name.length()+ " "+((Color.AQUA+"§l"+" "+Color.GRAY+"-"+Color.AQUA+"§l"+" Party").length()-31) +" "+(Color.AQUA+"§l"+" "+Color.GRAY+"-"+Color.AQUA+"§l"+" Party").length());
-				name = name.substring(0, (Color.AQUA+"§l"+" "+Color.GRAY+"-"+Color.AQUA+"§l"+" Party").length()-31 );
-				scorename = Color.AQUA+"§l"+name+" "+Color.GRAY+"-"+Color.AQUA+"§l"+" Party";
-			}
+			String scorename = Color.AQUA+player.getName()+" Party";
 			
 			UtilScoreboard.addBoard(board,DisplaySlot.SIDEBAR, scorename);
 			UtilScoreboard.setScore(board,Color.GRAY+"Spieler: ", DisplaySlot.SIDEBAR, 0);
