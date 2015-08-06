@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import lombok.Getter;
-import me.kingingo.kcore.Enum.Text;
+import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
 import me.kingingo.kcore.Packet.Packets.PLAYER_VOTE;
@@ -16,7 +16,6 @@ import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.RestartScheduler;
 import me.kingingo.kcore.Util.TabTitle;
-import me.kingingo.kcore.Util.UtilItem;
 import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilWorldGuard;
 
@@ -72,7 +71,7 @@ public class kSkyBlockListener extends kListener{
 				player.getInventory().addItem(new ItemStack(Material.DIAMOND,2));
 				player.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
 				player.getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
-				player.sendMessage(Text.PREFIX.getText()+"§aDanke fürs §lVoten§a du hast deine Belohnung bekommen.");
+				player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "VOTE_THX"));
 			}else{
 				vote_list.add(vote.getUuid());
 			}
@@ -224,7 +223,7 @@ public class kSkyBlockListener extends kListener{
 			ev.getPlayer().getInventory().addItem(new ItemStack(Material.DIAMOND,2));
 			ev.getPlayer().getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
 			ev.getPlayer().getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
-			ev.getPlayer().sendMessage(Text.PREFIX.getText()+"§aDanke fürs §lVoten§a du hast deine Belohnung bekommen.");
+			ev.getPlayer().sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "VOTE_THX"));
 		}
 	}
 	
@@ -237,7 +236,7 @@ public class kSkyBlockListener extends kListener{
 						player.teleport(Bukkit.getWorld("world").getSpawnLocation());
 						player.setAllowFlight(false);
 						player.setFlying(false);
-						player.sendMessage(Text.PREFIX.getText()+Text.kFLY_PVP_FLAG.getText());
+						player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "kFLY_PVP_FLAG"));
 					}
 					
 					if(player.isOnGround()){
@@ -281,7 +280,7 @@ public class kSkyBlockListener extends kListener{
 		}else{
 			if(!getManager().getAntiLogout().is(ev.getPlayer())){
 				if(cmd.equalsIgnoreCase("/homes")||cmd.equalsIgnoreCase("/etpa")||cmd.equalsIgnoreCase("/fly")||cmd.equalsIgnoreCase("/kfly")||cmd.equalsIgnoreCase("/tpaccet")||cmd.equalsIgnoreCase("/tpyes")||cmd.equalsIgnoreCase("/tpask")||cmd.equalsIgnoreCase("/etpaccept")||cmd.equalsIgnoreCase("/ewarp")||cmd.equalsIgnoreCase("/tpa")||cmd.equalsIgnoreCase("/eback")||cmd.equalsIgnoreCase("/ehome")||cmd.equalsIgnoreCase("/tpaccept")||cmd.equalsIgnoreCase("/back")||cmd.equalsIgnoreCase("/home")||cmd.equalsIgnoreCase("/spawn")||cmd.equalsIgnoreCase("/espawn")||cmd.equalsIgnoreCase("/warp")){
-					ev.getPlayer().sendMessage(Text.PREFIX.getText()+"§cDu kannst den Befehl §b"+cmd+"§c nicht in Kampf ausführen!");
+					ev.getPlayer().sendMessage(Language.getText(player, "PREFIX")+"§cDu kannst den Befehl §b"+cmd+"§c nicht in Kampf ausführen!");
 					ev.setCancelled(true);
 				}
 			}else{

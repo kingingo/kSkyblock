@@ -2,7 +2,7 @@ package me.kingingo.kSkyblock.Commands;
 
 import lombok.Getter;
 import me.kingingo.kcore.Command.CommandHandler.Sender;
-import me.kingingo.kcore.Enum.Text;
+import me.kingingo.kcore.Language.Language;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -25,13 +25,13 @@ public class CommandHomedeny implements CommandExecutor{
 		if(args.length==0){
 			if(cmda.list.containsKey(player)){
 				if(cmda.list.get(player).isOnline()){
-					player.sendMessage(Text.PREFIX.getText()+Text.DENY.getText());
+					player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "DENY"));
 					cmda.list_name.remove(player);
 					cmda.list_loc.remove(player);
 					cmda.list.remove(player);
 				}
 			}else{
-				player.sendMessage(Text.PREFIX.getText()+Text.NO_ANFRAGE.getText());
+				player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "NO_ANFRAGE"));
 			}
 		}
 		return false;

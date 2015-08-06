@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import me.kingingo.kSkyblock.SkyBlockManager;
 import me.kingingo.kcore.Command.CommandHandler.Sender;
-import me.kingingo.kcore.Enum.Text;
+import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.UserDataConfig.UserDataConfig;
 
 import org.bukkit.Location;
@@ -37,14 +37,14 @@ public class CommandHomeaccept implements CommandExecutor{
 			if(list.containsKey(player)){
 				if(list.get(player).isOnline()){
 					userData.getConfig(list.get(player)).setLocation("homes."+list_name.get(player), list_loc.get(player));
-					list.get(player).sendMessage(Text.PREFIX.getText()+Text.HOME_SET.getText(list_name.get(player)));
-					player.sendMessage(Text.PREFIX.getText()+Text.ACCEPT.getText());
+					list.get(player).sendMessage(Language.getText(list.get(player), "PREFIX")+Language.getText(list.get(player), "HOME_SET",list_name.get(player)));
+					player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "ACCEPT"));
 					list_name.remove(player);
 					list_loc.remove(player);
 					list.remove(player);
 				}
 			}else{
-				player.sendMessage(Text.PREFIX.getText()+Text.NO_ANFRAGE.getText());
+				player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "NO_ANFRAGE"));
 			}
 		}
 		return false;

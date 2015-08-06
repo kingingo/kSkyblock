@@ -9,8 +9,8 @@ import lombok.Getter;
 import me.kingingo.kSkyblock.Gilden.SkyBlockGildenWorld;
 import me.kingingo.kSkyblock.World.SkyBlockWorld;
 import me.kingingo.kcore.ChunkGenerator.CleanroomChunkGenerator;
-import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Gilden.GildenManager;
+import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
 import me.kingingo.kcore.Packet.Packets.WORLD_CHANGE_DATA;
@@ -125,7 +125,7 @@ public class SkyBlockManager extends kListener{
 	@EventHandler
 	public void Join(PlayerJoinEvent ev){
 		ev.setJoinMessage(null);
-		ev.getPlayer().sendMessage(Text.PREFIX.getText()+Text.WHEREIS_TEXT.getText("SkyBlock"));
+		ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "WHEREIS_TEXT","SkyBlock"));
 		ev.getPlayer().teleport(Bukkit.getWorld("world").getSpawnLocation());
 	}
 	

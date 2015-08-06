@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import lombok.Getter;
-import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Inventory.InventoryBase;
 import me.kingingo.kcore.Inventory.Item.Click;
 import me.kingingo.kcore.Inventory.Item.SalesPackageBase;
+import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Permission.PermissionManager;
 import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.Pet.PetManager;
@@ -81,7 +81,7 @@ public class PetShop extends InventoryBase implements IPetShop{
 					if(!manager.getShop().getChange_settings().contains(player))manager.getShop().getChange_settings().add(player);
 					player.closeInventory();
 				}else{
-					player.sendMessage(Text.PREFIX.getText()+"§cDu musst das Pet im Online-Store kaufen §bShop.EpicPvP.de");
+					player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "PET_MUST_BUYED_IN_SHOP"));
 					player.closeInventory();
 				}
 			}
@@ -95,7 +95,7 @@ public class PetShop extends InventoryBase implements IPetShop{
 					if(!manager.getShop().getChange_settings().contains(player))manager.getShop().getChange_settings().add(player);
 					player.closeInventory();
 				}else{
-					player.sendMessage(Text.PREFIX.getText()+"§cDu musst das Pet im Online-Store kaufen §bShop.EpicPvP.de");
+					player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "PET_MUST_BUYED_IN_SHOP"));
 					player.closeInventory();
 				}
 			}
@@ -109,7 +109,7 @@ public class PetShop extends InventoryBase implements IPetShop{
 					if(!manager.getShop().getChange_settings().contains(player))manager.getShop().getChange_settings().add(player);
 					player.closeInventory();
 				}else{
-					player.sendMessage(Text.PREFIX.getText()+"§cDu musst das Pet im Online-Store kaufen §bShop.EpicPvP.de");
+					player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "PET_MUST_BUYED_IN_SHOP"));
 					player.closeInventory();
 				}
 			}
@@ -123,7 +123,7 @@ public class PetShop extends InventoryBase implements IPetShop{
 					if(!manager.getShop().getChange_settings().contains(player))manager.getShop().getChange_settings().add(player);
 					player.closeInventory();
 				}else{
-					player.sendMessage(Text.PREFIX.getText()+"§cDu musst das Pet im Online-Store kaufen §bShop.EpicPvP.de");
+					player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "PET_MUST_BUYED_IN_SHOP"));
 					player.closeInventory();
 				}
 			}

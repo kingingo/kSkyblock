@@ -11,7 +11,7 @@ import me.kingingo.kSkyblock.SkyBlockManager;
 import me.kingingo.kSkyblock.Util.UtilSchematic;
 import me.kingingo.kcore.AntiLogout.Events.AntiLogoutAddPlayerEvent;
 import me.kingingo.kcore.Command.Commands.Events.PlayerSetHomeEvent;
-import me.kingingo.kcore.Enum.Text;
+import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.MySQL.MySQLErr;
 import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
@@ -25,7 +25,6 @@ import me.kingingo.kcore.Util.UtilScoreboard;
 import me.kingingo.kcore.Util.UtilServer;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -124,7 +123,7 @@ public class SkyBlockWorld extends kListener{
 	
 	public boolean verlassenParty(Player player,boolean withMSG){
 		if(getPartys().containsKey(player)){
-			sendChatParty(player, Text.SKYBLOCK_PARTY_SCHLIEßEN.getText());
+			sendChatParty(player,"SKYBLOCK_PARTY_SCHLIEßEN");
 			for(String p : getPartys().get(player)){
 				getParty_island().remove(p.toLowerCase());
 				if(UtilPlayer.isOnline(p)){
@@ -146,12 +145,12 @@ public class SkyBlockWorld extends kListener{
 					UtilScoreboard.resetScore(owner.getScoreboard(),player.getName(), DisplaySlot.SIDEBAR);
 					getManager().getInstance().getPermissionManager().setTabList(player);
 					player.teleport(Bukkit.getWorld("world").getSpawnLocation());
-					if(withMSG)player.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_VERLASSEN.getText());
+					if(withMSG)player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "SKYBLOCK_PARTY_VERLASSEN"));
 					break;
 				}
 			}
 			if(!b){
-				if(withMSG)player.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_NO.getText());
+				if(withMSG)player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "SKYBLOCK_PARTY_NO"));
 				return false;
 			}
 			return true;
@@ -162,7 +161,7 @@ public class SkyBlockWorld extends kListener{
 		if(getPartys().containsKey(owner)){
 			ArrayList<String> list = getPartys().get(owner);
 			if(list.contains(kicken.toLowerCase())){
-				sendChatParty(owner, Text.SKYBLOCK_PARTY_KICKEN.getText(kicken));
+				sendChatParty(owner, "SKYBLOCK_PARTY_KICKEN",kicken);
 				list.remove(kicken.toLowerCase());
 				getParty_island().remove(kicken.toLowerCase());
 				if(UtilPlayer.isOnline(kicken)){
@@ -172,21 +171,43 @@ public class SkyBlockWorld extends kListener{
 				}
 				return true;
 			}else{
-				owner.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_PLAYER_NOT.getText());
+				owner.sendMessage(Language.getText(player, "PREFIX")+Language.getText(owner, "SKYBLOCK_PARTY_PLAYER_NOT"));
 				return false;
 			}
 		}else{
-			owner.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_NO_OWNER.getText());
+			owner.sendMessage(Language.getText(player, "PREFIX")+Language.getText(owner, "SKYBLOCK_PARTY_NO_OWNER"));
 			return false;
 		}
 	}
 	
-	public void sendChatParty(Player owner,String msg){
+	public void sendChatParty(Player owner,String name){
 		if(getPartys().containsKey(owner)){
-			owner.sendMessage(Text.PREFIX.getText()+msg);
+			owner.sendMessage(Language.getText(player, "PREFIX")+Language.getText(owner, name));
 			for(String player : getPartys().get(owner)){
 				if(UtilPlayer.isOnline(player)){
-					Bukkit.getPlayer(player).sendMessage(Text.PREFIX.getText()+msg);
+					Bukkit.getPlayer(player).sendMessage(Language.getText(player, "PREFIX")+Language.getText(Bukkit.getPlayer(player), name));
+				}
+			}
+		}
+	}
+	
+	public void sendChatParty(Player owner,String name,Object[] input){
+		if(getPartys().containsKey(owner)){
+			owner.sendMessage(Language.getText(player, "PREFIX")+Language.getText(owner, name, input));
+			for(String player : getPartys().get(owner)){
+				if(UtilPlayer.isOnline(player)){
+					Bukkit.getPlayer(player).sendMessage(Language.getText(player, "PREFIX")+Language.getText(Bukkit.getPlayer(player), name, input));
+				}
+			}
+		}
+	}
+	
+	public void sendChatParty(Player owner,String name,Object input){
+		if(getPartys().containsKey(owner)){
+			owner.sendMessage(Language.getText(player, "PREFIX")+Language.getText(owner, name, input));
+			for(String player : getPartys().get(owner)){
+				if(UtilPlayer.isOnline(player)){
+					Bukkit.getPlayer(player).sendMessage(Language.getText(player, "PREFIX")+Language.getText(Bukkit.getPlayer(player), name, input));
 				}
 			}
 		}
@@ -220,22 +241,22 @@ public class SkyBlockWorld extends kListener{
 				if(!getPartys().containsKey(owner))return false;
 					
 				if(getPartys().get(owner).size()>=8){
-					p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_VOLL.getText());
+					p.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "SKYBLOCK_PARTY_VOLL"));
 					return false;
 				}else{
 					getPartys().get(owner).add(p.getName().toLowerCase());
 					getParty_island().put(p.getName().toLowerCase(), islands.get(UtilPlayer.getRealUUID(owner).toString()));
 					UtilScoreboard.setScore(owner.getScoreboard(),p.getName(), DisplaySlot.SIDEBAR, -1);
 					p.setScoreboard(owner.getScoreboard());
-					sendChatParty(owner, Text.SKYBLOCK_PARTY_ENTER_BY.getText(p.getName()));
+					sendChatParty(p, "SKYBLOCK_PARTY_ENTER_BY",p.getName());
 					return true;
 				}
 			}else{
-				p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_IN.getText());
+				p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_PARTY_IN"));
 				return false;
 			}
 		}else{
-			p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_EINLADEN_NO.getText());
+			p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_PARTY_EINLADEN_NO"));
 			return false;
 		}
 	}
@@ -248,29 +269,29 @@ public class SkyBlockWorld extends kListener{
 				if(!isInParty(invite)){
 					if(!getParty_einladungen().containsKey(einladen.toLowerCase())||getParty_einladungen().containsKey(einladen.toLowerCase())&&getParty_einladungen().get(einladen).getName().equalsIgnoreCase(owner.getName())){
 						if(getPartys().get(owner).size()>=8){
-							owner.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_SIZE.getText(8));
+							owner.sendMessage(Language.getText(owner, "PREFIX")+Language.getText(owner, "SKYBLOCK_PARTY_SIZE",8));
 							return false;
 						}else{
 							getParty_einladungen().remove(einladen.toLowerCase());
 							getParty_einladungen().put(einladen.toLowerCase(), owner);
-							owner.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_EINLADEN.getText(invite.getName()));
-							invite.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_EINLADEN_INVITE.getText(owner.getName()));
+							owner.sendMessage(Language.getText(owner, "PREFIX")+Language.getText(owner, "SKYBLOCK_PARTY_EINLADEN",invite.getName()));
+							invite.sendMessage(Language.getText(invite, "PREFIX")+Language.getText(invite, "SKYBLOCK_PARTY_EINLADEN_INVITE",owner.getName()));
 							return true;
 						}
 					}else{
-						owner.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_EINLADEN_IS_IN.getText(einladen));
+						owner.sendMessage(Language.getText(owner, "PREFIX")+Language.getText(owner, "SKYBLOCK_PARTY_EINLADEN_IS_IN",einladen));
 						return false;
 					}
 				}else{
-					owner.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_EINLADEN_IS_IN.getText());
+					owner.sendMessage(Language.getText(owner, "PREFIX")+Language.getText(owner, "SKYBLOCK_PARTY_EINLADEN_IS_IN"));
 					return false;
 				}
 			}else{
-				owner.sendMessage(Text.PREFIX.getText()+Text.PLAYER_IS_OFFLINE.getText(einladen));
+				owner.sendMessage(Language.getText(owner, "PREFIX")+Language.getText(owner, "PLAYER_IS_OFFLINE",einladen));
 				return false;
 			}
 		}else{
-			owner.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PARTY_NO.getText());
+			owner.sendMessage(Language.getText(owner, "PREFIX")+Language.getText(owner, "SKYBLOCK_PARTY_NO"));
 			return false;
 		}
 	}
@@ -291,10 +312,10 @@ public class SkyBlockWorld extends kListener{
 			
 			getPartys().put(player, new ArrayList<String>());
 			Scoreboard board = player.getScoreboard();
-			String scorename = Color.AQUA+player.getName()+" Party";
+			String scorename = "§b"+player.getName()+" Party";
 			
 			UtilScoreboard.addBoard(board,DisplaySlot.SIDEBAR, scorename);
-			UtilScoreboard.setScore(board,Color.GRAY+"Spieler: ", DisplaySlot.SIDEBAR, 0);
+			UtilScoreboard.setScore(board,"§7"+"Spieler: ", DisplaySlot.SIDEBAR, 0);
 			UtilScoreboard.setScore(board,player.getName(), DisplaySlot.SIDEBAR, -1);
 			player.setScoreboard(board);
 			return true;
@@ -319,8 +340,8 @@ public class SkyBlockWorld extends kListener{
 							getManager().getInstance().getHa().list.put( player , ev.getPlayer());
 							getManager().getInstance().getHa().list_loc.put(player, ev.getHome());
 							getManager().getInstance().getHa().list_name.put(player, ev.getName());
-							player.sendMessage(Text.PREFIX.getText()+Text.HOME_QUESTION.getText(ev.getPlayer().getName()));
-							ev.setReason(Text.HOME_ISLAND.getText());
+							player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "HOME_QUESTION",ev.getPlayer().getName()));
+							ev.setReason(Language.getText(player, "HOME_ISLAND"));
 							ev.setCancelled(true);
 							break;
 						}
@@ -605,7 +626,7 @@ public class SkyBlockWorld extends kListener{
 		Location loc = getIslandHome(player);
 		loc.getBlock().setType(Material.AIR);
 		loc.clone().add(0,-1,0).getBlock().setType(Material.AIR);
-		loc.clone().add(0,-2,0).getBlock().setType(Material.GLASS);
+		loc.clone().add(0,-2,0).getBlock().setType(Material.BEDROCK);
 		return loc;
 	}
 	
@@ -687,7 +708,7 @@ public class SkyBlockWorld extends kListener{
 	
 	public boolean removeIsland(Player player){
 		if(getManager().getDelete().contains(player.getName().toLowerCase())){
-			player.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_REMOVE_ISLAND_ONE.getText());
+			player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "SKYBLOCK_REMOVE_ISLAND_ONE"));
 			return false;
 		}
 		UUID uuid = UtilPlayer.getRealUUID(player);

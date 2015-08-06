@@ -2,7 +2,7 @@ package me.kingingo.kSkyblock.Commands;
 
 import me.kingingo.kSkyblock.World.SkyBlockWorld;
 import me.kingingo.kcore.Command.CommandHandler.Sender;
-import me.kingingo.kcore.Enum.Text;
+import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Util.UtilPlayer;
 
 import org.bukkit.Bukkit;
@@ -27,7 +27,7 @@ public class CommandHomedelete implements CommandExecutor{
 	public boolean onCommand(CommandSender cs, Command cmd, String arg2,String[] args) {
 		player = (Player)cs;
 		if(args.length==0){
-			player.sendMessage(Text.PREFIX.getText()+"/homedelete [Name]");
+			player.sendMessage(Language.getText(player, "PREFIX")+"/homedelete [Name]");
 		}else{
 			if(UtilPlayer.isOnline(args[0])){
 				if(cmda.manager.haveIsland(player)){
@@ -42,10 +42,10 @@ public class CommandHomedelete implements CommandExecutor{
 						}
 					}
 					cmda.userData.getConfig(target).save();
-					player.sendMessage(Text.PREFIX.getText()+Text.HOME_SKYBLOCK_DELETE.getText(target.getName()));
+					player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "HOME_SKYBLOCK_DELETE",target.getName()));
 				}
 			}else{
-				player.sendMessage(Text.PREFIX.getText()+Text.PLAYER_IS_OFFLINE.getText());
+				player.sendMessage(Language.getText(player, "PLAYER_IS_OFFLINE",args[0]));
 			}
 		}
 		return false;

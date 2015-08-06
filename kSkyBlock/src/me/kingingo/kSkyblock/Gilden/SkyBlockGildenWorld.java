@@ -8,9 +8,9 @@ import java.util.UUID;
 import lombok.Getter;
 import me.kingingo.kSkyblock.SkyBlockManager;
 import me.kingingo.kSkyblock.Util.UtilSchematic;
-import me.kingingo.kcore.Enum.Text;
 import me.kingingo.kcore.Gilden.GildenManager;
 import me.kingingo.kcore.Gilden.Events.GildeLoadEvent;
+import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.MySQL.MySQLErr;
 import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
@@ -439,7 +439,7 @@ public class SkyBlockGildenWorld extends kListener{
 	public boolean addIsland(Player player,String gilde,String schematic,boolean recyceln){
 		if(player!=null){
 			if(getManager().getDelete().contains(player.getName().toLowerCase())){
-				player.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_REMOVE_ISLAND_ONE.getText());
+				player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "SKYBLOCK_REMOVE_ISLAND_ONE"));
 				return false;
 			}
 		}

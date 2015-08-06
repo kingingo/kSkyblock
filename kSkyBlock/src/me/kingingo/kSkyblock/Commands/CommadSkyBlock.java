@@ -6,7 +6,7 @@ import lombok.Getter;
 import me.kingingo.kSkyblock.kSkyBlock;
 import me.kingingo.kSkyblock.World.SkyBlockWorld;
 import me.kingingo.kcore.Command.CommandHandler.Sender;
-import me.kingingo.kcore.Enum.Text;
+import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.Util.UtilPlayer;
 
@@ -36,7 +36,7 @@ public class CommadSkyBlock implements CommandExecutor{
 		if(cs instanceof Player){
 			p = (Player)cs;
 			if(args.length==0){
-				p.sendMessage(Text.SKYBLOCK_PREFIX.getText());
+				p.sendMessage(Language.getText(p, "SKYBLOCK_PREFIX"));
 				p.sendMessage("§6/skyblock erstellen §8|§7 Erstelle deine Insel.");
 				p.sendMessage("§6/skyblock entfernen §8|§7 Lösche deine Insel.");
 				p.sendMessage("§6/skyblock home §8|§7 Teleportiere dich zu deiner Insel.");
@@ -52,7 +52,7 @@ public class CommadSkyBlock implements CommandExecutor{
 			}else{
 				if(args[0].equalsIgnoreCase("erstellen")){
 					if(getInstance().getManager().haveIsland(p)){
-						p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_HAVE_ISLAND.getText());
+						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_HAVE_ISLAND"));
 					}else{
 						SkyBlockWorld world = getInstance().getManager().addIsland(p);
 						if(world!=null){
@@ -75,7 +75,7 @@ public class CommadSkyBlock implements CommandExecutor{
 						}else{
 							System.out.println("[SkyBlock] WORLD == NULL");
 						}
-						p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_CREATE_ISLAND.getText());
+						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_CREATE_ISLAND"));
 					}
 				}else if(args[0].equalsIgnoreCase("kick")){
 					if(args.length>=2){
@@ -86,40 +86,40 @@ public class CommadSkyBlock implements CommandExecutor{
 								
 								if(world.isInIsland(p, target.getLocation())){
 									target.teleport(Bukkit.getWorld("world").getSpawnLocation());
-									target.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PLAYER_KICKED.getText(p.getName()));
-									p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PLAYER_KICK.getText(target.getName()));
+									target.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_PLAYER_KICKED",p.getName()));
+									p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_PLAYER_KICK",target.getName()));
 								}else{
-									p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_PLAYER_NOT_ON_YOUR_ISLAND.getText(target.getName()));
+									p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_PLAYER_NOT_ON_YOUR_ISLAND",target.getName()));
 								}
 							}else{
-								p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_NO_ISLAND.getText());
+								p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_NO_ISLAND"));
 							}
 						}else{
-							p.sendMessage(Text.PREFIX.getText()+Text.PLAYER_IS_OFFLINE.getText(args[1]));
+							p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "PLAYER_IS_OFFLINE",args[1]));
 						}
 					}else{
-						p.sendMessage(Text.PREFIX.getText()+"§6/skyblock kick [Player]");
+						p.sendMessage(Language.getText(p, "PREFIX")+"§6/skyblock kick [Player]");
 					}
 				}else if(args[0].equalsIgnoreCase("entfernen")){
 					if(getInstance().getManager().haveIsland(p)){
 						p.teleport(Bukkit.getWorld("world").getSpawnLocation());
 						SkyBlockWorld world = getInstance().getManager().getIsland(p);
-						if(world.removeIsland(p))p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_REMOVE_ISLAND.getText());
+						if(world.removeIsland(p))p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_REMOVE_ISLAND"));
 					}else{
-						p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_NO_ISLAND.getText());
+						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_NO_ISLAND"));
 					}
 				}else if(args[0].equalsIgnoreCase("home")){
 					if(args.length==1){
 						if(!getInstance().getAntiLogout().is(p)){
-							p.sendMessage(Text.PREFIX.getText()+"§cDu kannst den Befehl §b"+cmd+"§c nicht in Kampf ausführen!");
+							p.sendMessage(Language.getText(p, "PREFIX")+"§cDu kannst den Befehl §b"+cmd+"§c nicht in Kampf ausführen!");
 							return false;
 						}
 						if(getInstance().getManager().haveIsland(p)){
 							SkyBlockWorld world = getInstance().getManager().getIsland(p);
 							p.teleport(world.getIslandHome(p));
-							p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_TELEPORT_HOME.getText());
+							p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_TELEPORT_HOME"));
 						}else{
-							p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_NO_ISLAND.getText());
+							p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_NO_ISLAND"));
 						}
 					}else if(p.hasPermission(kPermission.SKYBLOCK_HOME_OTHER.getPermissionToString())){
 						if(UtilPlayer.isOnline(args[1])){
@@ -127,12 +127,12 @@ public class CommadSkyBlock implements CommandExecutor{
 							if(getInstance().getManager().haveIsland(tp)){
 								SkyBlockWorld world = getInstance().getManager().getIsland(tp);
 								p.teleport(world.getIslandHome(tp));
-								p.sendMessage(Text.PREFIX.getText()+"§aDu wurdest zur Insel teleportiert.");
+								p.sendMessage(Language.getText(p, "PREFIX")+"§aDu wurdest zur Insel teleportiert.");
 							}else{
-								p.sendMessage(Text.PREFIX.getText()+"Er hat keine Insel.");
+								p.sendMessage(Language.getText(p, "PREFIX")+"Er hat keine Insel.");
 							}
 						}else{
-							p.sendMessage(Text.PREFIX.getText()+Text.PLAYER_IS_OFFLINE.getText(args[1]));
+							p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "PLAYER_IS_OFFLINE",args[1]));
 							UUID uuid = UtilPlayer.getUUID(args[1], instance.getMysql());
 							if(!getInstance().getManager().haveIsland(uuid)){
 								for(SkyBlockWorld world : instance.getManager().getWorlds())world.loadIslandPlayer( uuid );
@@ -141,27 +141,31 @@ public class CommadSkyBlock implements CommandExecutor{
 							if(getInstance().getManager().haveIsland(uuid)){
 								SkyBlockWorld world = getInstance().getManager().getIsland(uuid);
 								p.teleport(world.getIslandHome(uuid));
-								p.sendMessage(Text.PREFIX.getText()+"§aDu wurdest zur Insel teleportiert.");
+								p.sendMessage(Language.getText(p, "PREFIX")+"§aDu wurdest zur Insel teleportiert.");
 							}else{
-								p.sendMessage(Text.PREFIX.getText()+" Insel konnte nicht geladen werden.");
+								p.sendMessage(Language.getText(p, "PREFIX")+" Insel konnte nicht geladen werden.");
 							}
 						}
 					}
 				}else if(args[0].equalsIgnoreCase("fixhome")){
 					if(getInstance().getManager().haveIsland(p)){
+						if(!getInstance().getAntiLogout().is(p)){
+							p.sendMessage(Language.getText(p, "PREFIX")+"§cDu kannst den Befehl §b"+cmd+"§c nicht in Kampf ausführen!");
+							return false;
+						}
 						SkyBlockWorld world = getInstance().getManager().getIsland(p);
 						p.teleport(world.getIslandFixHome(p));
-						p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_TELEPORT_HOME.getText());
+						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_TELEPORT_HOME"));
 					}else{
-						p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_NO_ISLAND.getText());
+						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_NO_ISLAND"));
 					}
 				}else if(args[0].equalsIgnoreCase("biome")){
 					if(getInstance().getManager().haveIsland(p)){
 						SkyBlockWorld world = getInstance().getManager().getIsland(p);
 						world.setBiome(UtilPlayer.getRealUUID(p).toString(), Biome.JUNGLE);
-						p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_CHANGE_BIOME.getText(Biome.JUNGLE.name()));
+						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_NO_ISLAND",Biome.JUNGLE.name()));
 					}else{
-						p.sendMessage(Text.PREFIX.getText()+Text.SKYBLOCK_NO_ISLAND.getText());
+						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_NO_ISLAND"));
 					}
 				}else if(args[0].equalsIgnoreCase("newisland")&&p.hasPermission(kPermission.GILDE_NEWISLAND.getPermissionToString())){
 					if(args.length==2){
@@ -170,12 +174,12 @@ public class CommadSkyBlock implements CommandExecutor{
 							if(getInstance().getManager().haveIsland(tp)){
 								SkyBlockWorld world = getInstance().getManager().getIsland(tp);
 								world.newIsland(tp);
-								p.sendMessage(Text.PREFIX.getText()+"§aDie Insel wurde erneuert.");
+								p.sendMessage(Language.getText(p, "PREFIX")+"§aDie Insel wurde erneuert.");
 							}else{
-								p.sendMessage(Text.PREFIX.getText()+"Er hat keine Insel.");
+								p.sendMessage(Language.getText(p, "PREFIX")+"Er hat keine Insel.");
 							}
 						}else{
-							p.sendMessage(Text.PREFIX.getText()+Text.PLAYER_IS_OFFLINE.getText(args[1]));
+							p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "PLAYER_IS_OFFLINE",args[1]));
 							UUID uuid = UtilPlayer.getUUID(args[1], instance.getMysql());
 							if(!getInstance().getManager().haveIsland(uuid)){
 								for(SkyBlockWorld world : instance.getManager().getWorlds())world.loadIslandPlayer( uuid );
@@ -184,9 +188,9 @@ public class CommadSkyBlock implements CommandExecutor{
 							if(getInstance().getManager().haveIsland(uuid)){
 								SkyBlockWorld world = getInstance().getManager().getIsland(uuid);
 								world.newIsland(uuid);
-								p.sendMessage(Text.PREFIX.getText()+"§aDie Insel wurde erneuert.");
+								p.sendMessage(Language.getText(p, "PREFIX")+"§aDie Insel wurde erneuert.");
 							}else{
-								p.sendMessage(Text.PREFIX.getText()+" Insel konnte nicht geladen werden.");
+								p.sendMessage(Language.getText(p, "PREFIX")+" Insel konnte nicht geladen werden.");
 							}
 						}
 					}
@@ -226,12 +230,12 @@ public class CommadSkyBlock implements CommandExecutor{
 										e.remove();
 									}
 								}
-								p.sendMessage(Text.PREFIX.getText()+"§aEs wurden "+entities+" entfernt.");
+								p.sendMessage(Language.getText(p, "PREFIX")+"§aEs wurden "+entities+" entfernt.");
 							}else{
-								p.sendMessage(Text.PREFIX.getText()+"Er hat keine Insel.");
+								p.sendMessage(Language.getText(p, "PREFIX")+"Er hat keine Insel.");
 							}
 						}else{
-							p.sendMessage(Text.PREFIX.getText()+Text.PLAYER_IS_OFFLINE.getText(args[1]));
+							p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "PLAYER_IS_OFFLINE",args[1]));
 						}
 					}
 				}else if(args[0].equalsIgnoreCase("info")&&p.hasPermission(kPermission.GILDE_NEWISLAND.getPermissionToString())){
