@@ -182,10 +182,10 @@ public class SkyBlockWorld extends kListener{
 	
 	public void sendChatParty(Player owner,String name){
 		if(getPartys().containsKey(owner)){
-			owner.sendMessage(Language.getText(player, "PREFIX")+Language.getText(owner, name));
+			owner.sendMessage(Language.getText(owner, "PREFIX")+Language.getText(owner, name));
 			for(String player : getPartys().get(owner)){
 				if(UtilPlayer.isOnline(player)){
-					Bukkit.getPlayer(player).sendMessage(Language.getText(player, "PREFIX")+Language.getText(Bukkit.getPlayer(player), name));
+					Bukkit.getPlayer(player).sendMessage(Language.getText(Bukkit.getPlayer(player), "PREFIX")+Language.getText(Bukkit.getPlayer(player), name));
 				}
 			}
 		}
@@ -193,10 +193,10 @@ public class SkyBlockWorld extends kListener{
 	
 	public void sendChatParty(Player owner,String name,Object[] input){
 		if(getPartys().containsKey(owner)){
-			owner.sendMessage(Language.getText(player, "PREFIX")+Language.getText(owner, name, input));
+			owner.sendMessage(Language.getText(owner, "PREFIX")+Language.getText(owner, name, input));
 			for(String player : getPartys().get(owner)){
 				if(UtilPlayer.isOnline(player)){
-					Bukkit.getPlayer(player).sendMessage(Language.getText(player, "PREFIX")+Language.getText(Bukkit.getPlayer(player), name, input));
+					Bukkit.getPlayer(player).sendMessage(Language.getText(Bukkit.getPlayer(player), "PREFIX")+Language.getText(Bukkit.getPlayer(player), name, input));
 				}
 			}
 		}
@@ -204,10 +204,10 @@ public class SkyBlockWorld extends kListener{
 	
 	public void sendChatParty(Player owner,String name,Object input){
 		if(getPartys().containsKey(owner)){
-			owner.sendMessage(Language.getText(player, "PREFIX")+Language.getText(owner, name, input));
+			owner.sendMessage(Language.getText(owner, "PREFIX")+Language.getText(owner, name, input));
 			for(String player : getPartys().get(owner)){
 				if(UtilPlayer.isOnline(player)){
-					Bukkit.getPlayer(player).sendMessage(Language.getText(player, "PREFIX")+Language.getText(Bukkit.getPlayer(player), name, input));
+					Bukkit.getPlayer(player).sendMessage(Language.getText(Bukkit.getPlayer(player), "PREFIX")+Language.getText(Bukkit.getPlayer(player), name, input));
 				}
 			}
 		}

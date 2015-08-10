@@ -37,20 +37,20 @@ public class CommadSkyBlock implements CommandExecutor{
 			p = (Player)cs;
 			if(args.length==0){
 				p.sendMessage(Language.getText(p, "SKYBLOCK_PREFIX"));
-				p.sendMessage("§6/skyblock erstellen §8|§7 Erstelle deine Insel.");
-				p.sendMessage("§6/skyblock entfernen §8|§7 Lösche deine Insel.");
-				p.sendMessage("§6/skyblock home §8|§7 Teleportiere dich zu deiner Insel.");
-				p.sendMessage("§6/skyblock fixhome §8|§7 Teleportiere dich zu deiner Insel.");
-				p.sendMessage("§6/skyblock kick [Player] §8|§7 Kicke Spieler von deiner Insel.");
-				if(p.hasPermission(kPermission.GILDE_NEWISLAND.getPermissionToString()))p.sendMessage("§6/skyblock newisland [Player] §8|§7 Erneurt die Insel.");
-				if(p.isOp())p.sendMessage("§6/skyblock check §8|§7 Erneuert die alten Gilden u. Islands.");
-				if(p.isOp())p.sendMessage("§6/skyblock entities [Player] §8|§7 Die Entitys werden entfernt.");
-				p.sendMessage("§6/homedelete [Player] §8|§7 Löschen von Homes auf deiner Insel.");
-				p.sendMessage("§6/homeaccept §8|§7 Annehmen von Homes.");
-				p.sendMessage("§6/homedeny §8|§7 Ablehnen von Homes.");
-				p.sendMessage("§6/party §8|§7 Party Menue.");
+				p.sendMessage(Language.getText(p, "SKYBLOCK_CMD1"));
+				p.sendMessage(Language.getText(p, "SKYBLOCK_CMD2"));
+				p.sendMessage(Language.getText(p, "SKYBLOCK_CMD3"));
+				p.sendMessage(Language.getText(p, "SKYBLOCK_CMD4"));
+				p.sendMessage(Language.getText(p, "SKYBLOCK_CMD5"));
+				if(p.hasPermission(kPermission.GILDE_NEWISLAND.getPermissionToString()))p.sendMessage(Language.getText(p, "SKYBLOCK_CMD6"));
+				if(p.isOp())p.sendMessage(Language.getText(p, "SKYBLOCK_CMD7"));
+				if(p.isOp())p.sendMessage(Language.getText(p, "SKYBLOCK_CMD8"));
+				p.sendMessage(Language.getText(p, "SKYBLOCK_CMD9"));
+				p.sendMessage(Language.getText(p, "SKYBLOCK_CMD10"));
+				p.sendMessage(Language.getText(p, "SKYBLOCK_CMD11"));
+				p.sendMessage(Language.getText(p, "SKYBLOCK_CMD12"));
 			}else{
-				if(args[0].equalsIgnoreCase("erstellen")){
+				if(args[0].equalsIgnoreCase("erstellen")||args[0].equalsIgnoreCase("create")){
 					if(getInstance().getManager().haveIsland(p)){
 						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_HAVE_ISLAND"));
 					}else{
@@ -100,7 +100,7 @@ public class CommadSkyBlock implements CommandExecutor{
 					}else{
 						p.sendMessage(Language.getText(p, "PREFIX")+"§6/skyblock kick [Player]");
 					}
-				}else if(args[0].equalsIgnoreCase("entfernen")){
+				}else if(args[0].equalsIgnoreCase("entfernen")||args[0].equalsIgnoreCase("delete")||args[0].equalsIgnoreCase("remove")){
 					if(getInstance().getManager().haveIsland(p)){
 						p.teleport(Bukkit.getWorld("world").getSpawnLocation());
 						SkyBlockWorld world = getInstance().getManager().getIsland(p);
