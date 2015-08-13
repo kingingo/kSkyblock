@@ -45,6 +45,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -96,6 +97,11 @@ public class SkyBlockWorld extends kListener{
 		this.session=new EditSession(new BukkitWorld(getWorld()), 999999999);
 		loadIslands();
 		addIslands(anzahl);
+	}
+	
+	@EventHandler
+	public void Block(BlockPistonExtendEvent ev){
+		
 	}
 	
 	@EventHandler
