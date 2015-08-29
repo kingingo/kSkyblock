@@ -91,6 +91,7 @@ import me.kingingo.kcore.TeleportManager.TeleportManager;
 import me.kingingo.kcore.Update.Updater;
 import me.kingingo.kcore.UserDataConfig.UserDataConfig;
 import me.kingingo.kcore.Util.UtilException;
+import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.kcore.Util.UtilTime;
 import me.kingingo.kcore.memory.MemoryFix;
 
@@ -207,6 +208,7 @@ public class kSkyBlock extends JavaPlugin {
 		a.setAntiLogoutManager(getAntiLogout());
 		new ListenerCMD(this);
 		new ChatListener(this,new SkyBlockGildenManager(manager, mysql, GildenType.SKY, cmd,getStatsManager()),permissionManager);
+		UtilServer.createLagListener(this);
 		DebugLog(time, 45, this.getClass().getName());
 		}catch(Exception e){
 			UtilException.catchException(e, "skyblock", Bukkit.getIp(), mysql);
