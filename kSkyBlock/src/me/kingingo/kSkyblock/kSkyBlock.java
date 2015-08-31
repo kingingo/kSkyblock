@@ -208,7 +208,7 @@ public class kSkyBlock extends JavaPlugin {
 		a.setAntiLogoutManager(getAntiLogout());
 		new ListenerCMD(this);
 		new ChatListener(this,new SkyBlockGildenManager(manager, mysql, GildenType.SKY, cmd,getStatsManager()),permissionManager);
-		UtilServer.createLagListener(this);
+		UtilServer.createLagListener(this.cmd);
 		DebugLog(time, 45, this.getClass().getName());
 		}catch(Exception e){
 			UtilException.catchException(e, "skyblock", Bukkit.getIp(), mysql);

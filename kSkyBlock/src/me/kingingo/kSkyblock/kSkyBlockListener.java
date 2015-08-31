@@ -215,7 +215,7 @@ public class kSkyBlockListener extends kListener{
 	
 	@EventHandler
 	public void Join(PlayerJoinEvent ev){
-		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEPICPVP §7-§e SkyBlock Server", "§eShop.EpicPvP.de");
+		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEpicPvP§8.§eeu §8| §SkyBlock Server", "§aTeamSpeak: §7ts.EpicPvP.eu §8| §eWebsite: §7EpicPvP.eu");
 		
 		if(vote_list.contains( UtilPlayer.getRealUUID(ev.getPlayer()) )){
 			vote_list.remove(UtilPlayer.getRealUUID(ev.getPlayer()));
