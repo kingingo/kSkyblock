@@ -34,6 +34,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -245,6 +246,13 @@ public class kSkyBlockListener extends kListener{
 					}
 				}
 			}
+		}
+	}
+	
+	@EventHandler
+	public void potion(PotionSplashEvent ev){
+		if(ev.getEntity().getItem().getData().getData()==16396||ev.getEntity().getItem().getData().getData()==16428){
+			ev.setCancelled(true);
 		}
 	}
 	
