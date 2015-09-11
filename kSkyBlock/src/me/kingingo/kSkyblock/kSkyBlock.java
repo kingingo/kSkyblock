@@ -166,7 +166,7 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommandTag.class, new CommandTag());
 		this.cmd.register(CommandNacht.class, new CommandNacht());
 		this.cmd.register(CommandHeal.class, new CommandHeal());
-		this.cmd.register(CommandHome.class, new CommandHome(getUserData(), teleport));
+		this.cmd.register(CommandHome.class, new CommandHome(getUserData(), teleport,this.cmd));
 		this.cmd.register(CommandSpawnmob.class, new CommandSpawnmob());
 		this.cmd.register(CommandSpawner.class, new CommandSpawner());
 		this.cmd.register(CommandSetHome.class, new CommandSetHome(getUserData(), getPermissionManager()));
