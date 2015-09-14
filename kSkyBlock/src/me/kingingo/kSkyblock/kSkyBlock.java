@@ -56,6 +56,7 @@ import me.kingingo.kcore.Command.Commands.CommandWarp;
 import me.kingingo.kcore.Command.Commands.CommandXP;
 import me.kingingo.kcore.Command.Commands.CommandkSpawn;
 import me.kingingo.kcore.Enum.GameType;
+import me.kingingo.kcore.Enum.ServerType;
 import me.kingingo.kcore.Gilden.GildenType;
 import me.kingingo.kcore.Gilden.SkyBlockGildenManager;
 import me.kingingo.kcore.JumpPad.CommandJump;
@@ -156,7 +157,7 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommandTrackingRange.class, new CommandTrackingRange());
 		this.cmd.register(CommandToggle.class, new CommandToggle(this));
 		this.cmd.register(CommandURang.class, new CommandURang(permissionManager,mysql));	
-		this.cmd.register(CommandMoney.class, new CommandMoney(getStatsManager()));
+		this.cmd.register(CommandMoney.class, new CommandMoney(getStatsManager(),ServerType.SKYBLOCK));
 		this.cmd.register(CommandMsg.class, new CommandMsg());
 		this.cmd.register(CommandR.class, new CommandR(this));
 		this.cmd.register(CommandSocialspy.class, new CommandSocialspy(this));
