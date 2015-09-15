@@ -182,8 +182,8 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommadSkyBlock.class, new CommadSkyBlock(this));	
 		this.cmd.register(CommandRenameItem.class, new CommandRenameItem());
 		this.cmd.register(CommandXP.class, new CommandXP());
-		this.cmd.register(CommandInvsee.class, new CommandInvsee(this));
-		this.cmd.register(CommandEnderchest.class, new CommandEnderchest(this));
+		this.cmd.register(CommandInvsee.class, new CommandInvsee(mysql));
+		this.cmd.register(CommandEnderchest.class, new CommandEnderchest(mysql));
 		this.cmd.register(CommandParty.class, new CommandParty(this));
 		this.cmd.register(CommandBroadcast.class, new CommandBroadcast());
 		this.cmd.register(CommandTppos.class, new CommandTppos());
