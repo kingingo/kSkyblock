@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import lombok.Getter;
 import me.kingingo.kSkyblock.Commands.CommadSkyBlock;
+import me.kingingo.kSkyblock.Commands.CommandDelivery;
 import me.kingingo.kSkyblock.Commands.CommandHomeaccept;
 import me.kingingo.kSkyblock.Commands.CommandParty;
 import me.kingingo.kcore.AACHack.AACHack;
@@ -88,10 +89,10 @@ import me.kingingo.kcore.Listener.EnderChest.EnderChestListener;
 import me.kingingo.kcore.Listener.Enderpearl.EnderpearlListener;
 import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
+import me.kingingo.kcore.Packet.Packets.TWIITTER_IS_PLAYER_FOLLOWER;
 import me.kingingo.kcore.Permission.GroupTyp;
 import me.kingingo.kcore.Permission.PermissionManager;
 import me.kingingo.kcore.Permission.kPermission;
-import me.kingingo.kcore.Pet.PetManager;
 import me.kingingo.kcore.SignShop.SignShop;
 import me.kingingo.kcore.StatsManager.Stats;
 import me.kingingo.kcore.StatsManager.StatsManager;
@@ -99,18 +100,21 @@ import me.kingingo.kcore.TeleportManager.TeleportManager;
 import me.kingingo.kcore.Update.Updater;
 import me.kingingo.kcore.UserDataConfig.UserDataConfig;
 import me.kingingo.kcore.Util.TimeSpan;
+import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilException;
+import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.kcore.Util.UtilTime;
-import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.memory.MemoryFix;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class kSkyBlock extends JavaPlugin {
@@ -158,9 +162,9 @@ public class kSkyBlock extends JavaPlugin {
 		new MemoryFix(this);
 		this.statsManager=new StatsManager(this,this.mysql,GameType.SKYBLOCK);
 		this.userData=new UserDataConfig(this);
-		new SignShop(this, this.statsManager);
 		this.hologram=new Hologram(this);
 		this.cmd=new CommandHandler(this);
+		new SignShop(this,this.cmd, this.statsManager);
 		teleport=new TeleportManager(getCmd(), getPermissionManager(), 5);
 		this.cmd.register(CommandPermissionTest.class, new CommandPermissionTest(permissionManager));
 		this.cmd.register(CommandCMDMute.class, new CommandCMDMute(this));	
@@ -208,10 +212,11 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommandFlyspeed.class, new CommandFlyspeed());
 		this.cmd.register(CommandGive.class, new CommandGive());
 		this.cmd.register(CommandgBroadcast.class, new CommandgBroadcast(PacketManager));
+		this.cmd.register(CommandDelivery.class, new CommandDelivery(this));
 		this.perkManager=new PerkManager(this,userData,new Perk[]{new PerkNoWaterdamage(),new PerkArrowPotionEffect(),new PerkHat(),new PerkGoldenApple(),new PerkNoHunger(),new PerkHealPotion(1),new PerkNoFiredamage(),new PerkRunner(0.35F),new PerkDoubleJump(),new PerkDoubleXP(),new PerkDropper(),new PerkGetXP(),new PerkPotionClear(),new PerkItemName(cmd)});
 		
 		UtilServer.createDeliveryPet(new DeliveryPet(null,new DeliveryObject[]{
-				new DeliveryObject(new String[]{"","§7Click for Vote!","","§eRewards:","§7   100 Coins"},kPermission.RANK_COINS_DAILY,false,10,"§aVote for EpicPvP",Material.PAPER,new Click(){
+				new DeliveryObject(new String[]{"","§7Click for Vote!","","§ePvP Rewards:","§7   200 Epics","§7   1x Inventory Repair","","§eGame Rewards:","§7   150 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},null,false,10,"§aVote for EpicPvP",Material.PAPER,new Click(){
 
 					@Override
 					public void onClick(Player p, ActionType a,Object obj) {
@@ -224,31 +229,45 @@ public class kSkyBlock extends JavaPlugin {
 					}
 					
 				},-1),
-				new DeliveryObject(new String[]{"","§eRewards:","§7   100 Coins"},kPermission.RANK_COINS_DAILY,true,12,"§cRank Day Reward",Material.EMERALD,new Click(){
+				new DeliveryObject(new String[]{"§aOnly for Premium Players!","","§ePvP Rewards:","§7   200 Epics","§7   10 Level","","§eGame Rewards:","§7   200 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},kPermission.RANK_COINS_DAILY,true,12,"§cRank Day Reward",Material.EMERALD,new Click(){
 
 					@Override
 					public void onClick(Player p, ActionType a,Object obj) {
-						getStatsManager().addInt(p, 100, Stats.MONEY);
+						getStatsManager().addDouble(p, 200, Stats.MONEY);
+						p.getInventory().addItem(new ItemStack(Material.DIAMOND,2));
+						p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
+						p.getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
+						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","200"}));
 					}
 					
 				},TimeSpan.DAY),
-				new DeliveryObject(new String[]{"","§eRewards:","§7   1000 Coins"},kPermission.RANK_COINS_MONTH,true,14,"§cRank Month Reward",Material.EMERALD_BLOCK,new Click(){
+				new DeliveryObject(new String[]{"§aOnly for Premium Players!","","§ePvP Rewards:","§7   5000 Epics","§7   5x Golden Apple","","§eGame Rewards:","§7   5000 Coins","§7   5x TTT Paesse","","§eSkyBlock Rewards:","§7   5000 Epics","§7   15x Diamonds","§7   15x Iron Ingot","§7   15x Gold Ingot"},kPermission.RANK_COINS_MONTH,true,14,"§cRank Month Reward",Material.EMERALD_BLOCK,new Click(){
 
 					@Override
 					public void onClick(Player p, ActionType a,Object obj) {
-						getStatsManager().addInt(p, 100, Stats.MONEY);
+						getStatsManager().addDouble(p, 5000, Stats.MONEY);
+						p.getInventory().addItem(new ItemStack(Material.DIAMOND,15));
+						p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,15));
+						p.getInventory().addItem(new ItemStack(Material.IRON_INGOT,15));
+						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","5000"}));
 					}
 					
 				},TimeSpan.DAY*30),
-				new DeliveryObject(new String[]{"","§eRewards:","§7   300 Coins"},null,true,16,"§cTwitter Reward",Material.getMaterial(351),4,new Click(){
+				new DeliveryObject(new String[]{"§7/twitter [TwitterName]","","§ePvP Rewards:","§7   300 Epics","§7   15 Level","","§eGame Rewards:","§7   300 Coins","","§eSkyBlock Rewards:","§7   300 Epics","§7   15 Level"},null,false,16,"§cTwitter Reward",Material.getMaterial(351),4,new Click(){
 
 					@Override
 					public void onClick(Player p, ActionType a,Object obj) {
-						getStatsManager().addInt(p, 300, Stats.MONEY);
+						String s1 = getMysql().getString("SELECT twitter FROM BG_TWITTER WHERE uuid='"+UtilPlayer.getRealUUID(p)+"'");
+						if(s1.equalsIgnoreCase("null")){
+							p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_ACC_NOT"));
+						}else{
+							getPacketManager().SendPacket("DATA", new TWIITTER_IS_PLAYER_FOLLOWER(s1, p.getName()));
+							p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_CHECK"));
+						}
 					}
 					
 				},TimeSpan.DAY*7),
-		},"§bThe Delivery Jockey!",EntityType.CHICKEN,Bukkit.getWorld("world").getSpawnLocation(),ServerType.GAME,getHologram(),getMysql())
+		},"§bThe Delivery Jockey!",EntityType.CHICKEN,CommandDelivery.getDelivery(),ServerType.SKYBLOCK,getHologram(),getMysql())
 		);
 		
 		new PerkListener(perkManager);
@@ -274,6 +293,8 @@ public class kSkyBlock extends JavaPlugin {
 	
 	public void onDisable(){
 		c.disconnect(false);
+		Updater.stop();
+		if(UtilServer.getDeliveryPet()!=null)UtilServer.getDeliveryPet().onDisable();
 		mysql.close();
 	}
 	
