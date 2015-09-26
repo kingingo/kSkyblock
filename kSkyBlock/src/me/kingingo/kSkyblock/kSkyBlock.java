@@ -55,10 +55,14 @@ import me.kingingo.kcore.Command.Commands.CommandTag;
 import me.kingingo.kcore.Command.Commands.CommandWarp;
 import me.kingingo.kcore.Command.Commands.CommandXP;
 import me.kingingo.kcore.Command.Commands.CommandkSpawn;
+import me.kingingo.kcore.DeliveryPet.DeliveryObject;
+import me.kingingo.kcore.DeliveryPet.DeliveryPet;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.Enum.ServerType;
 import me.kingingo.kcore.Gilden.GildenType;
 import me.kingingo.kcore.Gilden.SkyBlockGildenManager;
+import me.kingingo.kcore.Hologram.Hologram;
+import me.kingingo.kcore.Inventory.Item.Click;
 import me.kingingo.kcore.JumpPad.CommandJump;
 import me.kingingo.kcore.Kit.Perk;
 import me.kingingo.kcore.Kit.PerkManager;
@@ -86,20 +90,27 @@ import me.kingingo.kcore.MySQL.MySQL;
 import me.kingingo.kcore.Packet.PacketManager;
 import me.kingingo.kcore.Permission.GroupTyp;
 import me.kingingo.kcore.Permission.PermissionManager;
+import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.Pet.PetManager;
 import me.kingingo.kcore.SignShop.SignShop;
+import me.kingingo.kcore.StatsManager.Stats;
 import me.kingingo.kcore.StatsManager.StatsManager;
 import me.kingingo.kcore.TeleportManager.TeleportManager;
 import me.kingingo.kcore.Update.Updater;
 import me.kingingo.kcore.UserDataConfig.UserDataConfig;
+import me.kingingo.kcore.Util.TimeSpan;
 import me.kingingo.kcore.Util.UtilException;
 import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.kcore.Util.UtilTime;
+import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.memory.MemoryFix;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class kSkyBlock extends JavaPlugin {
@@ -131,8 +142,8 @@ public class kSkyBlock extends JavaPlugin {
 	@Getter
 	private CommandHomeaccept ha;
 	private PerkManager perkManager;
-	private PetManager pet;
-	private PetShop petShop;
+	@Getter
+	private Hologram hologram;
 	
 	public void onEnable(){
 		try{
@@ -148,6 +159,7 @@ public class kSkyBlock extends JavaPlugin {
 		this.statsManager=new StatsManager(this,this.mysql,GameType.SKYBLOCK);
 		this.userData=new UserDataConfig(this);
 		new SignShop(this, this.statsManager);
+		this.hologram=new Hologram(this);
 		this.cmd=new CommandHandler(this);
 		teleport=new TeleportManager(getCmd(), getPermissionManager(), 5);
 		this.cmd.register(CommandPermissionTest.class, new CommandPermissionTest(permissionManager));
@@ -197,6 +209,48 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommandGive.class, new CommandGive());
 		this.cmd.register(CommandgBroadcast.class, new CommandgBroadcast(PacketManager));
 		this.perkManager=new PerkManager(this,userData,new Perk[]{new PerkNoWaterdamage(),new PerkArrowPotionEffect(),new PerkHat(),new PerkGoldenApple(),new PerkNoHunger(),new PerkHealPotion(1),new PerkNoFiredamage(),new PerkRunner(0.35F),new PerkDoubleJump(),new PerkDoubleXP(),new PerkDropper(),new PerkGetXP(),new PerkPotionClear(),new PerkItemName(cmd)});
+		
+		UtilServer.createDeliveryPet(new DeliveryPet(null,new DeliveryObject[]{
+				new DeliveryObject(new String[]{"","§7Click for Vote!","","§eRewards:","§7   100 Coins"},kPermission.RANK_COINS_DAILY,false,10,"§aVote for EpicPvP",Material.PAPER,new Click(){
+
+					@Override
+					public void onClick(Player p, ActionType a,Object obj) {
+						p.closeInventory();
+						p.sendMessage(Language.getText(p,"PREFIX")+"§7-----------------------------------------");
+						p.sendMessage(Language.getText(p,"PREFIX")+" ");
+						p.sendMessage(Language.getText(p,"PREFIX")+"Vote Link:§a http://goo.gl/wxdAj4");
+						p.sendMessage(Language.getText(p,"PREFIX")+" ");
+						p.sendMessage(Language.getText(p,"PREFIX")+"§7-----------------------------------------");
+					}
+					
+				},-1),
+				new DeliveryObject(new String[]{"","§eRewards:","§7   100 Coins"},kPermission.RANK_COINS_DAILY,true,12,"§cRank Day Reward",Material.EMERALD,new Click(){
+
+					@Override
+					public void onClick(Player p, ActionType a,Object obj) {
+						getStatsManager().addInt(p, 100, Stats.MONEY);
+					}
+					
+				},TimeSpan.DAY),
+				new DeliveryObject(new String[]{"","§eRewards:","§7   1000 Coins"},kPermission.RANK_COINS_MONTH,true,14,"§cRank Month Reward",Material.EMERALD_BLOCK,new Click(){
+
+					@Override
+					public void onClick(Player p, ActionType a,Object obj) {
+						getStatsManager().addInt(p, 100, Stats.MONEY);
+					}
+					
+				},TimeSpan.DAY*30),
+				new DeliveryObject(new String[]{"","§eRewards:","§7   300 Coins"},null,true,16,"§cTwitter Reward",Material.getMaterial(351),4,new Click(){
+
+					@Override
+					public void onClick(Player p, ActionType a,Object obj) {
+						getStatsManager().addInt(p, 300, Stats.MONEY);
+					}
+					
+				},TimeSpan.DAY*7),
+		},"§bThe Delivery Jockey!",EntityType.CHICKEN,Bukkit.getWorld("world").getSpawnLocation(),ServerType.GAME,getHologram(),getMysql())
+		);
+		
 		new PerkListener(perkManager);
 		cmd.register(CommandPerk.class, new CommandPerk(perkManager));
 		this.antiLogout=new AntiLogoutManager(this,AntiLogoutType.KILL,5);
