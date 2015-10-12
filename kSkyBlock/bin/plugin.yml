@@ -1,0 +1,5 @@
+name: kSkyBlock
+author: kingingo
+version: 1.7
+main: me.kingingo.kSkyblock.kSkyBlock
+depend: [kCore]

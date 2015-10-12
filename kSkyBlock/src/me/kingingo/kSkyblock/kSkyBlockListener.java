@@ -12,6 +12,8 @@ import me.kingingo.kcore.Packet.Packets.PLAYER_VOTE;
 import me.kingingo.kcore.Packet.Packets.TWITTER_PLAYER_FOLLOW;
 import me.kingingo.kcore.Permission.GroupTyp;
 import me.kingingo.kcore.Permission.kPermission;
+import me.kingingo.kcore.Permission.Event.PlayerLoadPermissionEvent;
+import me.kingingo.kcore.Scoreboard.Events.PlayerSetScoreboardEvent;
 import me.kingingo.kcore.SignShop.Events.SignShopUseEvent;
 import me.kingingo.kcore.StatsManager.Stats;
 import me.kingingo.kcore.Update.UpdateType;
@@ -61,6 +63,11 @@ public class kSkyBlockListener extends kListener{
 	public kSkyBlockListener(kSkyBlock manager) {
 		super(manager.getAntiLogout().getInstance(), "Listener");
 		this.manager=manager;
+	}
+	
+	@EventHandler
+	public void AddBoard(PlayerSetScoreboardEvent ev){
+		UtilPlayer.setScoreboard(ev.getPlayer(), getManager().getGems().getGems());
 	}
 	
 	Player player;
@@ -235,6 +242,11 @@ public class kSkyBlockListener extends kListener{
 				ev.setCancelled(true);
 			}
 		}
+	}
+	
+	@EventHandler
+	public void loadPerm(PlayerLoadPermissionEvent ev){
+		if(ev.getPlayer().getScoreboard()==null)ev.getPlayer().setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 	}
 	
 	@EventHandler

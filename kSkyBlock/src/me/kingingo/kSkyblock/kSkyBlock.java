@@ -38,6 +38,7 @@ import me.kingingo.kcore.Command.Commands.CommandClearInventory;
 import me.kingingo.kcore.Command.Commands.CommandDelHome;
 import me.kingingo.kcore.Command.Commands.CommandEnderchest;
 import me.kingingo.kcore.Command.Commands.CommandFeed;
+import me.kingingo.kcore.Command.Commands.CommandHandel;
 import me.kingingo.kcore.Command.Commands.CommandHeal;
 import me.kingingo.kcore.Command.Commands.CommandHome;
 import me.kingingo.kcore.Command.Commands.CommandKit;
@@ -60,9 +61,11 @@ import me.kingingo.kcore.DeliveryPet.DeliveryObject;
 import me.kingingo.kcore.DeliveryPet.DeliveryPet;
 import me.kingingo.kcore.Enum.GameType;
 import me.kingingo.kcore.Enum.ServerType;
+import me.kingingo.kcore.GemsShop.GemsShop;
 import me.kingingo.kcore.Gilden.GildenType;
 import me.kingingo.kcore.Gilden.SkyBlockGildenManager;
 import me.kingingo.kcore.Hologram.Hologram;
+import me.kingingo.kcore.Inventory.InventoryBase;
 import me.kingingo.kcore.Inventory.Item.Click;
 import me.kingingo.kcore.JumpPad.CommandJump;
 import me.kingingo.kcore.Kit.Perk;
@@ -93,6 +96,9 @@ import me.kingingo.kcore.Packet.Packets.TWIITTER_IS_PLAYER_FOLLOWER;
 import me.kingingo.kcore.Permission.GroupTyp;
 import me.kingingo.kcore.Permission.PermissionManager;
 import me.kingingo.kcore.Permission.kPermission;
+import me.kingingo.kcore.Pet.PetManager;
+import me.kingingo.kcore.Pet.Commands.CommandPet;
+import me.kingingo.kcore.Pet.Shop.PlayerPetHandler;
 import me.kingingo.kcore.SignShop.SignShop;
 import me.kingingo.kcore.StatsManager.Stats;
 import me.kingingo.kcore.StatsManager.StatsManager;
@@ -148,6 +154,14 @@ public class kSkyBlock extends JavaPlugin {
 	private PerkManager perkManager;
 	@Getter
 	private Hologram hologram;
+	@Getter
+	private InventoryBase base;
+	@Getter
+	private GemsShop gems;
+	@Getter
+	private PetManager petManager;
+	@Getter
+	private PlayerPetHandler petHandler;
 	
 	public void onEnable(){
 		try{
@@ -164,9 +178,15 @@ public class kSkyBlock extends JavaPlugin {
 		this.userData=new UserDataConfig(this);
 		this.hologram=new Hologram(this);
 		this.cmd=new CommandHandler(this);
+		this.base=new InventoryBase(this);
+		this.gems=new GemsShop(getHologram(), getCmd(), getBase(), getPermissionManager(), ServerType.SKYBLOCK);
+		this.petManager=new PetManager(this);
+		this.petHandler= new PlayerPetHandler(ServerType.SKYBLOCK, getPetManager(), getBase(), getPermissionManager());
+		this.teleport=new TeleportManager(getCmd(), getPermissionManager(), 5);
+		this.perkManager=new PerkManager(this,userData,new Perk[]{new PerkNoWaterdamage(),new PerkArrowPotionEffect(),new PerkHat(),new PerkGoldenApple(),new PerkNoHunger(),new PerkHealPotion(1),new PerkNoFiredamage(),new PerkRunner(0.35F),new PerkDoubleJump(),new PerkDoubleXP(),new PerkDropper(),new PerkGetXP(),new PerkPotionClear(),new PerkItemName(cmd)});
 		new SignShop(this,this.cmd, this.statsManager);
-		teleport=new TeleportManager(getCmd(), getPermissionManager(), 5);
-		this.cmd.register(CommandPermissionTest.class, new CommandPermissionTest(permissionManager));
+		
+		this.cmd.register(CommandPet.class, new CommandPet(getPetHandler()));
 		this.cmd.register(CommandCMDMute.class, new CommandCMDMute(this));	
 		this.cmd.register(CommandPvPMute.class, new CommandPvPMute(this));	
 		this.cmd.register(CommandChatMute.class, new CommandChatMute(this));
@@ -178,6 +198,7 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommandR.class, new CommandR(this));
 		this.cmd.register(CommandSocialspy.class, new CommandSocialspy(this));
 		this.cmd.register(CommandFly.class, new CommandFly(this));
+		this.cmd.register(CommandHandel.class, new CommandHandel(this));
 		this.cmd.register(CommandJump.class, new CommandJump(this));
 		this.cmd.register(CommandFeed.class, new CommandFeed());
 		this.cmd.register(CommandRepair.class, new CommandRepair());
@@ -213,10 +234,10 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommandGive.class, new CommandGive());
 		this.cmd.register(CommandgBroadcast.class, new CommandgBroadcast(PacketManager));
 		this.cmd.register(CommandDelivery.class, new CommandDelivery(this));
-		this.perkManager=new PerkManager(this,userData,new Perk[]{new PerkNoWaterdamage(),new PerkArrowPotionEffect(),new PerkHat(),new PerkGoldenApple(),new PerkNoHunger(),new PerkHealPotion(1),new PerkNoFiredamage(),new PerkRunner(0.35F),new PerkDoubleJump(),new PerkDoubleXP(),new PerkDropper(),new PerkGetXP(),new PerkPotionClear(),new PerkItemName(cmd)});
+		cmd.register(CommandPerk.class, new CommandPerk(perkManager,getBase()));
 		
-		UtilServer.createDeliveryPet(new DeliveryPet(null,new DeliveryObject[]{
-				new DeliveryObject(new String[]{"","§7Click for Vote!","","§ePvP Rewards:","§7   200 Epics","§7   1x Inventory Repair","","§eGame Rewards:","§7   150 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},null,false,10,"§aVote for EpicPvP",Material.PAPER,new Click(){
+		UtilServer.createDeliveryPet(new DeliveryPet(getBase(),null,new DeliveryObject[]{
+			new DeliveryObject(new String[]{"","§7Click for Vote!","","§ePvP Rewards:","§7   200 Epics","§7   1x Inventory Repair","","§eGame Rewards:","§7   25 Gems","§7   100 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},null,false,10,"§aVote for EpicPvP",Material.PAPER,new Click(){
 
 					@Override
 					public void onClick(Player p, ActionType a,Object obj) {
@@ -271,7 +292,6 @@ public class kSkyBlock extends JavaPlugin {
 		);
 		
 		new PerkListener(perkManager);
-		cmd.register(CommandPerk.class, new CommandPerk(perkManager));
 		this.antiLogout=new AntiLogoutManager(this,AntiLogoutType.KILL,5);
 		this.manager=new SkyBlockManager(this);
 		this.ha=new CommandHomeaccept(manager);
@@ -293,6 +313,8 @@ public class kSkyBlock extends JavaPlugin {
 	
 	public void onDisable(){
 		c.disconnect(false);
+		getHologram().RemoveText();
+		getGems().onDisable();
 		Updater.stop();
 		if(UtilServer.getDeliveryPet()!=null)UtilServer.getDeliveryPet().onDisable();
 		mysql.close();
