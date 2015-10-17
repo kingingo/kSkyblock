@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import lombok.Getter;
 import me.kingingo.kSkyblock.Commands.CommadSkyBlock;
-import me.kingingo.kSkyblock.Commands.CommandDelivery;
 import me.kingingo.kSkyblock.Commands.CommandHomeaccept;
 import me.kingingo.kSkyblock.Commands.CommandParty;
 import me.kingingo.kcore.AACHack.AACHack;
@@ -22,8 +21,8 @@ import me.kingingo.kcore.Command.Admin.CommandGive;
 import me.kingingo.kcore.Command.Admin.CommandGroup;
 import me.kingingo.kcore.Command.Admin.CommandInvsee;
 import me.kingingo.kcore.Command.Admin.CommandItem;
+import me.kingingo.kcore.Command.Admin.CommandLocations;
 import me.kingingo.kcore.Command.Admin.CommandMore;
-import me.kingingo.kcore.Command.Admin.CommandPermissionTest;
 import me.kingingo.kcore.Command.Admin.CommandPvPMute;
 import me.kingingo.kcore.Command.Admin.CommandSocialspy;
 import me.kingingo.kcore.Command.Admin.CommandToggle;
@@ -114,7 +113,6 @@ import me.kingingo.kcore.Util.UtilTime;
 import me.kingingo.kcore.memory.MemoryFix;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -177,6 +175,7 @@ public class kSkyBlock extends JavaPlugin {
 		this.statsManager=new StatsManager(this,this.mysql,GameType.SKYBLOCK);
 		this.userData=new UserDataConfig(this);
 		this.hologram=new Hologram(this);
+		this.hologram.RemoveText();
 		this.cmd=new CommandHandler(this);
 		this.base=new InventoryBase(this);
 		this.gems=new GemsShop(getHologram(), getCmd(), getBase(), getPermissionManager(), ServerType.SKYBLOCK);
@@ -233,7 +232,7 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommandFlyspeed.class, new CommandFlyspeed());
 		this.cmd.register(CommandGive.class, new CommandGive());
 		this.cmd.register(CommandgBroadcast.class, new CommandgBroadcast(PacketManager));
-		this.cmd.register(CommandDelivery.class, new CommandDelivery(this));
+		this.cmd.register(CommandLocations.class, new CommandLocations(this));
 		cmd.register(CommandPerk.class, new CommandPerk(perkManager,getBase()));
 		
 		UtilServer.createDeliveryPet(new DeliveryPet(getBase(),null,new DeliveryObject[]{
@@ -288,7 +287,7 @@ public class kSkyBlock extends JavaPlugin {
 					}
 					
 				},TimeSpan.DAY*7),
-		},"§bThe Delivery Jockey!",EntityType.CHICKEN,CommandDelivery.getDelivery(),ServerType.SKYBLOCK,getHologram(),getMysql())
+		},"§bThe Delivery Jockey!",EntityType.CHICKEN,CommandLocations.getLocation("DeliveryPet"),ServerType.SKYBLOCK,getHologram(),getMysql())
 		);
 		
 		new PerkListener(perkManager);
