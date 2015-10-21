@@ -18,6 +18,7 @@ import me.kingingo.kcore.Command.Admin.CommandChatMute;
 import me.kingingo.kcore.Command.Admin.CommandFly;
 import me.kingingo.kcore.Command.Admin.CommandFlyspeed;
 import me.kingingo.kcore.Command.Admin.CommandGive;
+import me.kingingo.kcore.Command.Admin.CommandGiveAll;
 import me.kingingo.kcore.Command.Admin.CommandGroup;
 import me.kingingo.kcore.Command.Admin.CommandInvsee;
 import me.kingingo.kcore.Command.Admin.CommandItem;
@@ -184,7 +185,8 @@ public class kSkyBlock extends JavaPlugin {
 		this.teleport=new TeleportManager(getCmd(), getPermissionManager(), 5);
 		this.perkManager=new PerkManager(this,userData,new Perk[]{new PerkNoWaterdamage(),new PerkArrowPotionEffect(),new PerkHat(),new PerkGoldenApple(),new PerkNoHunger(),new PerkHealPotion(1),new PerkNoFiredamage(),new PerkRunner(0.35F),new PerkDoubleJump(),new PerkDoubleXP(),new PerkDropper(),new PerkGetXP(),new PerkPotionClear(),new PerkItemName(cmd)});
 		new SignShop(this,this.cmd, this.statsManager);
-		
+
+		this.cmd.register(CommandGiveAll.class, new CommandGiveAll());
 		this.cmd.register(CommandPet.class, new CommandPet(getPetHandler()));
 		this.cmd.register(CommandCMDMute.class, new CommandCMDMute(this));	
 		this.cmd.register(CommandPvPMute.class, new CommandPvPMute(this));	
