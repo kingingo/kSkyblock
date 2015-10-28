@@ -15,6 +15,7 @@ import me.kingingo.kcore.Command.CommandHandler;
 import me.kingingo.kcore.Command.Admin.CommandBroadcast;
 import me.kingingo.kcore.Command.Admin.CommandCMDMute;
 import me.kingingo.kcore.Command.Admin.CommandChatMute;
+import me.kingingo.kcore.Command.Admin.CommandDebug;
 import me.kingingo.kcore.Command.Admin.CommandFly;
 import me.kingingo.kcore.Command.Admin.CommandFlyspeed;
 import me.kingingo.kcore.Command.Admin.CommandGive;
@@ -186,6 +187,7 @@ public class kSkyBlock extends JavaPlugin {
 		this.perkManager=new PerkManager(this,userData,new Perk[]{new PerkNoWaterdamage(),new PerkArrowPotionEffect(),new PerkHat(),new PerkGoldenApple(),new PerkNoHunger(),new PerkHealPotion(1),new PerkNoFiredamage(),new PerkRunner(0.35F),new PerkDoubleJump(),new PerkDoubleXP(),new PerkDropper(),new PerkGetXP(),new PerkPotionClear(),new PerkItemName(cmd)});
 		new SignShop(this,this.cmd, this.statsManager);
 
+		this.cmd.register(CommandDebug.class, new CommandDebug());
 		this.cmd.register(CommandGiveAll.class, new CommandGiveAll());
 		this.cmd.register(CommandPet.class, new CommandPet(getPetHandler()));
 		this.cmd.register(CommandCMDMute.class, new CommandCMDMute(this));	
@@ -229,7 +231,7 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommandTp.class, new CommandTp());
 		this.cmd.register(CommandTpHere.class, new CommandTpHere());
 		this.cmd.register(CommandVanish.class, new CommandVanish(this));
-		this.cmd.register(CommandkSpawn.class, new CommandkSpawn());
+		this.cmd.register(CommandkSpawn.class, new CommandkSpawn(getAntiLogout()));
 		this.cmd.register(CommandMore.class, new CommandMore());
 		this.cmd.register(CommandFlyspeed.class, new CommandFlyspeed());
 		this.cmd.register(CommandGive.class, new CommandGive());
