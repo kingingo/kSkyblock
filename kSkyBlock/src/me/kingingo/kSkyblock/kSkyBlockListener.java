@@ -340,6 +340,7 @@ public class kSkyBlockListener extends kListener{
 	
 	public void restart(){
 		RestartScheduler restart = new RestartScheduler(getManager().getAntiLogout().getInstance());
+		restart.setGems(getManager().getGems().getGems());
 		restart.setAnti(getManager().getAntiLogout());
 		restart.setStats(getManager().getStatsManager());
 		restart.setUserData(getManager().getUserData());
