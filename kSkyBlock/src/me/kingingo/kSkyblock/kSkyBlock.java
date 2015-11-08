@@ -87,6 +87,7 @@ import me.kingingo.kcore.Kit.Perks.PerkNoWaterdamage;
 import me.kingingo.kcore.Kit.Perks.PerkPotionClear;
 import me.kingingo.kcore.Kit.Perks.PerkRunner;
 import me.kingingo.kcore.Language.Language;
+import me.kingingo.kcore.Listener.BungeeCordFirewall.BungeeCordFirewallListener;
 import me.kingingo.kcore.Listener.Chat.ChatListener;
 import me.kingingo.kcore.Listener.Command.ListenerCMD;
 import me.kingingo.kcore.Listener.EnderChest.EnderChestListener;
@@ -293,7 +294,7 @@ public class kSkyBlock extends JavaPlugin {
 				},TimeSpan.DAY*7),
 		},"§bThe Delivery Jockey!",EntityType.CHICKEN,CommandLocations.getLocation("DeliveryPet"),ServerType.SKYBLOCK,getHologram(),getMysql())
 		);
-		
+
 		new PerkListener(perkManager);
 		this.antiLogout=new AntiLogoutManager(this,AntiLogoutType.KILL,5);
 		this.manager=new SkyBlockManager(this);
@@ -305,6 +306,7 @@ public class kSkyBlock extends JavaPlugin {
 		Bukkit.getWorld("world").setStorm(false);
 		AACHack a = new AACHack("SKYBLOCK", mysql, PacketManager);
 		a.setAntiLogoutManager(getAntiLogout());
+		new BungeeCordFirewallListener(mysql, "sky");
 		new ListenerCMD(this);
 		new ChatListener(this,new SkyBlockGildenManager(manager, mysql, GildenType.SKY, cmd,getStatsManager()),permissionManager);
 		UtilServer.createLagListener(this.cmd);
