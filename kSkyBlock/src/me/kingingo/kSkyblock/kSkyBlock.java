@@ -187,6 +187,7 @@ public class kSkyBlock extends JavaPlugin {
 		this.teleport=new TeleportManager(getCmd(), getPermissionManager(), 5);
 		this.perkManager=new PerkManager(this,userData,new Perk[]{new PerkNoWaterdamage(),new PerkArrowPotionEffect(),new PerkHat(),new PerkGoldenApple(),new PerkNoHunger(),new PerkHealPotion(1),new PerkNoFiredamage(),new PerkRunner(0.35F),new PerkDoubleJump(),new PerkDoubleXP(),new PerkDropper(),new PerkGetXP(),new PerkPotionClear(),new PerkItemName(cmd)});
 		new SignShop(this,this.cmd, this.statsManager);
+		this.antiLogout=new AntiLogoutManager(this,AntiLogoutType.KILL,5);
 
 		this.cmd.register(CommandDebug.class, new CommandDebug());
 		this.cmd.register(CommandGiveAll.class, new CommandGiveAll());
@@ -296,7 +297,6 @@ public class kSkyBlock extends JavaPlugin {
 		);
 
 		new PerkListener(perkManager);
-		this.antiLogout=new AntiLogoutManager(this,AntiLogoutType.KILL,5);
 		this.manager=new SkyBlockManager(this);
 		this.ha=new CommandHomeaccept(manager);
 		getAntiLogout().setStats(statsManager);
