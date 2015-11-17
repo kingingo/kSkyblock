@@ -365,7 +365,7 @@ public class SkyBlockWorld extends kListener{
 	
 	@EventHandler
 	public void Fall(UpdateEvent ev){
-		if(ev.getType()!=UpdateType.SEC_3)return;
+		if(ev.getType()!=UpdateType.SEC_2)return;
 		for(Player player : getWorld().getPlayers()){
 			if(!player.isOnGround()&&player.getLocation().getBlockY()<=12){
 				player.teleport(Bukkit.getWorld("world").getSpawnLocation());
