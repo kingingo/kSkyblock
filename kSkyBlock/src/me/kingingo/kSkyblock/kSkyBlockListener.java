@@ -10,7 +10,6 @@ import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
 import me.kingingo.kcore.Packet.Packets.PLAYER_VOTE;
 import me.kingingo.kcore.Packet.Packets.TWITTER_PLAYER_FOLLOW;
-import me.kingingo.kcore.Permission.GroupTyp;
 import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.Permission.Event.PlayerLoadPermissionEvent;
 import me.kingingo.kcore.Scoreboard.Events.PlayerSetScoreboardEvent;
@@ -78,7 +77,7 @@ public class kSkyBlockListener extends kListener{
 			
 			if(UtilPlayer.isOnline(vote.getPlayer())){
 				if(UtilServer.getDeliveryPet()!=null){
-					 UtilServer.getDeliveryPet().deliveryUSE(Bukkit.getPlayer(vote.getPlayer()), Material.PAPER, true);
+					 UtilServer.getDeliveryPet().deliveryUSE(Bukkit.getPlayer(vote.getPlayer()), "§aVote for EpicPvP", true);
 				 }
 				
 				player=Bukkit.getPlayer(vote.getPlayer());
@@ -100,7 +99,7 @@ public class kSkyBlockListener extends kListener{
 					p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_FOLLOW_N"));
 					p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_REMOVE"));
 				}else{
-					UtilServer.getDeliveryPet().deliveryBlock(p, Material.getMaterial(351));
+					UtilServer.getDeliveryPet().deliveryBlock(p, "§cTwitter Reward");
 					getManager().getStatsManager().addDouble(p, 300, Stats.MONEY);
 					p.setLevel(p.getLevel()+15);
 					p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","300"}));
@@ -255,7 +254,7 @@ public class kSkyBlockListener extends kListener{
 		
 		if(vote_list.contains( UtilPlayer.getRealUUID(ev.getPlayer()) )){
 			if(UtilServer.getDeliveryPet()!=null){
-				 UtilServer.getDeliveryPet().deliveryUSE(ev.getPlayer(), Material.PAPER, true);
+				 UtilServer.getDeliveryPet().deliveryUSE(ev.getPlayer(), "§aVote for EpicPvP", true);
 			 }
 			
 			vote_list.remove(UtilPlayer.getRealUUID(ev.getPlayer()));

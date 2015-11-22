@@ -21,7 +21,6 @@ import me.kingingo.kcore.Command.Admin.CommandFlyspeed;
 import me.kingingo.kcore.Command.Admin.CommandGive;
 import me.kingingo.kcore.Command.Admin.CommandGiveAll;
 import me.kingingo.kcore.Command.Admin.CommandGroup;
-import me.kingingo.kcore.Command.Admin.CommandInvsee;
 import me.kingingo.kcore.Command.Admin.CommandItem;
 import me.kingingo.kcore.Command.Admin.CommandLocations;
 import me.kingingo.kcore.Command.Admin.CommandMore;
@@ -35,18 +34,25 @@ import me.kingingo.kcore.Command.Admin.CommandTrackingRange;
 import me.kingingo.kcore.Command.Admin.CommandURang;
 import me.kingingo.kcore.Command.Admin.CommandVanish;
 import me.kingingo.kcore.Command.Admin.CommandgBroadcast;
+import me.kingingo.kcore.Command.Commands.CommandAmboss;
 import me.kingingo.kcore.Command.Commands.CommandClearInventory;
 import me.kingingo.kcore.Command.Commands.CommandDelHome;
+import me.kingingo.kcore.Command.Commands.CommandEnchantmentTable;
 import me.kingingo.kcore.Command.Commands.CommandEnderchest;
+import me.kingingo.kcore.Command.Commands.CommandExt;
 import me.kingingo.kcore.Command.Commands.CommandFeed;
 import me.kingingo.kcore.Command.Commands.CommandHandel;
+import me.kingingo.kcore.Command.Commands.CommandHead;
 import me.kingingo.kcore.Command.Commands.CommandHeal;
 import me.kingingo.kcore.Command.Commands.CommandHome;
+import me.kingingo.kcore.Command.Commands.CommandInvsee;
 import me.kingingo.kcore.Command.Commands.CommandKit;
 import me.kingingo.kcore.Command.Commands.CommandMoney;
 import me.kingingo.kcore.Command.Commands.CommandMsg;
 import me.kingingo.kcore.Command.Commands.CommandNacht;
+import me.kingingo.kcore.Command.Commands.CommandNear;
 import me.kingingo.kcore.Command.Commands.CommandR;
+import me.kingingo.kcore.Command.Commands.CommandRemoveEnchantment;
 import me.kingingo.kcore.Command.Commands.CommandRenameItem;
 import me.kingingo.kcore.Command.Commands.CommandRepair;
 import me.kingingo.kcore.Command.Commands.CommandSetHome;
@@ -54,6 +60,7 @@ import me.kingingo.kcore.Command.Commands.CommandSonne;
 import me.kingingo.kcore.Command.Commands.CommandSpawn;
 import me.kingingo.kcore.Command.Commands.CommandSpawner;
 import me.kingingo.kcore.Command.Commands.CommandSpawnmob;
+import me.kingingo.kcore.Command.Commands.CommandSuffix;
 import me.kingingo.kcore.Command.Commands.CommandTag;
 import me.kingingo.kcore.Command.Commands.CommandWarp;
 import me.kingingo.kcore.Command.Commands.CommandXP;
@@ -239,10 +246,17 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommandGive.class, new CommandGive());
 		this.cmd.register(CommandgBroadcast.class, new CommandgBroadcast(PacketManager));
 		this.cmd.register(CommandLocations.class, new CommandLocations(this));
-		cmd.register(CommandPerk.class, new CommandPerk(perkManager,getBase()));
+		this.cmd.register(CommandPerk.class, new CommandPerk(perkManager,getBase()));
+		this.cmd.register(CommandSuffix.class, new CommandSuffix(getUserData()));
+		this.cmd.register(CommandAmboss.class, new CommandAmboss());
+		this.cmd.register(CommandNear.class, new CommandNear());
+		this.cmd.register(CommandRemoveEnchantment.class, new CommandRemoveEnchantment());
+		this.cmd.register(CommandEnchantmentTable.class, new CommandEnchantmentTable());
+		this.cmd.register(CommandExt.class, new CommandExt());
+		this.cmd.register(CommandHead.class, new CommandHead());
 		
 		UtilServer.createDeliveryPet(new DeliveryPet(getBase(),null,new DeliveryObject[]{
-			new DeliveryObject(new String[]{"","§7Click for Vote!","","§ePvP Rewards:","§7   200 Epics","§7   1x Inventory Repair","","§eGame Rewards:","§7   25 Gems","§7   100 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},null,false,10,"§aVote for EpicPvP",Material.PAPER,new Click(){
+			new DeliveryObject(new String[]{"","§7Click for Vote!","","§ePvP Rewards:","§7   200 Epics","§7   1x Inventory Repair","","§eGame Rewards:","§7   25 Gems","§7   100 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},kPermission.DELIVERY_PET_VOTE,false,28,"§aVote for EpicPvP",Material.PAPER,Material.REDSTONE_BLOCK,new Click(){
 
 					@Override
 					public void onClick(Player p, ActionType a,Object obj) {
@@ -255,31 +269,65 @@ public class kSkyBlock extends JavaPlugin {
 					}
 					
 				},-1),
-				new DeliveryObject(new String[]{"§aOnly for Premium Players!","","§ePvP Rewards:","§7   200 Epics","§7   10 Level","","§eGame Rewards:","§7   200 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},kPermission.RANK_COINS_DAILY,true,12,"§cRank Day Reward",Material.EMERALD,new Click(){
+				new DeliveryObject(new String[]{"§aOnly for §eVIP§a!","","§ePvP Rewards:","§7   200 Epics","§7   10 Level","","§eGame Rewards:","§7   200 Coins","§7   2x TTT Paesse","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},kPermission.DELIVERY_PET_VIP_WEEK,true,11,"§cRank §eVIP§c Reward",Material.getMaterial(342),Material.MINECART,new Click(){
 
 					@Override
 					public void onClick(Player p, ActionType a,Object obj) {
 						getStatsManager().addDouble(p, 200, Stats.MONEY);
-						p.getInventory().addItem(new ItemStack(Material.DIAMOND,2));
-						p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
-						p.getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
+						p.setLevel(p.getLevel()+10);
 						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","200"}));
 					}
 					
-				},TimeSpan.DAY),
-				new DeliveryObject(new String[]{"§aOnly for Premium Players!","","§ePvP Rewards:","§7   5000 Epics","§7   5x Golden Apple","","§eGame Rewards:","§7   5000 Coins","§7   5x TTT Paesse","","§eSkyBlock Rewards:","§7   5000 Epics","§7   15x Diamonds","§7   15x Iron Ingot","§7   15x Gold Ingot"},kPermission.RANK_COINS_MONTH,true,14,"§cRank Month Reward",Material.EMERALD_BLOCK,new Click(){
+				},TimeSpan.DAY*7),
+				new DeliveryObject(new String[]{"§aOnly for §6ULTRA§a!","","§ePvP Rewards:","§7   300 Epics","§7   15 Level","","§eGame Rewards:","§7   300 Coins","§7   2x TTT Paesse","","§eSkyBlock Rewards:","§7   300 Epics","§7   4x Diamonds","§7   4x Iron Ingot","§7   4x Gold Ingot"},kPermission.DELIVERY_PET_ULTRA_WEEK,true,12,"§cRank §6ULTRA§c Reward",Material.getMaterial(342),Material.MINECART,new Click(){
 
 					@Override
 					public void onClick(Player p, ActionType a,Object obj) {
-						getStatsManager().addDouble(p, 5000, Stats.MONEY);
-						p.getInventory().addItem(new ItemStack(Material.DIAMOND,15));
-						p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,15));
-						p.getInventory().addItem(new ItemStack(Material.IRON_INGOT,15));
-						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","5000"}));
+						getStatsManager().addDouble(p, 300, Stats.MONEY);
+						p.getInventory().addItem(new ItemStack(Material.DIAMOND,2));
+						p.getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
+						p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
+						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","300"}));
 					}
 					
-				},TimeSpan.DAY*30),
-				new DeliveryObject(new String[]{"§7/twitter [TwitterName]","","§ePvP Rewards:","§7   300 Epics","§7   15 Level","","§eGame Rewards:","§7   300 Coins","","§eSkyBlock Rewards:","§7   300 Epics","§7   15 Level"},null,false,16,"§cTwitter Reward",Material.getMaterial(351),4,new Click(){
+				},TimeSpan.DAY*7),
+				new DeliveryObject(new String[]{"§aOnly for §5LEGEND§a!","","§ePvP Rewards:","§7   400 Epics","§7   20 Level","","§eGame Rewards:","§7   400 Coins","§7   3x TTT Paesse","","§eSkyBlock Rewards:","§7   400 Epics","§7   6x Diamonds","§7   6x Iron Ingot","§7   6x Gold Ingot"},kPermission.DELIVERY_PET_LEGEND_WEEK,true,13,"§cRank §5LEGEND§c Reward",Material.getMaterial(342),Material.MINECART,new Click(){
+
+					@Override
+					public void onClick(Player p, ActionType a,Object obj) {
+						getStatsManager().addDouble(p, 400, Stats.MONEY);
+						p.getInventory().addItem(new ItemStack(Material.DIAMOND,4));
+						p.getInventory().addItem(new ItemStack(Material.IRON_INGOT,4));
+						p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,4));
+						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","400"}));
+					}
+					
+				},TimeSpan.DAY*7),
+				new DeliveryObject(new String[]{"§aOnly for §3MVP§a!","","§ePvP Rewards:","§7   500 Epics","§7   25 Level","","§eGame Rewards:","§7   500 Coins","§7   3x TTT Paesse","","§eSkyBlock Rewards:","§7   500 Epics","§7   8x Diamonds","§7   8x Iron Ingot","§7   8x Gold Ingot"},kPermission.DELIVERY_PET_MVP_WEEK,true,14,"§cRank §3MVP§c Reward",Material.getMaterial(342),Material.MINECART,new Click(){
+
+					@Override
+					public void onClick(Player p, ActionType a,Object obj) {
+						getStatsManager().addDouble(p, 500, Stats.MONEY);
+						p.getInventory().addItem(new ItemStack(Material.DIAMOND,4));
+						p.getInventory().addItem(new ItemStack(Material.IRON_INGOT,4));
+						p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,4));
+						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","500"}));
+					}
+					
+				},TimeSpan.DAY*7),
+				new DeliveryObject(new String[]{"§aOnly for §9MVP§e+§a!","","§ePvP Rewards:","§7   600 Epics","§7   30 Level","","§eGame Rewards:","§7   600 Coins","§7   4x TTT Paesse","","§eSkyBlock Rewards:","§7   600 Epics","§7   10x Diamonds","§7   10x Iron Ingot","§7   10x Gold Ingot"},kPermission.DELIVERY_PET_MVPPLUS_WEEK,true,15,"§cRank §9MVP§e+§c Reward",Material.getMaterial(342),Material.MINECART,new Click(){
+
+					@Override
+					public void onClick(Player p, ActionType a,Object obj) {
+						getStatsManager().addDouble(p, 600, Stats.MONEY);
+						p.getInventory().addItem(new ItemStack(Material.DIAMOND,6));
+						p.getInventory().addItem(new ItemStack(Material.IRON_INGOT,6));
+						p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,6));
+						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","600"}));
+					}
+					
+				},TimeSpan.DAY*7),
+				new DeliveryObject(new String[]{"§7/twitter [TwitterName]","","§ePvP Rewards:","§7   300 Epics","§7   15 Level","","§eGame Rewards:","§7   300 Coins","","§eSkyBlock Rewards:","§7   300 Epics","§7   15 Level"},kPermission.DELIVERY_PET_TWITTER,false,34,"§cTwitter Reward",Material.getMaterial(351),4,new Click(){
 
 					@Override
 					public void onClick(Player p, ActionType a,Object obj) {
@@ -308,7 +356,7 @@ public class kSkyBlock extends JavaPlugin {
 		a.setAntiLogoutManager(getAntiLogout());
 		new BungeeCordFirewallListener(mysql, "sky");
 		new ListenerCMD(this);
-		new ChatListener(this,new SkyBlockGildenManager(manager, mysql, GildenType.SKY, cmd,getStatsManager()),permissionManager);
+		new ChatListener(this,new SkyBlockGildenManager(manager, mysql, GildenType.SKY, cmd,getStatsManager()),permissionManager,getUserData());
 		UtilServer.createLagListener(this.cmd);
 		DebugLog(time, 45, this.getClass().getName());
 		}catch(Exception e){
