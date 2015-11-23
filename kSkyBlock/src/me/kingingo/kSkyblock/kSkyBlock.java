@@ -63,6 +63,7 @@ import me.kingingo.kcore.Command.Commands.CommandSpawnmob;
 import me.kingingo.kcore.Command.Commands.CommandSuffix;
 import me.kingingo.kcore.Command.Commands.CommandTag;
 import me.kingingo.kcore.Command.Commands.CommandWarp;
+import me.kingingo.kcore.Command.Commands.CommandWorkbench;
 import me.kingingo.kcore.Command.Commands.CommandXP;
 import me.kingingo.kcore.Command.Commands.CommandkSpawn;
 import me.kingingo.kcore.DeliveryPet.DeliveryObject;
@@ -253,6 +254,7 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommandRemoveEnchantment.class, new CommandRemoveEnchantment());
 		this.cmd.register(CommandEnchantmentTable.class, new CommandEnchantmentTable());
 		this.cmd.register(CommandExt.class, new CommandExt());
+		this.cmd.register(CommandWorkbench.class, new CommandWorkbench());
 		this.cmd.register(CommandHead.class, new CommandHead());
 		
 		UtilServer.createDeliveryPet(new DeliveryPet(getBase(),null,new DeliveryObject[]{
