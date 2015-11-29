@@ -7,9 +7,14 @@ import lombok.Getter;
 import me.kingingo.kSkyblock.Commands.CommadSkyBlock;
 import me.kingingo.kSkyblock.Commands.CommandHomeaccept;
 import me.kingingo.kSkyblock.Commands.CommandParty;
+import me.kingingo.kSkyblock.Listener.PerkListener;
+import me.kingingo.kSkyblock.Listener.kSkyBlockListener;
+import me.kingingo.kSkyblock.Listener.Holiday.ChristmasListener;
 import me.kingingo.kcore.AACHack.AACHack;
+import me.kingingo.kcore.Addons.AddonNight;
 import me.kingingo.kcore.AntiLogout.AntiLogoutManager;
 import me.kingingo.kcore.AntiLogout.AntiLogoutType;
+import me.kingingo.kcore.Calendar.Calendar;
 import me.kingingo.kcore.Client.Client;
 import me.kingingo.kcore.Command.CommandHandler;
 import me.kingingo.kcore.Command.Admin.CommandBroadcast;
@@ -51,6 +56,7 @@ import me.kingingo.kcore.Command.Commands.CommandMoney;
 import me.kingingo.kcore.Command.Commands.CommandMsg;
 import me.kingingo.kcore.Command.Commands.CommandNacht;
 import me.kingingo.kcore.Command.Commands.CommandNear;
+import me.kingingo.kcore.Command.Commands.CommandPotion;
 import me.kingingo.kcore.Command.Commands.CommandR;
 import me.kingingo.kcore.Command.Commands.CommandRemoveEnchantment;
 import me.kingingo.kcore.Command.Commands.CommandRenameItem;
@@ -256,6 +262,7 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommandExt.class, new CommandExt());
 		this.cmd.register(CommandWorkbench.class, new CommandWorkbench());
 		this.cmd.register(CommandHead.class, new CommandHead());
+		this.cmd.register(CommandPotion.class, new CommandPotion(getPermissionManager()));
 		
 		UtilServer.createDeliveryPet(new DeliveryPet(getBase(),null,new DeliveryObject[]{
 			new DeliveryObject(new String[]{"","§7Click for Vote!","","§ePvP Rewards:","§7   200 Epics","§7   1x Inventory Repair","","§eGame Rewards:","§7   25 Gems","§7   100 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},kPermission.DELIVERY_PET_VOTE,false,28,"§aVote for EpicPvP",Material.PAPER,Material.REDSTONE_BLOCK,new Click(){
@@ -346,7 +353,6 @@ public class kSkyBlock extends JavaPlugin {
 		},"§bThe Delivery Jockey!",EntityType.CHICKEN,CommandLocations.getLocation("DeliveryPet"),ServerType.SKYBLOCK,getHologram(),getMysql())
 		);
 
-		new PerkListener(perkManager);
 		this.manager=new SkyBlockManager(this);
 		this.ha=new CommandHomeaccept(manager);
 		getAntiLogout().setStats(statsManager);
@@ -356,9 +362,21 @@ public class kSkyBlock extends JavaPlugin {
 		Bukkit.getWorld("world").setStorm(false);
 		AACHack a = new AACHack("SKYBLOCK", mysql, PacketManager);
 		a.setAntiLogoutManager(getAntiLogout());
+		
+		new PerkListener(perkManager);
 		new BungeeCordFirewallListener(mysql, "sky");
 		new ListenerCMD(this);
 		new ChatListener(this,new SkyBlockGildenManager(manager, mysql, GildenType.SKY, cmd,getStatsManager()),permissionManager,getUserData());
+		
+		
+		if(Calendar.getHoliday()!=null){
+			switch(Calendar.holiday){
+			case WEIHNACHTEN:
+					new ChristmasListener(this);
+				break;
+			}
+		}
+		
 		UtilServer.createLagListener(this.cmd);
 		DebugLog(time, 45, this.getClass().getName());
 		}catch(Exception e){

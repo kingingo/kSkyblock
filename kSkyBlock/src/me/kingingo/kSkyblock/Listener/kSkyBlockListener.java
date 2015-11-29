@@ -1,10 +1,11 @@
-package me.kingingo.kSkyblock;
+package me.kingingo.kSkyblock.Listener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
 import lombok.Getter;
+import me.kingingo.kSkyblock.kSkyBlock;
 import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;

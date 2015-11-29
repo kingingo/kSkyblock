@@ -1,4 +1,4 @@
-package me.kingingo.kSkyblock;
+package me.kingingo.kSkyblock.Listener;
 
 import me.kingingo.kcore.Kit.PerkManager;
 import me.kingingo.kcore.Listener.kListener;
