@@ -8,6 +8,7 @@ import me.kingingo.kSkyblock.World.SkyBlockWorld;
 import me.kingingo.kcore.Command.CommandHandler.Sender;
 import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Permission.kPermission;
+import me.kingingo.kcore.TeleportManager.Teleporter;
 import me.kingingo.kcore.Util.UtilPlayer;
 
 import org.bukkit.Bukkit;
@@ -116,7 +117,7 @@ public class CommadSkyBlock implements CommandExecutor{
 						}
 						if(getInstance().getManager().haveIsland(p)){
 							SkyBlockWorld world = getInstance().getManager().getIsland(p);
-							p.teleport(world.getIslandHome(p));
+							getInstance().getTeleport().getTeleport().add(new Teleporter(p, world.getIslandHome(p), 3));
 							p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_TELEPORT_HOME"));
 						}else{
 							p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_NO_ISLAND"));
@@ -126,7 +127,7 @@ public class CommadSkyBlock implements CommandExecutor{
 							Player tp = Bukkit.getPlayer(args[1]);
 							if(getInstance().getManager().haveIsland(tp)){
 								SkyBlockWorld world = getInstance().getManager().getIsland(tp);
-								p.teleport(world.getIslandHome(tp));
+								getInstance().getTeleport().getTeleport().add(new Teleporter(p,tp, world.getIslandHome(tp), 3));
 								p.sendMessage(Language.getText(p, "PREFIX")+"§aDu wurdest zur Insel teleportiert.");
 							}else{
 								p.sendMessage(Language.getText(p, "PREFIX")+"Er hat keine Insel.");
@@ -154,7 +155,7 @@ public class CommadSkyBlock implements CommandExecutor{
 							return false;
 						}
 						SkyBlockWorld world = getInstance().getManager().getIsland(p);
-						p.teleport(world.getIslandFixHome(p));
+						getInstance().getTeleport().getTeleport().add(new Teleporter(p, world.getIslandFixHome(p), 3));
 						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_TELEPORT_HOME"));
 					}else{
 						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_NO_ISLAND"));

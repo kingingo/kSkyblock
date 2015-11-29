@@ -14,11 +14,15 @@ import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.MySQL.MySQLErr;
 import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
+import me.kingingo.kcore.PacketAPI.Packets.kPacketPlayOutWorldBorder;
 import me.kingingo.kcore.Permission.kPermission;
+import me.kingingo.kcore.TeleportManager.Events.PlayerTeleportedEvent;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.UtilBlock;
 import me.kingingo.kcore.Util.UtilEvent;
+import me.kingingo.kcore.Util.UtilPlayer;
+import me.kingingo.kcore.Util.UtilWorld;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
 
 import org.bukkit.Bukkit;
@@ -88,6 +92,14 @@ public class SkyBlockGildenWorld extends kListener{
 		this.session=new EditSession(new BukkitWorld(getWorld()), 999999999);
 		loadIslands();
 		addIslands(anzahl);
+	}
+	
+	public kPacketPlayOutWorldBorder getIslandBorder(Player player){
+		if(islands.containsKey(gilde.getPlayerGilde(player))){
+			return UtilWorld.createWorldBorder(islands.get(gilde.getPlayerGilde(player)), radius*2, 25, 10);
+		}else{
+			return null;
+		}
 	}
 	
 	@EventHandler

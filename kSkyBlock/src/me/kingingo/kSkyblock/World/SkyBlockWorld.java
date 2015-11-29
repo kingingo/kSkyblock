@@ -15,6 +15,9 @@ import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.MySQL.MySQLErr;
 import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
+import me.kingingo.kcore.PacketAPI.Packets.kPacketPlayOutWorldBorder;
+import me.kingingo.kcore.TeleportManager.Teleporter;
+import me.kingingo.kcore.TeleportManager.Events.PlayerTeleportedEvent;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.UtilBlock;
@@ -23,6 +26,7 @@ import me.kingingo.kcore.Util.UtilEvent.ActionType;
 import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilScoreboard;
 import me.kingingo.kcore.Util.UtilServer;
+import me.kingingo.kcore.Util.UtilWorld;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -58,6 +62,7 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Scoreboard;
@@ -100,8 +105,14 @@ public class SkyBlockWorld extends kListener{
 	}
 	
 	@EventHandler
-	public void Block(BlockPistonExtendEvent ev){
-		
+	public void teleported(PlayerTeleportedEvent ev){
+		if(ev.getTeleporter().getLoc_to().getWorld().getUID() == getWorld().getUID()&&ev.getTeleporter().getFrom()!=null){
+			if(isInIsland(ev.getTeleporter().getFrom(), ev.getTeleporter().getLoc_to())){
+				UtilPlayer.sendPacket(ev.getTeleporter().getFrom(), getIslandBorder(ev.getTeleporter().getFrom()));
+			}else if(ev.getTeleporter().getTo()!=null&&isInIsland(ev.getTeleporter().getTo(), ev.getTeleporter().getLoc_to())){
+				UtilPlayer.sendPacket(ev.getTeleporter().getFrom(), getIslandBorder(ev.getTeleporter().getTo()));
+			}
+		}
 	}
 	
 	@EventHandler
@@ -221,14 +232,14 @@ public class SkyBlockWorld extends kListener{
 	
 	public boolean homeParty(Player player){
 		if(getPartys().containsKey(player)){
-			player.teleport(getIslandHome(player));
+			getManager().getInstance().getTeleport().getTeleport().add(new Teleporter(player, getIslandHome(player),3));
 			return true;
 		}else{
 			boolean b = false;
 			for(Player owner : getPartys().keySet()){
 				if(getPartys().get(owner).contains(player.getName().toLowerCase())){
 					b=true;
-					player.teleport(getIslandHome(owner));
+					getManager().getInstance().getTeleport().getTeleport().add(new Teleporter(player, owner, getIslandHome(owner), 3));
 					break;
 				}
 			}
@@ -628,6 +639,22 @@ public class SkyBlockWorld extends kListener{
 		}
 	}
 	
+	public kPacketPlayOutWorldBorder getIslandBorder(Player player){
+		return getIslandBorder(UtilPlayer.getRealUUID(player));
+	}
+	
+	public kPacketPlayOutWorldBorder getIslandBorder(UUID uuid){
+		return getIslandBorder(uuid.toString());
+	}
+	
+	public kPacketPlayOutWorldBorder getIslandBorder(String uuid){
+		if(islands.containsKey(uuid)){
+			return UtilWorld.createWorldBorder(islands.get(uuid), radius*2, 25, 10);
+		}else{
+			return null;
+		}
+	}
+	
 	public Location getIslandFixHome(Player player){
 		Location loc = getIslandHome(player);
 		loc.getBlock().setType(Material.AIR);
@@ -808,7 +835,6 @@ public class SkyBlockWorld extends kListener{
 			if(island!=null){
 				int x = islands.get(island).getBlockX();
 				int z = islands.get(island).getBlockZ();
-				//Log("Island: "+island+" X:"+x+" Z:"+z);
 				islands.remove(island);
 				islands.put(uuid.toString(), new Location(world,x,0,z));
 				getManager().getInstance().getMysql().Update("UPDATE list_skyblock_worlds SET uuid='"+uuid+"' WHERE worldName='"+world.getName()+"' AND uuid='"+island+"' AND X='"+x+"' AND Z='"+z+"'");
@@ -860,15 +886,18 @@ public class SkyBlockWorld extends kListener{
 	public boolean isInIsland(Location loc,Location loc1){
 		return (loc.getX()-radius) <= loc1.getX() && (loc.getZ()-radius) <= loc1.getZ() && loc.getBlockX() >= loc1.getBlockX() && loc.getBlockZ() >= loc1.getBlockZ();
 	}
+
+	public void setBiome(UUID uuid,Biome biome){
+		setBiome(uuid.toString(), biome);
+	}
 	
-	public void setBiome(String player,Biome biome){
-		player=player.toLowerCase();
-		if(islands.containsKey(player)){
-			int min_x = islands.get(player).getBlockX()-radius;
-			int max_x = islands.get(player).getBlockX();
+	public void setBiome(String uuid,Biome biome){
+		if(islands.containsKey(uuid)){
+			int min_x = islands.get(uuid).getBlockX()-radius;
+			int max_x = islands.get(uuid).getBlockX();
 			
-			int min_z = islands.get(player).getBlockZ()-radius;
-			int max_z = islands.get(player).getBlockZ();
+			int min_z = islands.get(uuid).getBlockZ()-radius;
+			int max_z = islands.get(uuid).getBlockZ();
 			
 			for(int x = min_x; x < max_x; x++){
 				for(int z = min_z; z < max_z; z++){

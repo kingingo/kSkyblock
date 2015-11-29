@@ -46,6 +46,7 @@ import me.kingingo.kcore.Command.Commands.CommandEnchantmentTable;
 import me.kingingo.kcore.Command.Commands.CommandEnderchest;
 import me.kingingo.kcore.Command.Commands.CommandExt;
 import me.kingingo.kcore.Command.Commands.CommandFeed;
+import me.kingingo.kcore.Command.Commands.CommandFill;
 import me.kingingo.kcore.Command.Commands.CommandHandel;
 import me.kingingo.kcore.Command.Commands.CommandHead;
 import me.kingingo.kcore.Command.Commands.CommandHeal;
@@ -263,6 +264,7 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommandWorkbench.class, new CommandWorkbench());
 		this.cmd.register(CommandHead.class, new CommandHead());
 		this.cmd.register(CommandPotion.class, new CommandPotion(getPermissionManager()));
+		this.cmd.register(CommandFill.class, new CommandFill());
 		
 		UtilServer.createDeliveryPet(new DeliveryPet(getBase(),null,new DeliveryObject[]{
 			new DeliveryObject(new String[]{"","§7Click for Vote!","","§ePvP Rewards:","§7   200 Epics","§7   1x Inventory Repair","","§eGame Rewards:","§7   25 Gems","§7   100 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},kPermission.DELIVERY_PET_VOTE,false,28,"§aVote for EpicPvP",Material.PAPER,Material.REDSTONE_BLOCK,new Click(){
