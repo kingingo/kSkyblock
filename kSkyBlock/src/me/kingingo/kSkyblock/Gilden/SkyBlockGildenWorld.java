@@ -95,8 +95,11 @@ public class SkyBlockGildenWorld extends kListener{
 	}
 	
 	public kPacketPlayOutWorldBorder getIslandBorder(Player player){
+		if(player.hasPermission(kPermission.SKYBLOCK_ISLAND_BORDER_BYPASS.getPermissionToString())){
+			return null;
+		}
 		if(islands.containsKey(gilde.getPlayerGilde(player))){
-			return UtilWorld.createWorldBorder(islands.get(gilde.getPlayerGilde(player)), radius*2, 25, 10);
+			return UtilWorld.createWorldBorder(new Location(getWorld(), (islands.get(gilde.getPlayerGilde(player)).getX()-(radius/2)) ,30, (islands.get(gilde.getPlayerGilde(player)).getZ()-(radius/2)) ), radius, 25, 10);
 		}else{
 			return null;
 		}

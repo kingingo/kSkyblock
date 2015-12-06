@@ -16,6 +16,7 @@ import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.MySQL.MySQLErr;
 import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
 import me.kingingo.kcore.PacketAPI.Packets.kPacketPlayOutWorldBorder;
+import me.kingingo.kcore.Permission.kPermission;
 import me.kingingo.kcore.TeleportManager.Teleporter;
 import me.kingingo.kcore.TeleportManager.Events.PlayerTeleportedEvent;
 import me.kingingo.kcore.Update.UpdateType;
@@ -49,7 +50,6 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -62,7 +62,6 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Scoreboard;
@@ -104,16 +103,16 @@ public class SkyBlockWorld extends kListener{
 		addIslands(anzahl);
 	}
 	
-	@EventHandler
-	public void teleported(PlayerTeleportedEvent ev){
-		if(ev.getTeleporter().getLoc_to().getWorld().getUID() == getWorld().getUID()&&ev.getTeleporter().getFrom()!=null){
-			if(isInIsland(ev.getTeleporter().getFrom(), ev.getTeleporter().getLoc_to())){
-				UtilPlayer.sendPacket(ev.getTeleporter().getFrom(), getIslandBorder(ev.getTeleporter().getFrom()));
-			}else if(ev.getTeleporter().getTo()!=null&&isInIsland(ev.getTeleporter().getTo(), ev.getTeleporter().getLoc_to())){
-				UtilPlayer.sendPacket(ev.getTeleporter().getFrom(), getIslandBorder(ev.getTeleporter().getTo()));
-			}
-		}
-	}
+//	@EventHandler
+//	public void teleported(PlayerTeleportedEvent ev){
+//		if(ev.getTeleporter().getLoc_to().getWorld().getUID() == getWorld().getUID()&&ev.getTeleporter().getFrom()!=null){
+//			if(isInIsland(ev.getTeleporter().getFrom(), ev.getTeleporter().getLoc_to())){
+//				UtilPlayer.sendPacket(ev.getTeleporter().getFrom(), getIslandBorder(ev.getTeleporter().getFrom()));
+//			}else if(ev.getTeleporter().getTo()!=null&&isInIsland(ev.getTeleporter().getTo(), ev.getTeleporter().getLoc_to())){
+//				UtilPlayer.sendPacket(ev.getTeleporter().getFrom(), getIslandBorder(ev.getTeleporter().getTo()));
+//			}
+//		}
+//	}
 	
 	@EventHandler
 	public void QuitParty(PlayerQuitEvent ev){
@@ -344,11 +343,13 @@ public class SkyBlockWorld extends kListener{
 	@EventHandler
 	public void Home(PlayerSetHomeEvent ev){
 		if(ev.getHome().getWorld()==getWorld()){
-			for(String uuid : islands.keySet()){
-				if(uuid.startsWith("-"))continue;
-				if( (islands.get(uuid).getBlockX()-radius <= ev.getHome().getBlockX() && islands.get(uuid).getBlockX() >= ev.getHome().getBlockX()) && (islands.get(uuid).getBlockZ()-radius <= ev.getHome().getBlockZ() && islands.get(uuid).getBlockZ() >= ev.getHome().getBlockZ()) ){
-					for(Player player : UtilServer.getPlayers()){
-						if(!player.getName().equalsIgnoreCase(ev.getPlayer().getName())&&UtilPlayer.getRealUUID(player).toString().equalsIgnoreCase(uuid)){
+			if(islands.containsKey(UtilPlayer.getRealUUID(ev.getPlayer()).toString())
+					&&isInIsland(ev.getPlayer(), ev.getHome()))return;
+			
+			for(Player player : UtilServer.getPlayers()){
+				if(islands.containsKey(UtilPlayer.getRealUUID(player).toString())){
+					if( (islands.get(UtilPlayer.getRealUUID(player).toString()).getBlockX()-radius <= ev.getHome().getBlockX() && islands.get(UtilPlayer.getRealUUID(player).toString()).getBlockX() >= ev.getHome().getBlockX()) && (islands.get(UtilPlayer.getRealUUID(player).toString()).getBlockZ()-radius <= ev.getHome().getBlockZ() && islands.get(UtilPlayer.getRealUUID(player).toString()).getBlockZ() >= ev.getHome().getBlockZ()) ){
+						if(!player.getName().equalsIgnoreCase(ev.getPlayer().getName())&&UtilPlayer.getRealUUID(player).toString().equalsIgnoreCase(UtilPlayer.getRealUUID(player).toString())){
 							if(getManager().getInstance().getHa().list.containsKey(player)){
 								getManager().getInstance().getHa().list.remove(player);
 								getManager().getInstance().getHa().list_loc.remove(player);
@@ -363,10 +364,10 @@ public class SkyBlockWorld extends kListener{
 							break;
 						}
 					}
-					break;
 				}
 			}
-			
+				
+				
 			if(ev.getReason()==null){
 				ev.setCancelled(true);
 				ev.setReason("Der Spieler der Insel ist nicht Online!");
@@ -640,6 +641,9 @@ public class SkyBlockWorld extends kListener{
 	}
 	
 	public kPacketPlayOutWorldBorder getIslandBorder(Player player){
+		if(player.hasPermission(kPermission.SKYBLOCK_ISLAND_BORDER_BYPASS.getPermissionToString())){
+			return null;
+		}
 		return getIslandBorder(UtilPlayer.getRealUUID(player));
 	}
 	
@@ -649,7 +653,7 @@ public class SkyBlockWorld extends kListener{
 	
 	public kPacketPlayOutWorldBorder getIslandBorder(String uuid){
 		if(islands.containsKey(uuid)){
-			return UtilWorld.createWorldBorder(islands.get(uuid), radius*2, 25, 10);
+			return UtilWorld.createWorldBorder(new Location(getWorld(), (islands.get(uuid).getX()-(radius/2)) ,90, (islands.get(uuid).getZ()-(radius/2)) ), radius, 25, 10);
 		}else{
 			return null;
 		}
