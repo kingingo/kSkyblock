@@ -103,16 +103,16 @@ public class SkyBlockWorld extends kListener{
 		addIslands(anzahl);
 	}
 	
-//	@EventHandler
-//	public void teleported(PlayerTeleportedEvent ev){
-//		if(ev.getTeleporter().getLoc_to().getWorld().getUID() == getWorld().getUID()&&ev.getTeleporter().getFrom()!=null){
-//			if(isInIsland(ev.getTeleporter().getFrom(), ev.getTeleporter().getLoc_to())){
-//				UtilPlayer.sendPacket(ev.getTeleporter().getFrom(), getIslandBorder(ev.getTeleporter().getFrom()));
-//			}else if(ev.getTeleporter().getTo()!=null&&isInIsland(ev.getTeleporter().getTo(), ev.getTeleporter().getLoc_to())){
-//				UtilPlayer.sendPacket(ev.getTeleporter().getFrom(), getIslandBorder(ev.getTeleporter().getTo()));
-//			}
-//		}
-//	}
+	@EventHandler
+	public void teleported(PlayerTeleportedEvent ev){
+		if(ev.getTeleporter().getLoc_to().getWorld().getUID() == getWorld().getUID()&&ev.getTeleporter().getFrom()!=null){
+			if(isInIsland(ev.getTeleporter().getFrom(), ev.getTeleporter().getLoc_to())){
+				UtilPlayer.sendPacket(ev.getTeleporter().getFrom(), getIslandBorder(ev.getTeleporter().getFrom()));
+			}else if(ev.getTeleporter().getTo()!=null&&isInIsland(ev.getTeleporter().getTo(), ev.getTeleporter().getLoc_to())){
+				UtilPlayer.sendPacket(ev.getTeleporter().getFrom(), getIslandBorder(ev.getTeleporter().getTo()));
+			}
+		}
+	}
 	
 	@EventHandler
 	public void QuitParty(PlayerQuitEvent ev){
@@ -420,41 +420,6 @@ public class SkyBlockWorld extends kListener{
 			}
 		}
 	}
-	
-//	Player move;
-//	World move_world;
-//	boolean result;
-//	Location newLoc;
-//	@EventHandler(priority=EventPriority.HIGH)
-//    public void onPlayerMove(PlayerMoveEvent event){
-//      move = event.getPlayer();
-//      
-//      if(move.isOp()||move.hasPermission(kPermission.SKYBLOCK_ISLAND_BYPASS.getPermissionToString())){
-//    	  return;
-//      }
-//      
-//      world = move.getWorld();
-//      if (move.getVehicle() != null||move_world!=getWorld()) {
-//        return;
-//      }
-//      
-//        if ((event.getFrom().getBlockX() != event.getTo().getBlockX()) || 
-//          (event.getFrom().getBlockY() != event.getTo().getBlockY()) || 
-//          (event.getFrom().getBlockZ() != event.getTo().getBlockZ())) {
-//          result = isInIsland(event.getPlayer(), event.getTo());
-//          if (!result) {  
-//        	 if(getParty_island().containsKey(event.getPlayer().getName().toLowerCase())&&isInIsland(getParty_island().get(event.getPlayer().getName().toLowerCase()), event.getTo())){
-//  				return;
-//  			 }
-//        	  
-//            newLoc = event.getFrom();
-//            newLoc.setX(newLoc.getBlockX() + 0.5D);
-//            newLoc.setY(newLoc.getBlockY());
-//            newLoc.setZ(newLoc.getBlockZ() + 0.5D);
-//            event.setTo(newLoc);
-//          }
-//      }
-//    }
 	
 	@EventHandler
 	public void Damage(EntityDamageByEntityEvent ev){

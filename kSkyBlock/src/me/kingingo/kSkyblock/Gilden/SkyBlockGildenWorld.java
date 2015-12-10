@@ -16,14 +16,12 @@ import me.kingingo.kcore.MySQL.MySQLErr;
 import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
 import me.kingingo.kcore.PacketAPI.Packets.kPacketPlayOutWorldBorder;
 import me.kingingo.kcore.Permission.kPermission;
-import me.kingingo.kcore.TeleportManager.Events.PlayerTeleportedEvent;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.UtilBlock;
 import me.kingingo.kcore.Util.UtilEvent;
-import me.kingingo.kcore.Util.UtilPlayer;
-import me.kingingo.kcore.Util.UtilWorld;
 import me.kingingo.kcore.Util.UtilEvent.ActionType;
+import me.kingingo.kcore.Util.UtilWorld;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

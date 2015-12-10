@@ -11,7 +11,6 @@ import me.kingingo.kSkyblock.Listener.PerkListener;
 import me.kingingo.kSkyblock.Listener.kSkyBlockListener;
 import me.kingingo.kSkyblock.Listener.Holiday.ChristmasListener;
 import me.kingingo.kcore.AACHack.AACHack;
-import me.kingingo.kcore.Addons.AddonNight;
 import me.kingingo.kcore.AntiLogout.AntiLogoutManager;
 import me.kingingo.kcore.AntiLogout.AntiLogoutType;
 import me.kingingo.kcore.Calendar.Calendar;
