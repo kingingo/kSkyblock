@@ -35,6 +35,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
@@ -196,9 +197,11 @@ public class kSkyBlockListener extends kListener{
 		}
 	}
 	
-	@EventHandler
+	@EventHandler(priority=EventPriority.HIGHEST)
 	public void Create(CreatureSpawnEvent ev){
-		if(ev.getLocation().getWorld().getName().equalsIgnoreCase("world")){
+		if(ev.getSpawnReason() == SpawnReason.CUSTOM){
+			ev.setCancelled(false);
+		}else if(ev.getLocation().getWorld().getName().equalsIgnoreCase("world")){
 			ev.setCancelled(true);
 		}
 	}

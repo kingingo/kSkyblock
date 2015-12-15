@@ -48,6 +48,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -131,17 +132,19 @@ public class SkyBlockGildenWorld extends kListener{
 	
 	@EventHandler
 	public void CreatureSpawn(CreatureSpawnEvent ev){
-		for(String gilde : islands.keySet()){
-			if(gilde.charAt(0)!='!'){
-				if(isInIsland(gilde.toLowerCase(),ev.getLocation())){
-					int a = 0;
-					for(Entity e : world.getEntities()){
-						if(!(e instanceof Player)){
-							if(isInIsland(gilde,e.getLocation()))a++;
+		if(ev.getSpawnReason() != SpawnReason.CUSTOM){
+			for(String gilde : islands.keySet()){
+				if(gilde.charAt(0)!='!'){
+					if(isInIsland(gilde.toLowerCase(),ev.getLocation())){
+						int a = 0;
+						for(Entity e : world.getEntities()){
+							if(!(e instanceof Player)){
+								if(isInIsland(gilde,e.getLocation()))a++;
+							}
 						}
+						if(a>=creature_limit)ev.setCancelled(true);
+						break;
 					}
-					if(a>=creature_limit)ev.setCancelled(true);
-					break;
 				}
 			}
 		}

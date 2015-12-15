@@ -54,6 +54,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -450,17 +451,19 @@ public class SkyBlockWorld extends kListener{
 	
 	@EventHandler
 	public void CreatureSpawn(CreatureSpawnEvent ev){
-		for(String player : islands.keySet()){
-			if(player.charAt(0)!='!'){
-				if(isInIsland(player,ev.getLocation())){
-					int a = 0;
-					for(Entity e : world.getEntities()){
-						if(!(e instanceof Player)){
-							if(isInIsland(player,e.getLocation()))a++;
+		if(ev.getSpawnReason() != SpawnReason.CUSTOM){
+			for(String player : islands.keySet()){
+				if(player.charAt(0)!='!'){
+					if(isInIsland(player,ev.getLocation())){
+						int a = 0;
+						for(Entity e : world.getEntities()){
+							if(!(e instanceof Player)){
+								if(isInIsland(player,e.getLocation()))a++;
+							}
 						}
+						if(a>=creature_limit)ev.setCancelled(true);
+						break;
 					}
-					if(a>=creature_limit)ev.setCancelled(true);
-					break;
 				}
 			}
 		}
