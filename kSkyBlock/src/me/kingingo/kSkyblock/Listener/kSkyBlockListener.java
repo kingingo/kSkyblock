@@ -68,7 +68,8 @@ public class kSkyBlockListener extends kListener{
 	
 	@EventHandler
 	public void AddBoard(PlayerSetScoreboardEvent ev){
-		UtilPlayer.setScoreboard(ev.getPlayer(), getManager().getGems().getGems());
+		UtilPlayer.setScoreboard(ev.getPlayer(), 
+				UtilServer.getGemsShop().getGems());
 	}
 	
 	Player player;
@@ -343,7 +344,7 @@ public class kSkyBlockListener extends kListener{
 	
 	public void restart(){
 		RestartScheduler restart = new RestartScheduler(getManager().getAntiLogout().getInstance());
-		restart.setGems(getManager().getGems().getGems());
+		restart.setGems(UtilServer.getGemsShop().getGems());
 		restart.setAnti(getManager().getAntiLogout());
 		restart.setStats(getManager().getStatsManager());
 		restart.setUserData(getManager().getUserData());

@@ -172,8 +172,6 @@ public class kSkyBlock extends JavaPlugin {
 	@Getter
 	private InventoryBase base;
 	@Getter
-	private GemsShop gems;
-	@Getter
 	private PetManager petManager;
 	@Getter
 	private PlayerPetHandler petHandler;
@@ -195,7 +193,7 @@ public class kSkyBlock extends JavaPlugin {
 		this.hologram.RemoveText();
 		this.cmd=new CommandHandler(this);
 		this.base=new InventoryBase(this);
-		this.gems=new GemsShop(getHologram(), getCmd(), getBase(), getPermissionManager(), ServerType.SKYBLOCK);
+		UtilServer.createGemsShop(new GemsShop(getHologram(), getCmd(), getBase(), getPermissionManager(), ServerType.SKYBLOCK));
 		this.petManager=new PetManager(this);
 		this.petHandler= new PlayerPetHandler(ServerType.SKYBLOCK, getPetManager(), getBase(), getPermissionManager());
 		this.teleport=new TeleportManager(getCmd(), getPermissionManager(), 5);
@@ -388,7 +386,7 @@ public class kSkyBlock extends JavaPlugin {
 	public void onDisable(){
 		c.disconnect(false);
 		getHologram().RemoveText();
-		getGems().onDisable();
+		UtilServer.getGemsShop().onDisable();
 		Updater.stop();
 		if(UtilServer.getDeliveryPet()!=null)UtilServer.getDeliveryPet().onDisable();
 		mysql.close();
