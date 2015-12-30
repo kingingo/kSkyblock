@@ -181,7 +181,7 @@ public class kSkyBlock extends JavaPlugin {
 		long time = System.currentTimeMillis();
 		loadConfig();
 		this.Updater=new Updater(this);
-		this.c = new Client(getFConfig().getString("Config.Client.Host"),getFConfig().getInt("Config.Client.Port"),"SkyBlock",this,Updater);
+		this.c = new Client(this,getFConfig().getString("Config.Client.Host"),getFConfig().getInt("Config.Client.Port"),"SkyBlock");
 		this.mysql=new MySQL(getFConfig().getString("Config.MySQL.User"),getFConfig().getString("Config.MySQL.Password"),getFConfig().getString("Config.MySQL.Host"),getFConfig().getString("Config.MySQL.DB"),this);
 		Language.load(mysql);
 		this.PacketManager=new PacketManager(this,c);
