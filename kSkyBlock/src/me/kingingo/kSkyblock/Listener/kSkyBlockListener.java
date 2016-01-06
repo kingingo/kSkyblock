@@ -202,7 +202,7 @@ public class kSkyBlockListener extends kListener{
 	public void Create(CreatureSpawnEvent ev){
 		if(ev.getSpawnReason() == SpawnReason.CUSTOM){
 			ev.setCancelled(false);
-		}else if(ev.getLocation().getWorld().getName().equalsIgnoreCase("world")){
+		}else if(ev.getLocation().getWorld().getName().equalsIgnoreCase("world")&&!manager.getPetManager().isPet(ev.getEntity())){
 			ev.setCancelled(true);
 		}
 	}
