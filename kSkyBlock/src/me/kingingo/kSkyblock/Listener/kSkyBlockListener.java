@@ -198,11 +198,11 @@ public class kSkyBlockListener extends kListener{
 		}
 	}
 	
-	@EventHandler(priority=EventPriority.HIGHEST)
+	@EventHandler(priority=EventPriority.HIGH)
 	public void Create(CreatureSpawnEvent ev){
-		if(ev.getSpawnReason() == SpawnReason.CUSTOM){
+		if(ev.getSpawnReason() == SpawnReason.CUSTOM || ev.getSpawnReason() == SpawnReason.DEFAULT){
 			ev.setCancelled(false);
-		}else if(ev.getLocation().getWorld().getName().equalsIgnoreCase("world")&&!manager.getPetManager().isPet(ev.getEntity())){
+		}else if(ev.getLocation().getWorld().getName().equalsIgnoreCase("world")){
 			ev.setCancelled(true);
 		}
 	}

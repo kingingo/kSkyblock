@@ -101,6 +101,7 @@ import me.kingingo.kcore.Kit.Perks.PerkNoWaterdamage;
 import me.kingingo.kcore.Kit.Perks.PerkPotionClear;
 import me.kingingo.kcore.Kit.Perks.PerkRunner;
 import me.kingingo.kcore.Language.Language;
+import me.kingingo.kcore.Listener.AntiCrashListener.AntiCrashListener;
 import me.kingingo.kcore.Listener.BungeeCordFirewall.BungeeCordFirewallListener;
 import me.kingingo.kcore.Listener.Chat.ChatListener;
 import me.kingingo.kcore.Listener.Command.ListenerCMD;
@@ -366,7 +367,8 @@ public class kSkyBlock extends JavaPlugin {
 		new BungeeCordFirewallListener(mysql, "sky");
 		new ListenerCMD(this);
 		new ChatListener(this,new SkyBlockGildenManager(manager, mysql, GildenType.SKY, cmd,getStatsManager()),permissionManager,getUserData());
-		
+
+		new AntiCrashListener(this.PacketManager,this.mysql);
 		
 		if(Calendar.getHoliday()!=null){
 			switch(Calendar.holiday){
