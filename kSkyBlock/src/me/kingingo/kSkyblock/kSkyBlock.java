@@ -187,8 +187,9 @@ public class kSkyBlock extends JavaPlugin {
 		Language.load(mysql);
 		this.PacketManager=new PacketManager(this,c);
 		this.permissionManager=new PermissionManager(this,GroupTyp.SKY,PacketManager,mysql);
-		new MemoryFix(this);
+		this.permissionManager.setAsync(true);
 		this.statsManager=new StatsManager(this,this.mysql,GameType.SKYBLOCK);
+		this.statsManager.setAsync(true);
 		this.userData=new UserDataConfig(this);
 		this.hologram=new Hologram(this);
 		this.hologram.RemoveText();
@@ -197,6 +198,7 @@ public class kSkyBlock extends JavaPlugin {
 		UtilServer.createGemsShop(new GemsShop(getHologram(), getCmd(), getBase(), getPermissionManager(), ServerType.SKYBLOCK));
 		this.petManager=new PetManager(this);
 		this.petHandler= new PlayerPetHandler(ServerType.SKYBLOCK, getPetManager(), getBase(), getPermissionManager());
+		this.petHandler.setAsync(true);
 		this.teleport=new TeleportManager(getCmd(), getPermissionManager(), 5);
 		this.perkManager=new PerkManager(this,userData,new Perk[]{new PerkNoWaterdamage(),new PerkArrowPotionEffect(),new PerkHat(),new PerkGoldenApple(),new PerkNoHunger(),new PerkHealPotion(1),new PerkNoFiredamage(),new PerkRunner(0.35F),new PerkDoubleJump(),new PerkDoubleXP(),new PerkDropper(),new PerkGetXP(),new PerkPotionClear(),new PerkItemName(cmd)});
 		new SignShop(this,this.cmd, this.statsManager);
@@ -390,6 +392,7 @@ public class kSkyBlock extends JavaPlugin {
 		getHologram().RemoveText();
 		UtilServer.getGemsShop().onDisable();
 		Updater.stop();
+		UtilServer.getUpdaterAsync().stop();
 		if(UtilServer.getDeliveryPet()!=null)UtilServer.getDeliveryPet().onDisable();
 		mysql.close();
 	}

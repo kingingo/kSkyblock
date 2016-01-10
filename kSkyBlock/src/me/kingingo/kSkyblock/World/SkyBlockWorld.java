@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import lombok.Getter;
+import lombok.Setter;
 import me.kingingo.kSkyblock.SkyBlockManager;
 import me.kingingo.kSkyblock.Util.UtilSchematic;
 import me.kingingo.kcore.AntiLogout.Events.AntiLogoutAddPlayerEvent;
@@ -91,6 +92,9 @@ public class SkyBlockWorld extends kListener{
 	@Getter
 	private HashMap<String,Player> party_einladungen = new HashMap<>();
 	private EditSession session;
+	@Getter
+	@Setter
+	private boolean async=false;
 	
 	public SkyBlockWorld(SkyBlockManager manager,String schematic,World world,int radius,int anzahl,int creature_limit) {
 		super(manager.getInstance(),"SkyBlockWorld:"+world.getName());
@@ -581,16 +585,16 @@ public class SkyBlockWorld extends kListener{
 		}
 	}
 	
-	public void loadIslandPlayer(Player player){
-		loadIslandPlayer(UtilPlayer.getRealUUID(player));
-	}
-	
 	public boolean haveIsland(Player player){
 		return haveIsland(UtilPlayer.getRealUUID(player));
 	}
 	
 	public boolean haveIsland(UUID uuid){
 		return islands.containsKey(uuid.toString());
+	}
+	
+	public void loadIslandPlayer(Player player){
+		loadIslandPlayer(UtilPlayer.getRealUUID(player));
 	}
 	
 	public void loadIslandPlayer(UUID uuid){
@@ -759,7 +763,7 @@ public class SkyBlockWorld extends kListener{
 			islands.remove(uuid.toString());
 			Log("Die Insel von den Spieler "+player.getName()+"(Entities:"+count+"/Bloecke:"+b_count+") wurde resetet.");
 			uuid = UUID.randomUUID();
-			getManager().getInstance().getMysql().Update("UPDATE list_skyblock_worlds SET uuid='!"+uuid+"' WHERE X='"+loc.getBlockX()+"' AND Z='"+loc.getBlockZ()+"' AND worldName='"+world.getName()+"'");
+			getManager().getInstance().getMysql().Update(isAsync(),"UPDATE list_skyblock_worlds SET uuid='!"+uuid+"' WHERE X='"+loc.getBlockX()+"' AND Z='"+loc.getBlockZ()+"' AND worldName='"+world.getName()+"'");
 			islands.put("!"+uuid.toString(), loc);
 			Location loc1 = new Location(getWorld(), (max_x-(radius/2)) ,90, (max_z-(radius/2)) );
 			loc1.getWorld().loadChunk(loc1.getChunk());
@@ -809,7 +813,7 @@ public class SkyBlockWorld extends kListener{
 				int z = islands.get(island).getBlockZ();
 				islands.remove(island);
 				islands.put(uuid.toString(), new Location(world,x,0,z));
-				getManager().getInstance().getMysql().Update("UPDATE list_skyblock_worlds SET uuid='"+uuid+"' WHERE worldName='"+world.getName()+"' AND uuid='"+island+"' AND X='"+x+"' AND Z='"+z+"'");
+				getManager().getInstance().getMysql().Update(isAsync(),"UPDATE list_skyblock_worlds SET uuid='"+uuid+"' WHERE worldName='"+world.getName()+"' AND uuid='"+island+"' AND X='"+x+"' AND Z='"+z+"'");
 				Log("Die Insel von den Spieler "+uuid+"(X:"+x+",Z:"+z+") wurde recycelt.");
 				return;
 			}
@@ -833,7 +837,7 @@ public class SkyBlockWorld extends kListener{
 		}
 		islands.put(u, new Location(world,X,0,Z));
 		setBiome(u, Biome.JUNGLE);
-		getManager().getInstance().getMysql().Update("INSERT INTO list_skyblock_worlds (uuid,worldName,X,Z) VALUES ('"+u+"','"+getWorld().getName()+"','"+X+"','"+Z+"');");
+		getManager().getInstance().getMysql().Update(isAsync(),"INSERT INTO list_skyblock_worlds (uuid,worldName,X,Z) VALUES ('"+u+"','"+getWorld().getName()+"','"+X+"','"+Z+"');");
 		Log("Die Insel von den Spieler "+u+"(X:"+(X-(radius/2))+",Z:"+(Z-(radius/2))+") wurde erstellt.");
 	}
 	
@@ -922,8 +926,6 @@ public class SkyBlockWorld extends kListener{
 			Z=0;
 			Log("X: "+X+" Z:"+Z);
 		}
-		
-		
 	}
 	
 	public void loadIslands(){

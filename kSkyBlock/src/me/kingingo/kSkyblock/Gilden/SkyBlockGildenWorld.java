@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import lombok.Getter;
+import lombok.Setter;
 import me.kingingo.kSkyblock.SkyBlockManager;
 import me.kingingo.kSkyblock.Util.UtilSchematic;
 import me.kingingo.kcore.Gilden.GildenManager;
@@ -78,10 +79,13 @@ public class SkyBlockGildenWorld extends kListener{
 	@Getter
 	private GildenManager gilde;
 	private EditSession session;
+	@Getter
+	@Setter
+	private boolean async=false;
 	
 	public SkyBlockGildenWorld(SkyBlockManager manager,GildenManager gilde,World world,int radius,int anzahl,int creature_limit) {
 		super(manager.getInstance(),"SkyBlockGildenWorld:"+world.getName());
-		manager.getInstance().getMysql().Update("CREATE TABLE IF NOT EXISTS list_gilden_Sky_world(gilde varchar(100),X int,Z int)");
+		manager.getInstance().getMysql().Update(isAsync(),"CREATE TABLE IF NOT EXISTS list_gilden_Sky_world(gilde varchar(100),X int,Z int)");
 		this.manager=manager;
 		this.gilde=gilde;
 		this.world=world;
@@ -409,7 +413,7 @@ public class SkyBlockGildenWorld extends kListener{
 				}
 			}
 			islands.remove(gilde);
-			getManager().getInstance().getMysql().Update("UPDATE list_gilden_Sky_world SET gilde='!"+gilde+"' WHERE X='"+loc.getBlockX()+"' AND Z='"+loc.getBlockZ()+"'");
+			getManager().getInstance().getMysql().Update(isAsync(),"UPDATE list_gilden_Sky_world SET gilde='!"+gilde+"' WHERE X='"+loc.getBlockX()+"' AND Z='"+loc.getBlockZ()+"'");
 			islands.put("!"+gilde, loc);
 			Location loc1 = new Location(getWorld(), (max_x-(radius/2)) ,30, (max_z-(radius/2)) );
 			loc1.getWorld().loadChunk(loc1.getChunk());
@@ -467,7 +471,7 @@ public class SkyBlockGildenWorld extends kListener{
 				int z = islands.get(island).getBlockZ();
 				islands.remove(island);
 				islands.put(gilde, new Location(world,x,0,z));
-				getManager().getInstance().getMysql().Update("UPDATE list_gilden_Sky_world SET gilde='"+gilde+"' WHERE gilde='"+island+"'");
+				getManager().getInstance().getMysql().Update(isAsync(),"UPDATE list_gilden_Sky_world SET gilde='"+gilde+"' WHERE gilde='"+island+"'");
 				Log("Die Insel von der Gilde "+gilde+"(X:"+x+",Z:"+z+") wurde recycelt.");
 				return true;
 			}
@@ -486,7 +490,7 @@ public class SkyBlockGildenWorld extends kListener{
 			gilde="!"+UUID.randomUUID();
 		}
 		islands.put(gilde, new Location(world,X,0,Z));
-		getManager().getInstance().getMysql().Update("INSERT INTO list_gilden_Sky_world (gilde,X,Z) VALUES ('"+gilde+"','"+X+"','"+Z+"');");
+		getManager().getInstance().getMysql().Update(isAsync(),"INSERT INTO list_gilden_Sky_world (gilde,X,Z) VALUES ('"+gilde+"','"+X+"','"+Z+"');");
 		Log("Die Insel von der Gilde "+gilde+"(X:"+(X-(radius/2))+",Z:"+(Z-(radius/2))+") wurde erstellt.");
 		return true;
 	}

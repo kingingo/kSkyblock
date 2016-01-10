@@ -69,7 +69,7 @@ public class kSkyBlockListener extends kListener{
 	@EventHandler
 	public void AddBoard(PlayerSetScoreboardEvent ev){
 		UtilPlayer.setScoreboard(ev.getPlayer(), 
-				UtilServer.getGemsShop().getGems());
+		UtilServer.getGemsShop().getGems());
 	}
 	
 	Player player;

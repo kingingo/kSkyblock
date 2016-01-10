@@ -85,6 +85,7 @@ public class SkyBlockManager extends kListener{
 			wc.generator(new CleanroomChunkGenerator(".0,AIR"));
 			gilden_world=new SkyBlockGildenWorld(this,gilde,UtilWorld.LoadWorld(wc),getInstance().getFConfig().getInt("Config.World."+worldName+".Radius"),getInstance().getFConfig().getInt("Config.World."+worldName+".GenerateIsland"),getInstance().getConfig().getInt("Config.World."+worldName+".CreatureLimit"));
 		}
+		
 	}
 	
 	public SkyBlockWorld addIsland(Player player){
@@ -212,11 +213,15 @@ public class SkyBlockManager extends kListener{
 			setConifg("Config.World."+worldName+".CreatureLimit", 50);
 			WorldCreator wc = new WorldCreator(worldName);
 			wc.generator(new CleanroomChunkGenerator(".0,AIR"));
-			worlds.add(new SkyBlockWorld(this,worldName,Bukkit.createWorld(wc),radius,generate,50));
+			SkyBlockWorld sw = new SkyBlockWorld(this,worldName,Bukkit.createWorld(wc),radius,generate,50);
+			sw.setAsync(true);
+			worlds.add(sw);
 		}else{
 			WorldCreator wc = new WorldCreator(worldName);
 			wc.generator(new CleanroomChunkGenerator(".0,AIR"));
-			worlds.add(new SkyBlockWorld(this,worldName,UtilWorld.LoadWorld(wc),getInstance().getFConfig().getInt("Config.World."+worldName+".Radius"),getInstance().getFConfig().getInt("Config.World."+worldName+".GenerateIsland"),getInstance().getConfig().getInt("Config.World."+worldName+".CreatureLimit")));
+			SkyBlockWorld sw = new SkyBlockWorld(this,worldName,UtilWorld.LoadWorld(wc),getInstance().getFConfig().getInt("Config.World."+worldName+".Radius"),getInstance().getFConfig().getInt("Config.World."+worldName+".GenerateIsland"),getInstance().getConfig().getInt("Config.World."+worldName+".CreatureLimit"));
+			sw.setAsync(true);
+			worlds.add(sw);
 		}
 	}
 	
