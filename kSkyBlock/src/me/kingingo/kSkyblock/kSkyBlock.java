@@ -238,7 +238,7 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommandClearInventory.class, new CommandClearInventory());
 		this.cmd.register(CommadSkyBlock.class, new CommadSkyBlock(this));	
 		this.cmd.register(CommandRenameItem.class, new CommandRenameItem());
-		this.cmd.register(CommandXP.class, new CommandXP());
+//		this.cmd.register(CommandXP.class, new CommandXP());
 		this.cmd.register(CommandInvsee.class, new CommandInvsee(mysql));
 		this.cmd.register(CommandEnderchest.class, new CommandEnderchest(mysql));
 		this.cmd.register(CommandParty.class, new CommandParty(this));
@@ -366,7 +366,7 @@ public class kSkyBlock extends JavaPlugin {
 		a.setAntiLogoutManager(getAntiLogout());
 		
 		new PerkListener(perkManager);
-		new BungeeCordFirewallListener(mysql, "sky");
+		new BungeeCordFirewallListener(mysql,cmd, "sky");
 		new ListenerCMD(this);
 		new ChatListener(this,new SkyBlockGildenManager(manager, mysql, GildenType.SKY, cmd,getStatsManager()),permissionManager,getUserData());
 

@@ -2,10 +2,10 @@ package me.kingingo.kSkyblock.Listener;
 
 import me.kingingo.kcore.Kit.PerkManager;
 import me.kingingo.kcore.Listener.kListener;
+import me.kingingo.kcore.UserDataConfig.Events.UserDataConfigLoadEvent;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PerkListener extends kListener{
@@ -18,7 +18,7 @@ public class PerkListener extends kListener{
 	}
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
-	public void Join(PlayerJoinEvent ev){
+	public void load(UserDataConfigLoadEvent ev){
 		perkManager.configPlayer(ev.getPlayer());
 	}
 	
