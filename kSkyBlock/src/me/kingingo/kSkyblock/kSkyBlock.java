@@ -370,7 +370,7 @@ public class kSkyBlock extends JavaPlugin {
 		new ListenerCMD(this);
 		new ChatListener(this,new SkyBlockGildenManager(manager, mysql, GildenType.SKY, cmd,getStatsManager()),permissionManager,getUserData());
 
-		new AntiCrashListener(this.PacketManager,this.mysql);
+//		new AntiCrashListener(this.PacketManager,this.mysql);
 		
 		if(Calendar.getHoliday()!=null){
 			switch(Calendar.holiday){

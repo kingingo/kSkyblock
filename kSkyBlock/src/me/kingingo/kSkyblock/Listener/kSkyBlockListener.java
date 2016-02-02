@@ -16,6 +16,7 @@ import me.kingingo.kcore.Permission.Event.PlayerLoadPermissionEvent;
 import me.kingingo.kcore.Scoreboard.Events.PlayerSetScoreboardEvent;
 import me.kingingo.kcore.SignShop.Events.SignShopUseEvent;
 import me.kingingo.kcore.StatsManager.Stats;
+import me.kingingo.kcore.StatsManager.Event.PlayerStatsLoadedEvent;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
 import me.kingingo.kcore.Util.RestartScheduler;
@@ -254,10 +255,7 @@ public class kSkyBlockListener extends kListener{
 	}
 	
 	@EventHandler
-	public void Join(PlayerJoinEvent ev){
-//		getManager().getStatsManager().loadPlayerStats(ev.getPlayer());
-		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEpicPvP§8.§eeu §8| §aSkyBlock Server", "§aTeamSpeak: §7ts.EpicPvP.eu §8| §eWebsite: §7EpicPvP.eu");
-		
+	public void loadedStats(PlayerStatsLoadedEvent ev){
 		if(vote_list.contains( UtilPlayer.getRealUUID(ev.getPlayer()) )){
 			if(UtilServer.getDeliveryPet()!=null){
 				 UtilServer.getDeliveryPet().deliveryUSE(ev.getPlayer(), "§aVote for EpicPvP", true);
@@ -270,6 +268,13 @@ public class kSkyBlockListener extends kListener{
 			ev.getPlayer().getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
 			ev.getPlayer().sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "VOTE_THX"));
 		}
+	}
+	
+	@EventHandler
+	public void Join(PlayerJoinEvent ev){
+		getManager().getStatsManager().loadPlayerStats(ev.getPlayer());
+		getManager().getManager().getGilden_world().getGilde().loadPlayer(ev.getPlayer());
+		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEpicPvP§8.§eeu §8| §aSkyBlock Server", "§aTeamSpeak: §7ts.EpicPvP.eu §8| §eWebsite: §7EpicPvP.eu");
 	}
 	
 	@EventHandler
