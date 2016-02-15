@@ -128,7 +128,6 @@ import me.kingingo.kcore.Util.UtilException;
 import me.kingingo.kcore.Util.UtilPlayer;
 import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.kcore.Util.UtilTime;
-import me.kingingo.kcore.memory.MemoryFix;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -200,7 +199,7 @@ public class kSkyBlock extends JavaPlugin {
 		this.petHandler= new PlayerPetHandler(ServerType.SKYBLOCK, getPetManager(), getBase(), getPermissionManager());
 		this.petHandler.setAsync(true);
 		this.teleport=new TeleportManager(getCmd(), getPermissionManager(), 5);
-		this.perkManager=new PerkManager(this,userData,new Perk[]{new PerkNoWaterdamage(),new PerkArrowPotionEffect(),new PerkHat(),new PerkGoldenApple(),new PerkNoHunger(),new PerkHealPotion(1),new PerkNoFiredamage(),new PerkRunner(0.35F),new PerkDoubleJump(),new PerkDoubleXP(),new PerkDropper(),new PerkGetXP(),new PerkPotionClear(),new PerkItemName(cmd)});
+		this.perkManager=new PerkManager(this,new Perk[]{new PerkNoWaterdamage(),new PerkArrowPotionEffect(),new PerkHat(),new PerkGoldenApple(),new PerkNoHunger(),new PerkHealPotion(1),new PerkNoFiredamage(),new PerkRunner(0.35F),new PerkDoubleJump(),new PerkDoubleXP(),new PerkDropper(),new PerkGetXP(),new PerkPotionClear(),new PerkItemName(cmd)});
 		new SignShop(this,this.cmd, this.statsManager);
 		this.antiLogout=new AntiLogoutManager(this,AntiLogoutType.KILL,5);
 
@@ -254,7 +253,7 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommandGive.class, new CommandGive());
 		this.cmd.register(CommandgBroadcast.class, new CommandgBroadcast(PacketManager));
 		this.cmd.register(CommandLocations.class, new CommandLocations(this));
-		this.cmd.register(CommandPerk.class, new CommandPerk(perkManager,getBase()));
+		this.cmd.register(CommandPerk.class, new CommandPerk(perkManager));
 		this.cmd.register(CommandSuffix.class, new CommandSuffix(getUserData()));
 		this.cmd.register(CommandAmboss.class, new CommandAmboss());
 		this.cmd.register(CommandNear.class, new CommandNear());
@@ -388,13 +387,7 @@ public class kSkyBlock extends JavaPlugin {
 	}
 	
 	public void onDisable(){
-		c.disconnect(false);
-		getHologram().RemoveText();
-		UtilServer.getGemsShop().onDisable();
-		Updater.stop();
-		UtilServer.getUpdaterAsync().stop();
-		if(UtilServer.getDeliveryPet()!=null)UtilServer.getDeliveryPet().onDisable();
-		mysql.close();
+		UtilServer.disable();
 	}
 	
 	public void DebugLog(long time,int zeile,String c){
