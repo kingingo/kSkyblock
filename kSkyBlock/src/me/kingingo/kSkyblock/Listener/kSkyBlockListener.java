@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import lombok.Getter;
 import me.kingingo.kSkyblock.kSkyBlock;
+import me.kingingo.kcore.GemsShop.Events.PlayerGemsBuyEvent;
 import me.kingingo.kcore.Language.Language;
 import me.kingingo.kcore.Listener.kListener;
 import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
@@ -16,12 +17,16 @@ import me.kingingo.kcore.Permission.Event.PlayerLoadPermissionEvent;
 import me.kingingo.kcore.Scoreboard.Events.PlayerSetScoreboardEvent;
 import me.kingingo.kcore.SignShop.Events.SignShopUseEvent;
 import me.kingingo.kcore.StatsManager.Stats;
+import me.kingingo.kcore.StatsManager.Event.PlayerStatsChangeEvent;
 import me.kingingo.kcore.StatsManager.Event.PlayerStatsLoadedEvent;
 import me.kingingo.kcore.Update.UpdateType;
 import me.kingingo.kcore.Update.Event.UpdateEvent;
+import me.kingingo.kcore.UserStores.Events.PlayerCreateUserStoreEvent;
 import me.kingingo.kcore.Util.RestartScheduler;
 import me.kingingo.kcore.Util.TabTitle;
+import me.kingingo.kcore.Util.UtilMath;
 import me.kingingo.kcore.Util.UtilPlayer;
+import me.kingingo.kcore.Util.UtilScoreboard;
 import me.kingingo.kcore.Util.UtilServer;
 import me.kingingo.kcore.Util.UtilWorldGuard;
 
@@ -52,6 +57,7 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scoreboard.DisplaySlot;
 
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
@@ -68,9 +74,35 @@ public class kSkyBlockListener extends kListener{
 	}
 	
 	@EventHandler
+	public void buygems(PlayerGemsBuyEvent ev){
+		if(ev.getItem().hasItemMeta()&&ev.getItem().getItemMeta().hasDisplayName()&&ev.getItem().getItemMeta().getDisplayName().toLowerCase().contains("usershop")){
+			if(UtilServer.getUserData()!=null){
+				UtilServer.getUserData().getConfig(ev.getPlayer()).set("Stores", UtilServer.getUserData().getConfig(ev.getPlayer()).getInt("Stores")+1);
+				UtilServer.getUserData().getConfig(ev.getPlayer()).save();
+				
+				UtilScoreboard.resetScore(ev.getPlayer().getScoreboard(), 2, DisplaySlot.SIDEBAR);
+				UtilScoreboard.setScore(ev.getPlayer().getScoreboard(), ""+UtilServer.getUserData().getConfig(ev.getPlayer()).getInt("Stores"), DisplaySlot.SIDEBAR, 2);
+			}
+		}
+	}
+	
+	@EventHandler
+	public void userstore(PlayerCreateUserStoreEvent ev){
+		UtilScoreboard.resetScore(ev.getPlayer().getScoreboard(), 2, DisplaySlot.SIDEBAR);
+		UtilScoreboard.setScore(ev.getPlayer().getScoreboard(), ""+UtilServer.getUserData().getConfig(ev.getPlayer()).getInt("Stores"), DisplaySlot.SIDEBAR, 2);
+	}
+	
+	@EventHandler
+	public void statsMONEY(PlayerStatsChangeEvent ev){
+		if(ev.getStats() == Stats.MONEY){
+			UtilScoreboard.resetScore(ev.getPlayer().getScoreboard(), 5, DisplaySlot.SIDEBAR);
+			UtilScoreboard.setScore(ev.getPlayer().getScoreboard(),UtilMath.trim(2, getManager().getStatsManager().getDouble(Stats.MONEY, ev.getPlayer()))+"$", DisplaySlot.SIDEBAR, 5);
+		}
+	}
+	
+	@EventHandler
 	public void AddBoard(PlayerSetScoreboardEvent ev){
-		UtilPlayer.setScoreboard(ev.getPlayer(), 
-		UtilServer.getGemsShop().getGems());
+		UtilPlayer.setSkyBlockScoreboard(ev.getPlayer(),UtilServer.getGemsShop().getGems(), getManager().getStatsManager(), UtilServer.getUserData());
 	}
 	
 	Player player;
