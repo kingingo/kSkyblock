@@ -1,4 +1,4 @@
-package me.kingingo.kSkyblock;
+package eu.epicpvp.Skyblock;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,17 +6,15 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import lombok.Getter;
-import me.kingingo.kSkyblock.Gilden.SkyBlockGildenWorld;
-import me.kingingo.kSkyblock.World.SkyBlockWorld;
-import me.kingingo.kcore.ChunkGenerator.CleanroomChunkGenerator;
-import me.kingingo.kcore.Gilden.GildenManager;
-import me.kingingo.kcore.Language.Language;
-import me.kingingo.kcore.Listener.kListener;
-import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
-import me.kingingo.kcore.Packet.Packets.WORLD_CHANGE_DATA;
-import me.kingingo.kcore.Util.UtilFile;
-import me.kingingo.kcore.Util.UtilPlayer;
-import me.kingingo.kcore.Util.UtilWorld;
+import eu.epicpvp.Skyblock.Gilden.SkyBlockGildenWorld;
+import eu.epicpvp.Skyblock.World.SkyBlockWorld;
+import eu.epicpvp.kcore.ChunkGenerator.CleanroomChunkGenerator;
+import eu.epicpvp.kcore.Gilden.GildenManager;
+import eu.epicpvp.kcore.Language.Language;
+import eu.epicpvp.kcore.Listener.kListener;
+import eu.epicpvp.kcore.Util.UtilFile;
+import eu.epicpvp.kcore.Util.UtilPlayer;
+import eu.epicpvp.kcore.Util.UtilWorld;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -32,7 +30,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class SkyBlockManager extends kListener{
 	
 	@Getter
-	private kSkyBlock instance;
+	private SkyBlock instance;
 	@Getter
 	private ArrayList<SkyBlockWorld> worlds = new ArrayList<>();
 	@Getter
@@ -43,7 +41,7 @@ public class SkyBlockManager extends kListener{
 	@Getter
 	private SkyBlockGildenWorld gilden_world;
 	
-	public SkyBlockManager(kSkyBlock instance){
+	public SkyBlockManager(SkyBlock instance){
 		super(instance,"SkyBlockManager");
 		this.instance=instance;
 		getInstance().getMysql().Update("CREATE TABLE IF NOT EXISTS list_skyblock_worlds(UUID varchar(100),worldName varchar(30),X int,Z int)");
@@ -110,13 +108,13 @@ public class SkyBlockManager extends kListener{
 		ev.setQuitMessage(null);
 	}
 
-	@EventHandler
-	public void PacketReceive(PacketReceiveEvent ev){
-		if(ev.getPacket() instanceof WORLD_CHANGE_DATA){
-			WORLD_CHANGE_DATA packet = (WORLD_CHANGE_DATA)ev.getPacket();
-			for(World world : Bukkit.getWorlds())UtilPlayer.setWorldChangeUUID(world, packet.getOld_uuid(), packet.getNew_uuid());
-		}
-	}
+//	@EventHandler
+//	public void PacketReceive(PacketReceiveEvent ev){
+//		if(ev.getPacket() instanceof WORLD_CHANGE_DATA){
+//			WORLD_CHANGE_DATA packet = (WORLD_CHANGE_DATA)ev.getPacket();
+//			for(World world : Bukkit.getWorlds())UtilPlayer.setWorldChangeUUID(world, packet.getOld_uuid(), packet.getNew_uuid());
+//		}
+//	}
 	
 	@EventHandler
 	public void AsyncLogin(AsyncPlayerPreLoginEvent ev){

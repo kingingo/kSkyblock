@@ -1,8 +1,8 @@
-package me.kingingo.kSkyblock.Listener;
+package eu.epicpvp.Skyblock.Listener;
 
-import me.kingingo.kcore.Kit.PerkManager;
-import me.kingingo.kcore.Listener.kListener;
-import me.kingingo.kcore.UserDataConfig.Events.UserDataConfigLoadEvent;
+import eu.epicpvp.kcore.Kit.PerkManager;
+import eu.epicpvp.kcore.Listener.kListener;
+import eu.epicpvp.kcore.UserDataConfig.Events.UserDataConfigLoadEvent;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

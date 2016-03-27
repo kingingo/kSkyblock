@@ -1,11 +1,11 @@
-package me.kingingo.kSkyblock.Commands;
+package eu.epicpvp.Skyblock.Commands;
 
 import java.util.HashMap;
 
-import me.kingingo.kSkyblock.SkyBlockManager;
-import me.kingingo.kcore.Command.CommandHandler.Sender;
-import me.kingingo.kcore.Language.Language;
-import me.kingingo.kcore.UserDataConfig.UserDataConfig;
+import eu.epicpvp.Skyblock.SkyBlockManager;
+import eu.epicpvp.kcore.Command.CommandHandler.Sender;
+import eu.epicpvp.kcore.Language.Language;
+import eu.epicpvp.kcore.UserDataConfig.UserDataConfig;
 
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -30,7 +30,7 @@ public class CommandHomeaccept implements CommandExecutor{
 		manager.getInstance().getCmd().register(CommandHomedeny.class, new CommandHomedeny(this));
 	}
 
-	@me.kingingo.kcore.Command.CommandHandler.Command(command = "homeaccept",alias={"ha","homeyes"}, sender = Sender.PLAYER)
+	@eu.epicpvp.kcore.Command.CommandHandler.Command(command = "homeaccept",alias={"ha","homeyes"}, sender = Sender.PLAYER)
 	public boolean onCommand(CommandSender cs, Command cmd, String arg2,String[] args) {
 		player = (Player)cs;
 		if(args.length==0){

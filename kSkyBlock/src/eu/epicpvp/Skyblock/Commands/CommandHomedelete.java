@@ -1,9 +1,9 @@
-package me.kingingo.kSkyblock.Commands;
+package eu.epicpvp.Skyblock.Commands;
 
-import me.kingingo.kSkyblock.World.SkyBlockWorld;
-import me.kingingo.kcore.Command.CommandHandler.Sender;
-import me.kingingo.kcore.Language.Language;
-import me.kingingo.kcore.Util.UtilPlayer;
+import eu.epicpvp.Skyblock.World.SkyBlockWorld;
+import eu.epicpvp.kcore.Command.CommandHandler.Sender;
+import eu.epicpvp.kcore.Language.Language;
+import eu.epicpvp.kcore.Util.UtilPlayer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -23,7 +23,7 @@ public class CommandHomedelete implements CommandExecutor{
 		this.cmda=cmda;
 	}
 
-	@me.kingingo.kcore.Command.CommandHandler.Command(command = "homedelete",alias={"homeremove","hr"}, sender = Sender.PLAYER)
+	@eu.epicpvp.kcore.Command.CommandHandler.Command(command = "homedelete",alias={"homeremove","hr"}, sender = Sender.PLAYER)
 	public boolean onCommand(CommandSender cs, Command cmd, String arg2,String[] args) {
 		player = (Player)cs;
 		if(args.length==0){

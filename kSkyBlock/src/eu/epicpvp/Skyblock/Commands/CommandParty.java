@@ -1,29 +1,29 @@
-package me.kingingo.kSkyblock.Commands;
-
-import lombok.Getter;
-import me.kingingo.kSkyblock.kSkyBlock;
-import me.kingingo.kSkyblock.World.SkyBlockWorld;
-import me.kingingo.kcore.Command.CommandHandler.Sender;
-import me.kingingo.kcore.Language.Language;
-import me.kingingo.kcore.Util.UtilFirework;
-import me.kingingo.kcore.Util.UtilMath;
+package eu.epicpvp.Skyblock.Commands;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import eu.epicpvp.Skyblock.SkyBlock;
+import eu.epicpvp.Skyblock.World.SkyBlockWorld;
+import eu.epicpvp.kcore.Command.CommandHandler.Sender;
+import eu.epicpvp.kcore.Language.Language;
+import eu.epicpvp.kcore.Util.UtilFirework;
+import eu.epicpvp.kcore.Util.UtilMath;
+import lombok.Getter;
+
 public class CommandParty implements CommandExecutor{
 	
 	@Getter
-	private kSkyBlock instance;
+	private SkyBlock instance;
 	private Player p;
 	
-	public CommandParty(kSkyBlock instance){
+	public CommandParty(SkyBlock instance){
 		this.instance=instance;
 	}
 	
-	@me.kingingo.kcore.Command.CommandHandler.Command(command = "party",alias = {"feier"}, sender = Sender.PLAYER)
+	@eu.epicpvp.kcore.Command.CommandHandler.Command(command = "party",alias = {"feier"}, sender = Sender.PLAYER)
 	public boolean onCommand(CommandSender cs, Command cmd, String arg2,String[] args) {
 		p=(Player)cs;
 			if(args.length==0){

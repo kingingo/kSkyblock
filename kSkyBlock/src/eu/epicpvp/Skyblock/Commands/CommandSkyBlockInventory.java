@@ -1,8 +1,8 @@
-package me.kingingo.kSkyblock.Commands;
+package eu.epicpvp.Skyblock.Commands;
 
 import lombok.Getter;
-import me.kingingo.kcore.Command.CommandHandler.Sender;
-import me.kingingo.kcore.Inventory.InventoryBase;
+import eu.epicpvp.kcore.Command.CommandHandler.Sender;
+import eu.epicpvp.kcore.Inventory.InventoryBase;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -20,7 +20,7 @@ public class CommandSkyBlockInventory implements CommandExecutor{
 		this.base=new InventoryBase(instance, "SkyBlock Menü");
 	}
 
-	@me.kingingo.kcore.Command.CommandHandler.Command(command = "si",alias={"skyblockinv"}, sender = Sender.PLAYER)
+	@eu.epicpvp.kcore.Command.CommandHandler.Command(command = "si",alias={"skyblockinv"}, sender = Sender.PLAYER)
 	public boolean onCommand(CommandSender cs, Command cmd, String arg2,String[] args) {
 		player = (Player)cs;
 		if(args.length==0){

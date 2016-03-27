@@ -1,4 +1,4 @@
-package me.kingingo.kSkyblock.World;
+package eu.epicpvp.Skyblock.World;
 
 import java.io.File;
 import java.sql.ResultSet;
@@ -8,27 +8,27 @@ import java.util.UUID;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.kingingo.kSkyblock.SkyBlockManager;
-import me.kingingo.kSkyblock.Util.UtilSchematic;
-import me.kingingo.kcore.AntiLogout.Events.AntiLogoutAddPlayerEvent;
-import me.kingingo.kcore.Command.Commands.Events.PlayerSetHomeEvent;
-import me.kingingo.kcore.Language.Language;
-import me.kingingo.kcore.Listener.kListener;
-import me.kingingo.kcore.MySQL.MySQLErr;
-import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
-import me.kingingo.kcore.PacketAPI.Packets.kPacketPlayOutWorldBorder;
-import me.kingingo.kcore.Permission.kPermission;
-import me.kingingo.kcore.TeleportManager.Teleporter;
-import me.kingingo.kcore.TeleportManager.Events.PlayerTeleportedEvent;
-import me.kingingo.kcore.Update.UpdateType;
-import me.kingingo.kcore.Update.Event.UpdateEvent;
-import me.kingingo.kcore.Util.UtilBlock;
-import me.kingingo.kcore.Util.UtilEvent;
-import me.kingingo.kcore.Util.UtilEvent.ActionType;
-import me.kingingo.kcore.Util.UtilPlayer;
-import me.kingingo.kcore.Util.UtilScoreboard;
-import me.kingingo.kcore.Util.UtilServer;
-import me.kingingo.kcore.Util.UtilWorld;
+import eu.epicpvp.Skyblock.SkyBlockManager;
+import eu.epicpvp.Skyblock.Util.UtilSchematic;
+import eu.epicpvp.kcore.AntiLogout.Events.AntiLogoutAddPlayerEvent;
+import eu.epicpvp.kcore.Command.Commands.Events.PlayerSetHomeEvent;
+import eu.epicpvp.kcore.Language.Language;
+import eu.epicpvp.kcore.Listener.kListener;
+import eu.epicpvp.kcore.MySQL.MySQLErr;
+import eu.epicpvp.kcore.MySQL.Events.MySQLErrorEvent;
+import eu.epicpvp.kcore.PacketAPI.Packets.kPacketPlayOutWorldBorder;
+import eu.epicpvp.kcore.Permission.PermissionType;
+import eu.epicpvp.kcore.TeleportManager.Teleporter;
+import eu.epicpvp.kcore.TeleportManager.Events.PlayerTeleportedEvent;
+import eu.epicpvp.kcore.Update.UpdateType;
+import eu.epicpvp.kcore.Update.Event.UpdateEvent;
+import eu.epicpvp.kcore.Util.UtilBlock;
+import eu.epicpvp.kcore.Util.UtilEvent;
+import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
+import eu.epicpvp.kcore.Util.UtilPlayer;
+import eu.epicpvp.kcore.Util.UtilScoreboard;
+import eu.epicpvp.kcore.Util.UtilServer;
+import eu.epicpvp.kcore.Util.UtilWorld;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -542,8 +542,8 @@ public class SkyBlockWorld extends kListener{
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void interact(PlayerInteractEvent ev){
-		if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()&&UtilEvent.isAction(ev, ActionType.BLOCK)){
-			if(ev.getPlayer().getItemInHand()!=null&&UtilBlock.isBlock(ev.getPlayer().getItemInHand())){
+		if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()){
+			if(ev.getPlayer().getItemInHand()!=null){
 				if(islands.containsKey(UtilPlayer.getRealUUID(ev.getPlayer()).toString())&&isInIsland(UtilPlayer.getRealUUID(ev.getPlayer()), ev.getClickedBlock().getLocation())) {
 					return;
 				}
@@ -613,7 +613,7 @@ public class SkyBlockWorld extends kListener{
 	}
 	
 	public kPacketPlayOutWorldBorder getIslandBorder(Player player){
-		if(player.hasPermission(kPermission.SKYBLOCK_ISLAND_BORDER_BYPASS.getPermissionToString())){
+		if(player.hasPermission(PermissionType.SKYBLOCK_ISLAND_BORDER_BYPASS.getPermissionToString())){
 			return null;
 		}
 		return getIslandBorder(UtilPlayer.getRealUUID(player));

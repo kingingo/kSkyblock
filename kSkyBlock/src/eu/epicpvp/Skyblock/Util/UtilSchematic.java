@@ -1,4 +1,4 @@
-package me.kingingo.kSkyblock.Util;
+package eu.epicpvp.Skyblock.Util;
 
 import java.io.File;
 import java.io.IOException;

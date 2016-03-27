@@ -1,34 +1,8 @@
-package me.kingingo.kSkyblock.Listener;
+package eu.epicpvp.Skyblock.Listener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
-
-import lombok.Getter;
-import me.kingingo.kSkyblock.kSkyBlock;
-import me.kingingo.kcore.GemsShop.Events.PlayerGemsBuyEvent;
-import me.kingingo.kcore.Language.Language;
-import me.kingingo.kcore.Listener.kListener;
-import me.kingingo.kcore.Packet.Events.PacketReceiveEvent;
-import me.kingingo.kcore.Packet.Packets.PLAYER_VOTE;
-import me.kingingo.kcore.Packet.Packets.TWITTER_PLAYER_FOLLOW;
-import me.kingingo.kcore.Permission.kPermission;
-import me.kingingo.kcore.Permission.Event.PlayerLoadPermissionEvent;
-import me.kingingo.kcore.Scoreboard.Events.PlayerSetScoreboardEvent;
-import me.kingingo.kcore.SignShop.Events.SignShopUseEvent;
-import me.kingingo.kcore.StatsManager.Stats;
-import me.kingingo.kcore.StatsManager.Event.PlayerStatsChangeEvent;
-import me.kingingo.kcore.StatsManager.Event.PlayerStatsLoadedEvent;
-import me.kingingo.kcore.Update.UpdateType;
-import me.kingingo.kcore.Update.Event.UpdateEvent;
-import me.kingingo.kcore.UserStores.Events.PlayerCreateUserStoreEvent;
-import me.kingingo.kcore.Util.RestartScheduler;
-import me.kingingo.kcore.Util.TabTitle;
-import me.kingingo.kcore.Util.UtilMath;
-import me.kingingo.kcore.Util.UtilPlayer;
-import me.kingingo.kcore.Util.UtilScoreboard;
-import me.kingingo.kcore.Util.UtilServer;
-import me.kingingo.kcore.Util.UtilWorldGuard;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -40,8 +14,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
@@ -61,14 +35,38 @@ import org.bukkit.scoreboard.DisplaySlot;
 
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
-public class kSkyBlockListener extends kListener{
+import dev.wolveringer.dataclient.gamestats.GameType;
+import dev.wolveringer.dataclient.gamestats.StatsKey;
+import lombok.Getter;
+import eu.epicpvp.Skyblock.SkyBlock;
+import eu.epicpvp.kcore.GemsShop.Events.PlayerGemsBuyEvent;
+import eu.epicpvp.kcore.Language.Language;
+import eu.epicpvp.kcore.Listener.kListener;
+import eu.epicpvp.kcore.Permission.PermissionType;
+import eu.epicpvp.kcore.Permission.Events.PlayerLoadPermissionEvent;
+import eu.epicpvp.kcore.Scoreboard.Events.PlayerSetScoreboardEvent;
+import eu.epicpvp.kcore.SignShop.Events.SignShopUseEvent;
+import eu.epicpvp.kcore.StatsManager.Event.PlayerStatsChangeEvent;
+import eu.epicpvp.kcore.StatsManager.Event.PlayerStatsLoadedEvent;
+import eu.epicpvp.kcore.Update.UpdateType;
+import eu.epicpvp.kcore.Update.Event.UpdateEvent;
+import eu.epicpvp.kcore.UserStores.Events.PlayerCreateUserStoreEvent;
+import eu.epicpvp.kcore.Util.RestartScheduler;
+import eu.epicpvp.kcore.Util.TabTitle;
+import eu.epicpvp.kcore.Util.UtilMath;
+import eu.epicpvp.kcore.Util.UtilPlayer;
+import eu.epicpvp.kcore.Util.UtilScoreboard;
+import eu.epicpvp.kcore.Util.UtilServer;
+import eu.epicpvp.kcore.Util.UtilWorldGuard;
+
+public class SkyBlockListener extends kListener{
 
 	@Getter
-	private kSkyBlock manager;
+	private SkyBlock manager;
 	private HashMap<Player,Location> player_loc = new HashMap<>();
 	private ArrayList<UUID> vote_list = new ArrayList<>();
 	
-	public kSkyBlockListener(kSkyBlock manager) {
+	public SkyBlockListener(SkyBlock manager) {
 		super(manager.getAntiLogout().getInstance(), "Listener");
 		this.manager=manager;
 	}
@@ -94,9 +92,13 @@ public class kSkyBlockListener extends kListener{
 	
 	@EventHandler
 	public void statsMONEY(PlayerStatsChangeEvent ev){
-		if(ev.getStats() == Stats.MONEY){
-			UtilScoreboard.resetScore(ev.getPlayer().getScoreboard(), 5, DisplaySlot.SIDEBAR);
-			UtilScoreboard.setScore(ev.getPlayer().getScoreboard(),UtilMath.trim(2, getManager().getStatsManager().getDouble(Stats.MONEY, ev.getPlayer()))+"$", DisplaySlot.SIDEBAR, 5);
+		if(ev.getManager().getType() != GameType.Money){
+			if(ev.getStats() == StatsKey.MONEY){
+				if(UtilPlayer.isOnline(ev.getPlayername())){
+					UtilScoreboard.resetScore(Bukkit.getPlayer(ev.getPlayername()).getScoreboard(), 5, DisplaySlot.SIDEBAR);
+					UtilScoreboard.setScore(Bukkit.getPlayer(ev.getPlayername()).getScoreboard(),UtilMath.trim(2, getManager().getStatsManager().getDouble(Bukkit.getPlayer(ev.getPlayername()), StatsKey.MONEY))+"$", DisplaySlot.SIDEBAR, 5);
+				}
+			}
 		}
 	}
 	
@@ -105,44 +107,44 @@ public class kSkyBlockListener extends kListener{
 		UtilPlayer.setSkyBlockScoreboard(ev.getPlayer(),UtilServer.getGemsShop().getGems(), getManager().getStatsManager(), UtilServer.getUserData());
 	}
 	
-	Player player;
-	@EventHandler
-	public void Receive(PacketReceiveEvent ev){
-		if(ev.getPacket() instanceof PLAYER_VOTE){
-			PLAYER_VOTE vote = (PLAYER_VOTE)ev.getPacket();
-			
-			if(UtilPlayer.isOnline(vote.getPlayer())){
-				if(UtilServer.getDeliveryPet()!=null){
-					 UtilServer.getDeliveryPet().deliveryUSE(Bukkit.getPlayer(vote.getPlayer()), "§aVote for EpicPvP", true);
-				 }
-				
-				player=Bukkit.getPlayer(vote.getPlayer());
-				manager.getStatsManager().setDouble(player, manager.getStatsManager().getDouble(Stats.MONEY, player)+200, Stats.MONEY);
-				player.getInventory().addItem(new ItemStack(Material.DIAMOND,2));
-				player.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
-				player.getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
-				player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "VOTE_THX"));
-			}else{
-				vote_list.add(vote.getUuid());
-			}
-		}else if(ev.getPacket() instanceof TWITTER_PLAYER_FOLLOW){
-			TWITTER_PLAYER_FOLLOW tw = (TWITTER_PLAYER_FOLLOW)ev.getPacket();
-			
-			if(UtilPlayer.isOnline(tw.getPlayer())){
-				Player p = Bukkit.getPlayer(tw.getPlayer());
-				if(!tw.isFollow()){
-					getManager().getMysql().Update("DELETE FROM BG_TWITTER WHERE uuid='" + UtilPlayer.getRealUUID(p) + "'");
-					p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_FOLLOW_N"));
-					p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_REMOVE"));
-				}else{
-					UtilServer.getDeliveryPet().deliveryBlock(p, "§cTwitter Reward");
-					getManager().getStatsManager().addDouble(p, 300, Stats.MONEY);
-					p.setLevel(p.getLevel()+15);
-					p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","300"}));
-				}
-			}
-		}
-	}
+//	Player player;
+//	@EventHandler
+//	public void Receive(PacketReceiveEvent ev){
+//		if(ev.getPacket() instanceof PLAYER_VOTE){
+//			PLAYER_VOTE vote = (PLAYER_VOTE)ev.getPacket();
+//			
+//			if(UtilPlayer.isOnline(vote.getPlayer())){
+//				if(UtilServer.getDeliveryPet()!=null){
+//					 UtilServer.getDeliveryPet().deliveryUSE(Bukkit.getPlayer(vote.getPlayer()), "§aVote for EpicPvP", true);
+//				 }
+//				
+//				player=Bukkit.getPlayer(vote.getPlayer());
+//				manager.getStatsManager().setDouble(player, manager.getStatsManager().getDouble(Stats.MONEY, player)+200, Stats.MONEY);
+//				player.getInventory().addItem(new ItemStack(Material.DIAMOND,2));
+//				player.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
+//				player.getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
+//				player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "VOTE_THX"));
+//			}else{
+//				vote_list.add(vote.getUuid());
+//			}
+//		}else if(ev.getPacket() instanceof TWITTER_PLAYER_FOLLOW){
+//			TWITTER_PLAYER_FOLLOW tw = (TWITTER_PLAYER_FOLLOW)ev.getPacket();
+//			
+//			if(UtilPlayer.isOnline(tw.getPlayer())){
+//				Player p = Bukkit.getPlayer(tw.getPlayer());
+//				if(!tw.isFollow()){
+//					getManager().getMysql().Update("DELETE FROM BG_TWITTER WHERE uuid='" + UtilPlayer.getRealUUID(p) + "'");
+//					p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_FOLLOW_N"));
+//					p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_REMOVE"));
+//				}else{
+//					UtilServer.getDeliveryPet().deliveryBlock(p, "§cTwitter Reward");
+//					getManager().getStatsManager().addDouble(p, 300, Stats.MONEY);
+//					p.setLevel(p.getLevel()+15);
+//					p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","300"}));
+//				}
+//			}
+//		}
+//	}
 	
 	@EventHandler
 	public void onClickinEnchant(EnchantItemEvent e){
@@ -223,7 +225,7 @@ public class kSkyBlockListener extends kListener{
 	
 	@EventHandler
 	public void Sign(SignChangeEvent ev){
-		if(ev.getPlayer().hasPermission(kPermission.CHAT_FARBIG.getPermissionToString())){
+		if(ev.getPlayer().hasPermission(PermissionType.CHAT_FARBIG.getPermissionToString())){
 			ev.setLine(0, ev.getLine(0).replaceAll("&", "§"));
 			ev.setLine(1, ev.getLine(1).replaceAll("&", "§"));
 			ev.setLine(2, ev.getLine(2).replaceAll("&", "§"));
@@ -243,7 +245,7 @@ public class kSkyBlockListener extends kListener{
 	@EventHandler
 	public void Quit(PlayerQuitEvent ev){
 		ev.setQuitMessage(null);
-		getManager().getStatsManager().SaveAllPlayerData(ev.getPlayer());
+		getManager().getStatsManager().save(ev.getPlayer());
 	}
 	
 	@EventHandler
@@ -259,8 +261,8 @@ public class kSkyBlockListener extends kListener{
 		if(ev.getEntity() instanceof Player){
 			death=(Player)ev.getEntity();;
 			UtilPlayer.RespawnNow(death, manager);
-			getManager().getStatsManager().setInt(death, getManager().getStatsManager().getInt(Stats.DEATHS, death)+1, Stats.DEATHS);
-			if(ev.getEntity().getKiller() instanceof Player)getManager().getStatsManager().setInt(ev.getEntity().getKiller(), getManager().getStatsManager().getInt(Stats.KILLS, ev.getEntity().getKiller())+1, Stats.KILLS);
+			getManager().getStatsManager().add(death, StatsKey.DEATHS,1);
+			if(ev.getEntity().getKiller() instanceof Player)getManager().getStatsManager().add(ev.getEntity().getKiller(),StatsKey.KILLS, 1);
 		}
 	}
 	
@@ -288,23 +290,27 @@ public class kSkyBlockListener extends kListener{
 	
 	@EventHandler
 	public void loadedStats(PlayerStatsLoadedEvent ev){
-		if(vote_list.contains( UtilPlayer.getRealUUID(ev.getPlayer()) )){
-			if(UtilServer.getDeliveryPet()!=null){
-				 UtilServer.getDeliveryPet().deliveryUSE(ev.getPlayer(), "§aVote for EpicPvP", true);
-			 }
-			
-			vote_list.remove(UtilPlayer.getRealUUID(ev.getPlayer()));
-			manager.getStatsManager().setDouble(ev.getPlayer(), manager.getStatsManager().getDouble(Stats.MONEY, ev.getPlayer())+200, Stats.MONEY);
-			ev.getPlayer().getInventory().addItem(new ItemStack(Material.DIAMOND,2));
-			ev.getPlayer().getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
-			ev.getPlayer().getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
-			ev.getPlayer().sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "VOTE_THX"));
+		if(ev.getManager().getType() != GameType.Money){
+			if(UtilPlayer.isOnline(ev.getPlayername())){
+				if(vote_list.contains( UtilPlayer.getRealUUID(Bukkit.getPlayer(ev.getPlayername())) )){
+					if(UtilServer.getDeliveryPet()!=null){
+						 UtilServer.getDeliveryPet().deliveryUSE(Bukkit.getPlayer(ev.getPlayername()), "§aVote for EpicPvP", true);
+					 }
+					
+					vote_list.remove(UtilPlayer.getRealUUID(Bukkit.getPlayer(ev.getPlayername())));
+					manager.getStatsManager().add(Bukkit.getPlayer(ev.getPlayername()), StatsKey.MONEY,200);
+					Bukkit.getPlayer(ev.getPlayername()).getInventory().addItem(new ItemStack(Material.DIAMOND,2));
+					Bukkit.getPlayer(ev.getPlayername()).getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
+					Bukkit.getPlayer(ev.getPlayername()).getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
+					Bukkit.getPlayer(ev.getPlayername()).sendMessage(Language.getText(Bukkit.getPlayer(ev.getPlayername()), "PREFIX")+Language.getText(Bukkit.getPlayer(ev.getPlayername()), "VOTE_THX"));
+				}
+			}
 		}
 	}
 	
 	@EventHandler
 	public void Join(PlayerJoinEvent ev){
-		getManager().getStatsManager().loadPlayerStats(ev.getPlayer());
+		getManager().getStatsManager().loadPlayer(ev.getPlayer());
 		getManager().getManager().getGilden_world().getGilde().loadPlayer(ev.getPlayer());
 		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEpicPvP§8.§eeu §8| §aSkyBlock Server", "§aTeamSpeak: §7ts.EpicPvP.eu §8| §eWebsite: §7EpicPvP.eu");
 	}
@@ -369,7 +375,7 @@ public class kSkyBlockListener extends kListener{
 		}else{
 			if(!getManager().getAntiLogout().is(ev.getPlayer())){
 				if(cmd.equalsIgnoreCase("/homes")||cmd.equalsIgnoreCase("/etpa")||cmd.equalsIgnoreCase("/fly")||cmd.equalsIgnoreCase("/kfly")||cmd.equalsIgnoreCase("/tpaccet")||cmd.equalsIgnoreCase("/tpyes")||cmd.equalsIgnoreCase("/tpask")||cmd.equalsIgnoreCase("/etpaccept")||cmd.equalsIgnoreCase("/ewarp")||cmd.equalsIgnoreCase("/tpa")||cmd.equalsIgnoreCase("/eback")||cmd.equalsIgnoreCase("/ehome")||cmd.equalsIgnoreCase("/tpaccept")||cmd.equalsIgnoreCase("/back")||cmd.equalsIgnoreCase("/home")||cmd.equalsIgnoreCase("/spawn")||cmd.equalsIgnoreCase("/espawn")||cmd.equalsIgnoreCase("/warp")){
-					ev.getPlayer().sendMessage(Language.getText(player, "PREFIX")+"§cDu kannst den Befehl §b"+cmd+"§c nicht in Kampf ausführen!");
+					ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+"§cDu kannst den Befehl §b"+cmd+"§c nicht in Kampf ausführen!");
 					ev.setCancelled(true);
 				}
 			}else{
@@ -382,7 +388,7 @@ public class kSkyBlockListener extends kListener{
 	
 	public void restart(){
 		RestartScheduler restart = new RestartScheduler(getManager().getAntiLogout().getInstance());
-		restart.setGems(UtilServer.getGemsShop().getGems());
+		restart.setMoney(getManager().getMoney());
 		restart.setAnti(getManager().getAntiLogout());
 		restart.setStats(getManager().getStatsManager());
 		restart.setUserData(getManager().getUserData());

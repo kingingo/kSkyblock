@@ -1,15 +1,15 @@
-package me.kingingo.kSkyblock.Commands;
+package eu.epicpvp.Skyblock.Commands;
 
 import java.util.UUID;
 
 import lombok.Getter;
-import me.kingingo.kSkyblock.kSkyBlock;
-import me.kingingo.kSkyblock.World.SkyBlockWorld;
-import me.kingingo.kcore.Command.CommandHandler.Sender;
-import me.kingingo.kcore.Language.Language;
-import me.kingingo.kcore.Permission.kPermission;
-import me.kingingo.kcore.TeleportManager.Teleporter;
-import me.kingingo.kcore.Util.UtilPlayer;
+import eu.epicpvp.Skyblock.SkyBlock;
+import eu.epicpvp.Skyblock.World.SkyBlockWorld;
+import eu.epicpvp.kcore.Command.CommandHandler.Sender;
+import eu.epicpvp.kcore.Language.Language;
+import eu.epicpvp.kcore.Permission.PermissionType;
+import eu.epicpvp.kcore.TeleportManager.Teleporter;
+import eu.epicpvp.kcore.Util.UtilPlayer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -24,15 +24,15 @@ import org.bukkit.inventory.ItemStack;
 public class CommadSkyBlock implements CommandExecutor{
 	
 	@Getter
-	private kSkyBlock instance;
+	private SkyBlock instance;
 	private Player p;
 	private Player target;
 	
-	public CommadSkyBlock(kSkyBlock instance){
+	public CommadSkyBlock(SkyBlock instance){
 		this.instance=instance;
 	}
 	
-	@me.kingingo.kcore.Command.CommandHandler.Command(command = "skyblock",alias = {"sb","sk","is","island","s"}, sender = Sender.PLAYER)
+	@eu.epicpvp.kcore.Command.CommandHandler.Command(command = "skyblock",alias = {"sb","sk","is","island","s"}, sender = Sender.PLAYER)
 	public boolean onCommand(CommandSender cs, Command cmd, String arg2,String[] args) {
 		if(cs instanceof Player){
 			p = (Player)cs;
@@ -43,7 +43,7 @@ public class CommadSkyBlock implements CommandExecutor{
 				p.sendMessage(Language.getText(p, "SKYBLOCK_CMD3"));
 				p.sendMessage(Language.getText(p, "SKYBLOCK_CMD4"));
 				p.sendMessage(Language.getText(p, "SKYBLOCK_CMD5"));
-				if(p.hasPermission(kPermission.GILDE_NEWISLAND.getPermissionToString()))p.sendMessage(Language.getText(p, "SKYBLOCK_CMD6"));
+				if(p.hasPermission(PermissionType.GILDE_NEWISLAND.getPermissionToString()))p.sendMessage(Language.getText(p, "SKYBLOCK_CMD6"));
 				if(p.isOp())p.sendMessage(Language.getText(p, "SKYBLOCK_CMD7"));
 				if(p.isOp())p.sendMessage(Language.getText(p, "SKYBLOCK_CMD8"));
 				p.sendMessage(Language.getText(p, "SKYBLOCK_CMD9"));
@@ -122,7 +122,7 @@ public class CommadSkyBlock implements CommandExecutor{
 						}else{
 							p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_NO_ISLAND"));
 						}
-					}else if(p.hasPermission(kPermission.SKYBLOCK_HOME_OTHER.getPermissionToString())){
+					}else if(p.hasPermission(PermissionType.SKYBLOCK_HOME_OTHER.getPermissionToString())){
 						if(UtilPlayer.isOnline(args[1])){
 							Player tp = Bukkit.getPlayer(args[1]);
 							if(getInstance().getManager().haveIsland(tp)){
@@ -168,7 +168,7 @@ public class CommadSkyBlock implements CommandExecutor{
 					}else{
 						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_NO_ISLAND"));
 					}
-				}else if(args[0].equalsIgnoreCase("newisland")&&p.hasPermission(kPermission.GILDE_NEWISLAND.getPermissionToString())){
+				}else if(args[0].equalsIgnoreCase("newisland")&&p.hasPermission(PermissionType.GILDE_NEWISLAND.getPermissionToString())){
 					if(args.length==2){
 						if(UtilPlayer.isOnline(args[1])){
 							Player tp = Bukkit.getPlayer(args[1]);
@@ -239,7 +239,7 @@ public class CommadSkyBlock implements CommandExecutor{
 							p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "PLAYER_IS_OFFLINE",args[1]));
 						}
 					}
-				}else if(args[0].equalsIgnoreCase("info")&&p.hasPermission(kPermission.GILDE_NEWISLAND.getPermissionToString())){
+				}else if(args[0].equalsIgnoreCase("info")&&p.hasPermission(PermissionType.GILDE_NEWISLAND.getPermissionToString())){
 					if(args.length==1){
 						
 					}

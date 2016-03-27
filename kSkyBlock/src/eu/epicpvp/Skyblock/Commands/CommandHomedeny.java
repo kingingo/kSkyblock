@@ -1,8 +1,8 @@
-package me.kingingo.kSkyblock.Commands;
+package eu.epicpvp.Skyblock.Commands;
 
 import lombok.Getter;
-import me.kingingo.kcore.Command.CommandHandler.Sender;
-import me.kingingo.kcore.Language.Language;
+import eu.epicpvp.kcore.Command.CommandHandler.Sender;
+import eu.epicpvp.kcore.Language.Language;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,7 +19,7 @@ public class CommandHomedeny implements CommandExecutor{
 		this.cmda=cmda;
 	}
 
-	@me.kingingo.kcore.Command.CommandHandler.Command(command = "homedeny",alias={"hd","homeno"}, sender = Sender.PLAYER)
+	@eu.epicpvp.kcore.Command.CommandHandler.Command(command = "homedeny",alias={"hd","homeno"}, sender = Sender.PLAYER)
 	public boolean onCommand(CommandSender cs, Command cmd, String arg2,String[] args) {
 		player = (Player)cs;
 		if(args.length==0){

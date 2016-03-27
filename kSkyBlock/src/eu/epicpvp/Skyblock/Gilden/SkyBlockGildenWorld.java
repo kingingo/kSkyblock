@@ -1,4 +1,4 @@
-package me.kingingo.kSkyblock.Gilden;
+package eu.epicpvp.Skyblock.Gilden;
 
 import java.io.File;
 import java.sql.ResultSet;
@@ -7,22 +7,22 @@ import java.util.UUID;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.kingingo.kSkyblock.SkyBlockManager;
-import me.kingingo.kSkyblock.Util.UtilSchematic;
-import me.kingingo.kcore.Gilden.GildenManager;
-import me.kingingo.kcore.Gilden.Events.GildeLoadEvent;
-import me.kingingo.kcore.Language.Language;
-import me.kingingo.kcore.Listener.kListener;
-import me.kingingo.kcore.MySQL.MySQLErr;
-import me.kingingo.kcore.MySQL.Events.MySQLErrorEvent;
-import me.kingingo.kcore.PacketAPI.Packets.kPacketPlayOutWorldBorder;
-import me.kingingo.kcore.Permission.kPermission;
-import me.kingingo.kcore.Update.UpdateType;
-import me.kingingo.kcore.Update.Event.UpdateEvent;
-import me.kingingo.kcore.Util.UtilBlock;
-import me.kingingo.kcore.Util.UtilEvent;
-import me.kingingo.kcore.Util.UtilEvent.ActionType;
-import me.kingingo.kcore.Util.UtilWorld;
+import eu.epicpvp.Skyblock.SkyBlockManager;
+import eu.epicpvp.Skyblock.Util.UtilSchematic;
+import eu.epicpvp.kcore.Gilden.GildenManager;
+import eu.epicpvp.kcore.Gilden.Events.GildeLoadEvent;
+import eu.epicpvp.kcore.Language.Language;
+import eu.epicpvp.kcore.Listener.kListener;
+import eu.epicpvp.kcore.MySQL.MySQLErr;
+import eu.epicpvp.kcore.MySQL.Events.MySQLErrorEvent;
+import eu.epicpvp.kcore.PacketAPI.Packets.kPacketPlayOutWorldBorder;
+import eu.epicpvp.kcore.Permission.PermissionType;
+import eu.epicpvp.kcore.Update.UpdateType;
+import eu.epicpvp.kcore.Update.Event.UpdateEvent;
+import eu.epicpvp.kcore.Util.UtilBlock;
+import eu.epicpvp.kcore.Util.UtilEvent;
+import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
+import eu.epicpvp.kcore.Util.UtilWorld;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -98,7 +98,7 @@ public class SkyBlockGildenWorld extends kListener{
 	}
 	
 	public kPacketPlayOutWorldBorder getIslandBorder(Player player){
-		if(player.hasPermission(kPermission.SKYBLOCK_ISLAND_BORDER_BYPASS.getPermissionToString())){
+		if(player.hasPermission(PermissionType.SKYBLOCK_ISLAND_BORDER_BYPASS.getPermissionToString())){
 			return null;
 		}
 		if(islands.containsKey(gilde.getPlayerGilde(player))){
@@ -315,7 +315,7 @@ public class SkyBlockGildenWorld extends kListener{
 	
 	public boolean addIsland(Player player,String gilde){
 		gilde=gilde.toLowerCase();
-		if(player.hasPermission(kPermission.SKYBLOCK_GILDEN_ISLAND.getPermissionToString())){
+		if(player.hasPermission(PermissionType.SKYBLOCK_GILDEN_ISLAND.getPermissionToString())){
 			return addIsland(player,gilde, schematic,true);
 		}
 		return false;

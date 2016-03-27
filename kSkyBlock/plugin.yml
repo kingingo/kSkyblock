@@ -1,0 +1,5 @@
+name: SkyBlock
+author: kingingo
+version: 1.7
+main: eu.epicpvp.Skyblock.SkyBlock
+depend: [Core]
