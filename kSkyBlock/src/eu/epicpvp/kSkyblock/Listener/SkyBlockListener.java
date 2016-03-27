@@ -1,4 +1,4 @@
-package eu.epicpvp.Skyblock.Listener;
+package eu.epicpvp.kSkyblock.Listener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +38,7 @@ import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import dev.wolveringer.dataclient.gamestats.GameType;
 import dev.wolveringer.dataclient.gamestats.StatsKey;
 import lombok.Getter;
-import eu.epicpvp.Skyblock.SkyBlock;
+import eu.epicpvp.kSkyblock.kSkyBlock;
 import eu.epicpvp.kcore.GemsShop.Events.PlayerGemsBuyEvent;
 import eu.epicpvp.kcore.Language.Language;
 import eu.epicpvp.kcore.Listener.kListener;
@@ -62,11 +62,11 @@ import eu.epicpvp.kcore.Util.UtilWorldGuard;
 public class SkyBlockListener extends kListener{
 
 	@Getter
-	private SkyBlock manager;
+	private kSkyBlock manager;
 	private HashMap<Player,Location> player_loc = new HashMap<>();
 	private ArrayList<UUID> vote_list = new ArrayList<>();
 	
-	public SkyBlockListener(SkyBlock manager) {
+	public SkyBlockListener(kSkyBlock manager) {
 		super(manager.getAntiLogout().getInstance(), "Listener");
 		this.manager=manager;
 	}

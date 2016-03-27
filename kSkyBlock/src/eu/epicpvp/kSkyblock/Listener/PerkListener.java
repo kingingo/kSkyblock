@@ -1,4 +1,4 @@
-package eu.epicpvp.Skyblock.Listener;
+package eu.epicpvp.kSkyblock.Listener;
 
 import eu.epicpvp.kcore.Kit.PerkManager;
 import eu.epicpvp.kcore.Listener.kListener;

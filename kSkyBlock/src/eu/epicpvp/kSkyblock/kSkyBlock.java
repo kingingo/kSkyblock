@@ -1,4 +1,4 @@
-package eu.epicpvp.Skyblock;
+package eu.epicpvp.kSkyblock;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,12 +19,12 @@ import dev.wolveringer.client.connection.ClientType;
 import dev.wolveringer.dataclient.gamestats.GameType;
 import dev.wolveringer.dataclient.gamestats.ServerType;
 import dev.wolveringer.dataclient.gamestats.StatsKey;
-import eu.epicpvp.Skyblock.Commands.CommadSkyBlock;
-import eu.epicpvp.Skyblock.Commands.CommandHomeaccept;
-import eu.epicpvp.Skyblock.Commands.CommandParty;
-import eu.epicpvp.Skyblock.Listener.PerkListener;
-import eu.epicpvp.Skyblock.Listener.SkyBlockListener;
-import eu.epicpvp.Skyblock.Listener.Holiday.ChristmasListener;
+import eu.epicpvp.kSkyblock.Commands.CommadSkyBlock;
+import eu.epicpvp.kSkyblock.Commands.CommandHomeaccept;
+import eu.epicpvp.kSkyblock.Commands.CommandParty;
+import eu.epicpvp.kSkyblock.Listener.PerkListener;
+import eu.epicpvp.kSkyblock.Listener.SkyBlockListener;
+import eu.epicpvp.kSkyblock.Listener.Holiday.ChristmasListener;
 import eu.epicpvp.kcore.AACHack.AACHack;
 import eu.epicpvp.kcore.AntiLogout.AntiLogoutManager;
 import eu.epicpvp.kcore.AntiLogout.AntiLogoutType;
@@ -142,7 +142,7 @@ import eu.epicpvp.kcore.Util.UtilServer;
 import eu.epicpvp.kcore.Util.UtilTime;
 import lombok.Getter;
 
-public class SkyBlock extends JavaPlugin {
+public class kSkyBlock extends JavaPlugin {
 	
 	@Getter
 	private AntiLogoutManager antiLogout;

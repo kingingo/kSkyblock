@@ -1,10 +1,10 @@
-package eu.epicpvp.Skyblock.Listener.Holiday;
+package eu.epicpvp.kSkyblock.Listener.Holiday;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 
-import eu.epicpvp.Skyblock.SkyBlock;
+import eu.epicpvp.kSkyblock.kSkyBlock;
 import eu.epicpvp.kcore.Listener.kListener;
 import eu.epicpvp.kcore.Update.UpdateType;
 import eu.epicpvp.kcore.Update.Event.UpdateEvent;
@@ -12,7 +12,7 @@ import eu.epicpvp.kcore.Util.UtilParticle;
 
 public class ChristmasListener extends kListener{
 
-	public ChristmasListener(SkyBlock skyblock) {
+	public ChristmasListener(kSkyBlock skyblock) {
 		super(skyblock, "ChrismasListener");
 		Log("Enabled");
 	}

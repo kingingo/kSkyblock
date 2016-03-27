@@ -1,4 +1,4 @@
-package eu.epicpvp.Skyblock.Commands;
+package eu.epicpvp.kSkyblock.Commands;
 
 import lombok.Getter;
 import eu.epicpvp.kcore.Command.CommandHandler.Sender;

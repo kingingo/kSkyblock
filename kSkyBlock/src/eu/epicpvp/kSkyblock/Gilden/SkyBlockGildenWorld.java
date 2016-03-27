@@ -1,4 +1,4 @@
-package eu.epicpvp.Skyblock.Gilden;
+package eu.epicpvp.kSkyblock.Gilden;
 
 import java.io.File;
 import java.sql.ResultSet;
@@ -7,8 +7,8 @@ import java.util.UUID;
 
 import lombok.Getter;
 import lombok.Setter;
-import eu.epicpvp.Skyblock.SkyBlockManager;
-import eu.epicpvp.Skyblock.Util.UtilSchematic;
+import eu.epicpvp.kSkyblock.SkyBlockManager;
+import eu.epicpvp.kSkyblock.Util.UtilSchematic;
 import eu.epicpvp.kcore.Gilden.GildenManager;
 import eu.epicpvp.kcore.Gilden.Events.GildeLoadEvent;
 import eu.epicpvp.kcore.Language.Language;

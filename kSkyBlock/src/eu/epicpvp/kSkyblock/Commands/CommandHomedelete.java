@@ -1,6 +1,6 @@
-package eu.epicpvp.Skyblock.Commands;
+package eu.epicpvp.kSkyblock.Commands;
 
-import eu.epicpvp.Skyblock.World.SkyBlockWorld;
+import eu.epicpvp.kSkyblock.World.SkyBlockWorld;
 import eu.epicpvp.kcore.Command.CommandHandler.Sender;
 import eu.epicpvp.kcore.Language.Language;
 import eu.epicpvp.kcore.Util.UtilPlayer;

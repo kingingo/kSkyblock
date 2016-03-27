@@ -1,4 +1,4 @@
-package eu.epicpvp.Skyblock.World;
+package eu.epicpvp.kSkyblock.World;
 
 import java.io.File;
 import java.sql.ResultSet;
@@ -8,8 +8,8 @@ import java.util.UUID;
 
 import lombok.Getter;
 import lombok.Setter;
-import eu.epicpvp.Skyblock.SkyBlockManager;
-import eu.epicpvp.Skyblock.Util.UtilSchematic;
+import eu.epicpvp.kSkyblock.SkyBlockManager;
+import eu.epicpvp.kSkyblock.Util.UtilSchematic;
 import eu.epicpvp.kcore.AntiLogout.Events.AntiLogoutAddPlayerEvent;
 import eu.epicpvp.kcore.Command.Commands.Events.PlayerSetHomeEvent;
 import eu.epicpvp.kcore.Language.Language;

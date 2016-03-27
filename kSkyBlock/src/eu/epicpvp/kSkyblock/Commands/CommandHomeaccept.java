@@ -1,8 +1,8 @@
-package eu.epicpvp.Skyblock.Commands;
+package eu.epicpvp.kSkyblock.Commands;
 
 import java.util.HashMap;
 
-import eu.epicpvp.Skyblock.SkyBlockManager;
+import eu.epicpvp.kSkyblock.SkyBlockManager;
 import eu.epicpvp.kcore.Command.CommandHandler.Sender;
 import eu.epicpvp.kcore.Language.Language;
 import eu.epicpvp.kcore.UserDataConfig.UserDataConfig;

@@ -1,4 +1,4 @@
-package eu.epicpvp.Skyblock;
+package eu.epicpvp.kSkyblock;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import lombok.Getter;
-import eu.epicpvp.Skyblock.Gilden.SkyBlockGildenWorld;
-import eu.epicpvp.Skyblock.World.SkyBlockWorld;
+import eu.epicpvp.kSkyblock.Gilden.SkyBlockGildenWorld;
+import eu.epicpvp.kSkyblock.World.SkyBlockWorld;
 import eu.epicpvp.kcore.ChunkGenerator.CleanroomChunkGenerator;
 import eu.epicpvp.kcore.Gilden.GildenManager;
 import eu.epicpvp.kcore.Language.Language;
@@ -30,7 +30,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class SkyBlockManager extends kListener{
 	
 	@Getter
-	private SkyBlock instance;
+	private kSkyBlock instance;
 	@Getter
 	private ArrayList<SkyBlockWorld> worlds = new ArrayList<>();
 	@Getter
@@ -41,7 +41,7 @@ public class SkyBlockManager extends kListener{
 	@Getter
 	private SkyBlockGildenWorld gilden_world;
 	
-	public SkyBlockManager(SkyBlock instance){
+	public SkyBlockManager(kSkyBlock instance){
 		super(instance,"SkyBlockManager");
 		this.instance=instance;
 		getInstance().getMysql().Update("CREATE TABLE IF NOT EXISTS list_skyblock_worlds(UUID varchar(100),worldName varchar(30),X int,Z int)");

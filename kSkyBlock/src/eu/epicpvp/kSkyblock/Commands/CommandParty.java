@@ -1,12 +1,12 @@
-package eu.epicpvp.Skyblock.Commands;
+package eu.epicpvp.kSkyblock.Commands;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import eu.epicpvp.Skyblock.SkyBlock;
-import eu.epicpvp.Skyblock.World.SkyBlockWorld;
+import eu.epicpvp.kSkyblock.kSkyBlock;
+import eu.epicpvp.kSkyblock.World.SkyBlockWorld;
 import eu.epicpvp.kcore.Command.CommandHandler.Sender;
 import eu.epicpvp.kcore.Language.Language;
 import eu.epicpvp.kcore.Util.UtilFirework;
@@ -16,10 +16,10 @@ import lombok.Getter;
 public class CommandParty implements CommandExecutor{
 	
 	@Getter
-	private SkyBlock instance;
+	private kSkyBlock instance;
 	private Player p;
 	
-	public CommandParty(SkyBlock instance){
+	public CommandParty(kSkyBlock instance){
 		this.instance=instance;
 	}
 	

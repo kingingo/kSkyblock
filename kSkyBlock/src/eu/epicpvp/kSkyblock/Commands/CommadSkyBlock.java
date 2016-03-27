@@ -1,10 +1,10 @@
-package eu.epicpvp.Skyblock.Commands;
+package eu.epicpvp.kSkyblock.Commands;
 
 import java.util.UUID;
 
 import lombok.Getter;
-import eu.epicpvp.Skyblock.SkyBlock;
-import eu.epicpvp.Skyblock.World.SkyBlockWorld;
+import eu.epicpvp.kSkyblock.kSkyBlock;
+import eu.epicpvp.kSkyblock.World.SkyBlockWorld;
 import eu.epicpvp.kcore.Command.CommandHandler.Sender;
 import eu.epicpvp.kcore.Language.Language;
 import eu.epicpvp.kcore.Permission.PermissionType;
@@ -24,11 +24,11 @@ import org.bukkit.inventory.ItemStack;
 public class CommadSkyBlock implements CommandExecutor{
 	
 	@Getter
-	private SkyBlock instance;
+	private kSkyBlock instance;
 	private Player p;
 	private Player target;
 	
-	public CommadSkyBlock(SkyBlock instance){
+	public CommadSkyBlock(kSkyBlock instance){
 		this.instance=instance;
 	}
 	
