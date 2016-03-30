@@ -35,8 +35,8 @@ import org.bukkit.scoreboard.DisplaySlot;
 
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
-import dev.wolveringer.dataclient.gamestats.GameType;
-import dev.wolveringer.dataclient.gamestats.StatsKey;
+import dev.wolveringer.dataserver.gamestats.GameType;
+import dev.wolveringer.dataserver.gamestats.StatsKey;
 import lombok.Getter;
 import eu.epicpvp.kSkyblock.kSkyBlock;
 import eu.epicpvp.kcore.GemsShop.Events.PlayerGemsBuyEvent;

@@ -16,9 +16,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import dev.wolveringer.client.ClientWrapper;
 import dev.wolveringer.client.connection.ClientType;
-import dev.wolveringer.dataclient.gamestats.GameType;
-import dev.wolveringer.dataclient.gamestats.ServerType;
-import dev.wolveringer.dataclient.gamestats.StatsKey;
+import dev.wolveringer.dataserver.gamestats.GameType;
+import dev.wolveringer.dataserver.gamestats.ServerType;
+import dev.wolveringer.dataserver.gamestats.StatsKey;
 import eu.epicpvp.kSkyblock.Commands.CommadSkyBlock;
 import eu.epicpvp.kSkyblock.Commands.CommandHomeaccept;
 import eu.epicpvp.kSkyblock.Commands.CommandParty;

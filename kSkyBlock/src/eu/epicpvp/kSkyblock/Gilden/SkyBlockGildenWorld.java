@@ -22,6 +22,7 @@ import eu.epicpvp.kcore.Update.Event.UpdateEvent;
 import eu.epicpvp.kcore.Util.UtilBlock;
 import eu.epicpvp.kcore.Util.UtilEvent;
 import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
+import eu.epicpvp.kcore.Util.UtilPlayer;
 import eu.epicpvp.kcore.Util.UtilWorld;
 
 import org.bukkit.Bukkit;
@@ -37,7 +38,6 @@ import org.bukkit.block.Dispenser;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.Hopper;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -160,7 +160,7 @@ public class SkyBlockGildenWorld extends kListener{
 		for(Player player : getWorld().getPlayers()){
 			if(!player.isOnGround()&&player.getLocation().getBlockY()<=12){
 				player.teleport(Bukkit.getWorld("world").getSpawnLocation());
-				player.setHealth( ((CraftPlayer)player).getMaxHealth() );
+				player.setHealth( UtilPlayer.getCraftPlayer(player).getMaxHealth() );
 			}
 		}
 	}
