@@ -17,7 +17,7 @@ public class CommandSkyBlockInventory implements CommandExecutor{
 	private InventoryBase base;
 	
 	public CommandSkyBlockInventory(JavaPlugin instance){
-		this.base=new InventoryBase(instance, "SkyBlock Menü");
+		this.base=new InventoryBase(instance, "SkyBlock MenÂ§");
 	}
 
 	@eu.epicpvp.kcore.Command.CommandHandler.Command(command = "si",alias={"skyblockinv"}, sender = Sender.PLAYER)

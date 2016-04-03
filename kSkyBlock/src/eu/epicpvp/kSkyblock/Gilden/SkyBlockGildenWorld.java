@@ -452,7 +452,7 @@ public class SkyBlockGildenWorld extends kListener{
 			for(int i = 0; i< (anzahl-a) ;i++){
 				addIsland(null,null,schematic,false);
 			}
-			Log((anzahl-a)+" Inseln wurden hinzugefügt!");
+			Log((anzahl-a)+" Inseln wurden hinzugefÂ§gt!");
 		}
 	}
 	

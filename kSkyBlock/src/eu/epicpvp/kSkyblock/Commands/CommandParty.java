@@ -60,7 +60,7 @@ public class CommandParty implements CommandExecutor{
 							p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_NO_ISLAND"));
 						}
 					}else{
-						p.sendMessage("§6/party einladen [Player] §8|§7 Einladen zur Party.");
+						p.sendMessage("Â§6/party einladen [Player] Â§8|Â§7 Einladen zur Party.");
 					}
 				}else if(args[0].equalsIgnoreCase("annehmen")||args[0].equalsIgnoreCase("accept")){
 					boolean b = false;
@@ -72,7 +72,7 @@ public class CommandParty implements CommandExecutor{
 						}
 					}
 					if(!b)p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_PARTY_EINLADEN_NO"));
-				}else if(args[0].equalsIgnoreCase("schließen")||args[0].equalsIgnoreCase("verlassen")||args[0].equalsIgnoreCase("leave")||args[0].equalsIgnoreCase("close")){
+				}else if(args[0].equalsIgnoreCase("schlieÂ§en")||args[0].equalsIgnoreCase("verlassen")||args[0].equalsIgnoreCase("leave")||args[0].equalsIgnoreCase("close")){
 					SkyBlockWorld world = getInstance().getManager().getParty(p);
 					if(world!=null){
 						world.verlassenParty(p,true);
@@ -95,7 +95,7 @@ public class CommandParty implements CommandExecutor{
 							p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_PARTY_NO"));
 						}
 					}else{
-						p.sendMessage(Language.getText(p, "PREFIX")+"§6/party kicken [Player]");
+						p.sendMessage(Language.getText(p, "PREFIX")+"Â§6/party kicken [Player]");
 					}
 				}else{
 					p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "NO_BEFEHL"));

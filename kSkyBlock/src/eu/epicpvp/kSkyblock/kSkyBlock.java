@@ -30,6 +30,7 @@ import eu.epicpvp.kcore.AntiLogout.AntiLogoutManager;
 import eu.epicpvp.kcore.AntiLogout.AntiLogoutType;
 import eu.epicpvp.kcore.Calendar.Calendar;
 import eu.epicpvp.kcore.Command.CommandHandler;
+import eu.epicpvp.kcore.Command.Admin.CommandAddEpics;
 import eu.epicpvp.kcore.Command.Admin.CommandBroadcast;
 import eu.epicpvp.kcore.Command.Admin.CommandCMDMute;
 import eu.epicpvp.kcore.Command.Admin.CommandChatMute;
@@ -38,6 +39,8 @@ import eu.epicpvp.kcore.Command.Admin.CommandFly;
 import eu.epicpvp.kcore.Command.Admin.CommandFlyspeed;
 import eu.epicpvp.kcore.Command.Admin.CommandGive;
 import eu.epicpvp.kcore.Command.Admin.CommandGiveAll;
+import eu.epicpvp.kcore.Command.Admin.CommandGiveCoins;
+import eu.epicpvp.kcore.Command.Admin.CommandGiveGems;
 import eu.epicpvp.kcore.Command.Admin.CommandItem;
 import eu.epicpvp.kcore.Command.Admin.CommandLocations;
 import eu.epicpvp.kcore.Command.Admin.CommandMore;
@@ -264,6 +267,9 @@ public class kSkyBlock extends JavaPlugin {
 		this.cmd.register(CommandHead.class, new CommandHead());
 		this.cmd.register(CommandPotion.class, new CommandPotion(getPermissionManager()));
 		this.cmd.register(CommandFill.class, new CommandFill());
+		this.cmd.register(CommandGiveGems.class, new CommandGiveGems(getMoney()));
+		this.cmd.register(CommandGiveCoins.class, new CommandGiveCoins(getMoney()));
+		this.cmd.register(CommandAddEpics.class, new CommandAddEpics(getStatsManager()));
 		
 		UtilServer.createDeliveryPet(new DeliveryPet(getBase(),null,new DeliveryObject[]{
 			new DeliveryObject(new String[]{"","§7Click for Vote!","","§ePvP Rewards:","§7   200 Epics","§7   1x Inventory Repair","","§eGame Rewards:","§7   25 Gems","§7   100 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},PermissionType.DELIVERY_PET_VOTE,false,28,"§aVote for EpicPvP",Material.PAPER,Material.REDSTONE_BLOCK,new Click(){

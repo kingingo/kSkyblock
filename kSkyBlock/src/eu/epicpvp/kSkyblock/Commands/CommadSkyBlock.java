@@ -99,7 +99,7 @@ public class CommadSkyBlock implements CommandExecutor{
 							p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "PLAYER_IS_OFFLINE",args[1]));
 						}
 					}else{
-						p.sendMessage(Language.getText(p, "PREFIX")+"§6/skyblock kick [Player]");
+						p.sendMessage(Language.getText(p, "PREFIX")+"Â§6/skyblock kick [Player]");
 					}
 				}else if(args[0].equalsIgnoreCase("entfernen")||args[0].equalsIgnoreCase("delete")||args[0].equalsIgnoreCase("remove")){
 					if(getInstance().getManager().haveIsland(p)){
@@ -112,7 +112,7 @@ public class CommadSkyBlock implements CommandExecutor{
 				}else if(args[0].equalsIgnoreCase("home")){
 					if(args.length==1){
 						if(!getInstance().getAntiLogout().is(p)){
-							p.sendMessage(Language.getText(p, "PREFIX")+"§cDu kannst den Befehl §b"+cmd+"§c nicht in Kampf ausführen!");
+							p.sendMessage(Language.getText(p, "PREFIX")+"Â§cDu kannst den Befehl Â§b"+cmd+"Â§c nicht in Kampf ausfÂ§hren!");
 							return false;
 						}
 						if(getInstance().getManager().haveIsland(p)){
@@ -128,7 +128,7 @@ public class CommadSkyBlock implements CommandExecutor{
 							if(getInstance().getManager().haveIsland(tp)){
 								SkyBlockWorld world = getInstance().getManager().getIsland(tp);
 								getInstance().getTeleport().getTeleport().add(new Teleporter(p,tp, world.getIslandHome(tp), 3));
-								p.sendMessage(Language.getText(p, "PREFIX")+"§aDu wurdest zur Insel teleportiert.");
+								p.sendMessage(Language.getText(p, "PREFIX")+"Â§aDu wurdest zur Insel teleportiert.");
 							}else{
 								p.sendMessage(Language.getText(p, "PREFIX")+"Er hat keine Insel.");
 							}
@@ -142,7 +142,7 @@ public class CommadSkyBlock implements CommandExecutor{
 							if(getInstance().getManager().haveIsland(uuid)){
 								SkyBlockWorld world = getInstance().getManager().getIsland(uuid);
 								p.teleport(world.getIslandHome(uuid));
-								p.sendMessage(Language.getText(p, "PREFIX")+"§aDu wurdest zur Insel teleportiert.");
+								p.sendMessage(Language.getText(p, "PREFIX")+"Â§aDu wurdest zur Insel teleportiert.");
 							}else{
 								p.sendMessage(Language.getText(p, "PREFIX")+" Insel konnte nicht geladen werden.");
 							}
@@ -151,7 +151,7 @@ public class CommadSkyBlock implements CommandExecutor{
 				}else if(args[0].equalsIgnoreCase("fixhome")){
 					if(getInstance().getManager().haveIsland(p)){
 						if(!getInstance().getAntiLogout().is(p)){
-							p.sendMessage(Language.getText(p, "PREFIX")+"§cDu kannst den Befehl §b"+cmd+"§c nicht in Kampf ausführen!");
+							p.sendMessage(Language.getText(p, "PREFIX")+"Â§cDu kannst den Befehl Â§b"+cmd+"Â§c nicht in Kampf ausfÂ§hren!");
 							return false;
 						}
 						SkyBlockWorld world = getInstance().getManager().getIsland(p);
@@ -175,7 +175,7 @@ public class CommadSkyBlock implements CommandExecutor{
 							if(getInstance().getManager().haveIsland(tp)){
 								SkyBlockWorld world = getInstance().getManager().getIsland(tp);
 								world.newIsland(tp);
-								p.sendMessage(Language.getText(p, "PREFIX")+"§aDie Insel wurde erneuert.");
+								p.sendMessage(Language.getText(p, "PREFIX")+"Â§aDie Insel wurde erneuert.");
 							}else{
 								p.sendMessage(Language.getText(p, "PREFIX")+"Er hat keine Insel.");
 							}
@@ -189,7 +189,7 @@ public class CommadSkyBlock implements CommandExecutor{
 							if(getInstance().getManager().haveIsland(uuid)){
 								SkyBlockWorld world = getInstance().getManager().getIsland(uuid);
 								world.newIsland(uuid);
-								p.sendMessage(Language.getText(p, "PREFIX")+"§aDie Insel wurde erneuert.");
+								p.sendMessage(Language.getText(p, "PREFIX")+"Â§aDie Insel wurde erneuert.");
 							}else{
 								p.sendMessage(Language.getText(p, "PREFIX")+" Insel konnte nicht geladen werden.");
 							}
@@ -231,7 +231,7 @@ public class CommadSkyBlock implements CommandExecutor{
 										e.remove();
 									}
 								}
-								p.sendMessage(Language.getText(p, "PREFIX")+"§aEs wurden "+entities+" entfernt.");
+								p.sendMessage(Language.getText(p, "PREFIX")+"Â§aEs wurden "+entities+" entfernt.");
 							}else{
 								p.sendMessage(Language.getText(p, "PREFIX")+"Er hat keine Insel.");
 							}

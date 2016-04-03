@@ -39,6 +39,7 @@ import dev.wolveringer.dataserver.gamestats.GameType;
 import dev.wolveringer.dataserver.gamestats.StatsKey;
 import lombok.Getter;
 import eu.epicpvp.kSkyblock.kSkyBlock;
+import eu.epicpvp.kcore.Events.ServerStatusUpdateEvent;
 import eu.epicpvp.kcore.GemsShop.Events.PlayerGemsBuyEvent;
 import eu.epicpvp.kcore.Language.Language;
 import eu.epicpvp.kcore.Listener.kListener;
@@ -115,7 +116,7 @@ public class SkyBlockListener extends kListener{
 //			
 //			if(UtilPlayer.isOnline(vote.getPlayer())){
 //				if(UtilServer.getDeliveryPet()!=null){
-//					 UtilServer.getDeliveryPet().deliveryUSE(Bukkit.getPlayer(vote.getPlayer()), "§aVote for EpicPvP", true);
+//					 UtilServer.getDeliveryPet().deliveryUSE(Bukkit.getPlayer(vote.getPlayer()), "Â§aVote for EpicPvP", true);
 //				 }
 //				
 //				player=Bukkit.getPlayer(vote.getPlayer());
@@ -137,10 +138,10 @@ public class SkyBlockListener extends kListener{
 //					p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_FOLLOW_N"));
 //					p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_REMOVE"));
 //				}else{
-//					UtilServer.getDeliveryPet().deliveryBlock(p, "§cTwitter Reward");
+//					UtilServer.getDeliveryPet().deliveryBlock(p, "Â§cTwitter Reward");
 //					getManager().getStatsManager().addDouble(p, 300, Stats.MONEY);
 //					p.setLevel(p.getLevel()+15);
-//					p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","300"}));
+//					p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "MONEY_RECEIVE_FROM", new String[]{"Â§bThe Delivery Jockey!","300"}));
 //				}
 //			}
 //		}
@@ -150,7 +151,7 @@ public class SkyBlockListener extends kListener{
 	public void onClickinEnchant(EnchantItemEvent e){
 		if(e.getItem().getAmount() > 1){
 			e.setCancelled(true);
-			e.getEnchanter().sendMessage("§cFEHLER: BuggUsing ist verboten!");
+			e.getEnchanter().sendMessage("Â§cFEHLER: BuggUsing ist verboten!");
 		}
 	}
 	
@@ -171,10 +172,10 @@ public class SkyBlockListener extends kListener{
 	@EventHandler
 	public void onSign(SignShopUseEvent ev){
 		if(!ev.getPlayer().getWorld().getName().equalsIgnoreCase("world")){
-			ev.getSign().setLine(0, "Nö!");
-			ev.getSign().setLine(1, "Nö!");
-			ev.getSign().setLine(2, "Nö!");
-			ev.getSign().setLine(3, "Nö!");
+			ev.getSign().setLine(0, "NÂ§!");
+			ev.getSign().setLine(1, "NÂ§!");
+			ev.getSign().setLine(2, "NÂ§!");
+			ev.getSign().setLine(3, "NÂ§!");
 			ev.getSign().update(true);
 			ev.setCancelled(true);
 		}
@@ -184,7 +185,7 @@ public class SkyBlockListener extends kListener{
 	public void Pickup(PlayerPickupItemEvent ev){
 		if(ev.getItem().getItemStack().getAmount()<0||ev.getItem().getItemStack().getAmount()>64){
 			ev.getItem().remove();
-	        ev.getPlayer().sendMessage("§cFEHLER: BuggUsing ist verboten!");
+	        ev.getPlayer().sendMessage("Â§cFEHLER: BuggUsing ist verboten!");
 		}
 	}
 	
@@ -196,7 +197,7 @@ public class SkyBlockListener extends kListener{
 				if(ev.getCurrentItem().getAmount()<0||ev.getCurrentItem().getAmount()>64){
 					ev.getCurrentItem().setAmount(1);
 					ev.getCurrentItem().setType(Material.AIR);
-					((Player)ev.getWhoClicked()).sendMessage("§cFEHLER: BuggUsing ist verboten!");
+					((Player)ev.getWhoClicked()).sendMessage("Â§cFEHLER: BuggUsing ist verboten!");
 				}
 			}
 		}
@@ -206,7 +207,7 @@ public class SkyBlockListener extends kListener{
 	public void Drop(PlayerDropItemEvent ev){
 		if(ev.getItemDrop().getItemStack().getAmount()<0||ev.getItemDrop().getItemStack().getAmount()>64){
 			ev.getItemDrop().remove();
-	        ev.getPlayer().sendMessage("§cFEHLER: BuggUsing ist verboten!");
+	        ev.getPlayer().sendMessage("Â§cFEHLER: BuggUsing ist verboten!");
 		}
 	}
 	
@@ -217,7 +218,7 @@ public class SkyBlockListener extends kListener{
 	        (e.getCurrentItem().getAmount() > 1)){
 	        e.setCancelled(true);
 	        Player ps = (Player)e.getWhoClicked();
-	        ps.sendMessage("§cFEHLER: BuggUsing ist verboten!");
+	        ps.sendMessage("Â§cFEHLER: BuggUsing ist verboten!");
 	      }
 	    }
 	    catch (Exception localException){}
@@ -226,10 +227,10 @@ public class SkyBlockListener extends kListener{
 	@EventHandler
 	public void Sign(SignChangeEvent ev){
 		if(ev.getPlayer().hasPermission(PermissionType.CHAT_FARBIG.getPermissionToString())){
-			ev.setLine(0, ev.getLine(0).replaceAll("&", "§"));
-			ev.setLine(1, ev.getLine(1).replaceAll("&", "§"));
-			ev.setLine(2, ev.getLine(2).replaceAll("&", "§"));
-			ev.setLine(3, ev.getLine(3).replaceAll("&", "§"));
+			ev.setLine(0, ev.getLine(0).replaceAll("&", "Â§"));
+			ev.setLine(1, ev.getLine(1).replaceAll("&", "Â§"));
+			ev.setLine(2, ev.getLine(2).replaceAll("&", "Â§"));
+			ev.setLine(3, ev.getLine(3).replaceAll("&", "Â§"));
 		}
 	}
 	
@@ -294,7 +295,7 @@ public class SkyBlockListener extends kListener{
 			if(UtilPlayer.isOnline(ev.getPlayername())){
 				if(vote_list.contains( UtilPlayer.getRealUUID(Bukkit.getPlayer(ev.getPlayername())) )){
 					if(UtilServer.getDeliveryPet()!=null){
-						 UtilServer.getDeliveryPet().deliveryUSE(Bukkit.getPlayer(ev.getPlayername()), "§aVote for EpicPvP", true);
+						 UtilServer.getDeliveryPet().deliveryUSE(Bukkit.getPlayer(ev.getPlayername()), "Â§aVote for EpicPvP", true);
 					 }
 					
 					vote_list.remove(UtilPlayer.getRealUUID(Bukkit.getPlayer(ev.getPlayername())));
@@ -309,10 +310,17 @@ public class SkyBlockListener extends kListener{
 	}
 	
 	@EventHandler
+	public void update(ServerStatusUpdateEvent ev){
+		ev.getPacket().setPlayers(UtilServer.getPlayers().size());
+		ev.getPacket().setTyp(GameType.SKYBLOCK);
+	}
+	
+	@EventHandler
 	public void Join(PlayerJoinEvent ev){
 		getManager().getStatsManager().loadPlayer(ev.getPlayer());
+		getManager().getMoney().loadPlayer(ev.getPlayer());
 		getManager().getManager().getGilden_world().getGilde().loadPlayer(ev.getPlayer());
-		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEpicPvP§8.§eeu §8| §aSkyBlock Server", "§aTeamSpeak: §7ts.EpicPvP.eu §8| §eWebsite: §7EpicPvP.eu");
+		TabTitle.setHeaderAndFooter(ev.getPlayer(), "Â§eEpicPvPÂ§8.Â§eeu Â§8| Â§aSkyBlock Server", "Â§aTeamSpeak: Â§7ts.EpicPvP.eu Â§8| Â§eWebsite: Â§7EpicPvP.eu");
 	}
 	
 	@EventHandler
@@ -375,7 +383,7 @@ public class SkyBlockListener extends kListener{
 		}else{
 			if(!getManager().getAntiLogout().is(ev.getPlayer())){
 				if(cmd.equalsIgnoreCase("/homes")||cmd.equalsIgnoreCase("/etpa")||cmd.equalsIgnoreCase("/fly")||cmd.equalsIgnoreCase("/kfly")||cmd.equalsIgnoreCase("/tpaccet")||cmd.equalsIgnoreCase("/tpyes")||cmd.equalsIgnoreCase("/tpask")||cmd.equalsIgnoreCase("/etpaccept")||cmd.equalsIgnoreCase("/ewarp")||cmd.equalsIgnoreCase("/tpa")||cmd.equalsIgnoreCase("/eback")||cmd.equalsIgnoreCase("/ehome")||cmd.equalsIgnoreCase("/tpaccept")||cmd.equalsIgnoreCase("/back")||cmd.equalsIgnoreCase("/home")||cmd.equalsIgnoreCase("/spawn")||cmd.equalsIgnoreCase("/espawn")||cmd.equalsIgnoreCase("/warp")){
-					ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+"§cDu kannst den Befehl §b"+cmd+"§c nicht in Kampf ausführen!");
+					ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+"Â§cDu kannst den Befehl Â§b"+cmd+"Â§c nicht in Kampf ausfÂ§hren!");
 					ev.setCancelled(true);
 				}
 			}else{

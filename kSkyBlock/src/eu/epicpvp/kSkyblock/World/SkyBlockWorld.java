@@ -144,7 +144,7 @@ public class SkyBlockWorld extends kListener{
 	
 	public boolean verlassenParty(Player player,boolean withMSG){
 		if(getPartys().containsKey(player)){
-			sendChatParty(player,"SKYBLOCK_PARTY_SCHLIEßEN");
+			sendChatParty(player,"SKYBLOCK_PARTY_SCHLIEÂ§EN");
 			for(String p : getPartys().get(player)){
 				getParty_island().remove(p.toLowerCase());
 				if(UtilPlayer.isOnline(p)){
@@ -333,10 +333,10 @@ public class SkyBlockWorld extends kListener{
 			
 			getPartys().put(player, new ArrayList<String>());
 			Scoreboard board = player.getScoreboard();
-			String scorename = "§b"+player.getName()+" Party";
+			String scorename = "Â§b"+player.getName()+" Party";
 			
 			UtilScoreboard.addBoard(board,DisplaySlot.SIDEBAR, scorename);
-			UtilScoreboard.setScore(board,"§7"+"Spieler: ", DisplaySlot.SIDEBAR, 0);
+			UtilScoreboard.setScore(board,"Â§7"+"Spieler: ", DisplaySlot.SIDEBAR, 0);
 			UtilScoreboard.setScore(board,player.getName(), DisplaySlot.SIDEBAR, -1);
 			player.setScoreboard(board);
 			return true;
@@ -801,7 +801,7 @@ public class SkyBlockWorld extends kListener{
 			for(int i = 0; i< (anzahl-a) ;i++){
 				addIsland(null,schematic,false);
 			}
-			Log((anzahl-a)+" Inseln wurden hinzugefügt!");
+			Log((anzahl-a)+" Inseln wurden hinzugefÂ§gt!");
 		}
 	}
 	

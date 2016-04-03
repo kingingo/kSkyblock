@@ -99,7 +99,7 @@ public class SkyBlockManager extends kListener{
 	@EventHandler
 	public void Login(PlayerLoginEvent ev){
 		if(whitelist){
-			ev.disallow(Result.KICK_WHITELIST, "§cDie Whitelist ist momentan Aktiv!");
+			ev.disallow(Result.KICK_WHITELIST, "Â§cDie Whitelist ist momentan Aktiv!");
 		}
 	}
 	
