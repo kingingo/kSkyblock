@@ -14,6 +14,7 @@ import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import dev.wolveringer.client.Callback;
 import dev.wolveringer.client.ClientWrapper;
 import dev.wolveringer.client.connection.ClientType;
 import dev.wolveringer.dataserver.gamestats.GameType;
@@ -123,6 +124,7 @@ import eu.epicpvp.kcore.Listener.Command.ListenerCMD;
 import eu.epicpvp.kcore.Listener.EnderChest.EnderChestListener;
 import eu.epicpvp.kcore.Listener.Enderpearl.EnderpearlListener;
 import eu.epicpvp.kcore.Listener.EntityClick.EntityClickListener;
+import eu.epicpvp.kcore.Listener.VoteListener.VoteListener;
 import eu.epicpvp.kcore.MySQL.MySQL;
 import eu.epicpvp.kcore.Permission.PermissionManager;
 import eu.epicpvp.kcore.Permission.PermissionType;
@@ -141,6 +143,7 @@ import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
 import eu.epicpvp.kcore.Util.UtilException;
 import eu.epicpvp.kcore.Util.UtilInv;
 import eu.epicpvp.kcore.Util.UtilItem;
+import eu.epicpvp.kcore.Util.UtilPlayer;
 import eu.epicpvp.kcore.Util.UtilServer;
 import eu.epicpvp.kcore.Util.UtilTime;
 import lombok.Getter;
@@ -386,6 +389,25 @@ public class kSkyBlock extends JavaPlugin {
 		}
 		setTutorialCreature(CommandLocations.getLocation("tutorial"));
 		UtilServer.createLagListener(this.cmd);
+		new VoteListener(this,true, new Callback<String>() {
+			
+			@Override
+			public void call(String playerName) {
+				if(UtilPlayer.isOnline(playerName)){
+					Player player = Bukkit.getPlayer(playerName);
+					
+					if(UtilServer.getDeliveryPet()!=null){
+						UtilServer.getDeliveryPet().deliveryUSE(player, "§aVote for EpicPvP", true);
+					}
+					
+					getStatsManager().addDouble(player, 200, StatsKey.MONEY);
+					player.getInventory().addItem(new ItemStack(Material.DIAMOND,2));
+					player.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
+					player.getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
+					player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "VOTE_THX"));
+				}
+			}
+		});
 		DebugLog(time, 45, this.getClass().getName());
 		}catch(Exception e){
 			UtilException.catchException(e, "skyblock", Bukkit.getIp(), mysql);

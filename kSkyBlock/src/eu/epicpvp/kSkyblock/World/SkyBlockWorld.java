@@ -385,6 +385,7 @@ public class SkyBlockWorld extends kListener{
 		if(ev.getType()!=UpdateType.SEC_2)return;
 		for(Player player : getWorld().getPlayers()){
 			if(!player.isOnGround()&&player.getLocation().getBlockY()<=12){
+				player.setHealth( ((CraftPlayer)player).getMaxHealth() );
 				player.teleport(Bukkit.getWorld("world").getSpawnLocation());
 				player.setHealth( ((CraftPlayer)player).getMaxHealth() );
 			}
