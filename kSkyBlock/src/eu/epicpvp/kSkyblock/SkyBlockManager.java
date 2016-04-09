@@ -5,19 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import lombok.Getter;
-import eu.epicpvp.kSkyblock.Gilden.SkyBlockGildenWorld;
-import eu.epicpvp.kSkyblock.World.SkyBlockWorld;
-import eu.epicpvp.kcore.ChunkGenerator.CleanroomChunkGenerator;
-import eu.epicpvp.kcore.Gilden.GildenManager;
-import eu.epicpvp.kcore.Language.Language;
-import eu.epicpvp.kcore.Listener.kListener;
-import eu.epicpvp.kcore.Util.UtilFile;
-import eu.epicpvp.kcore.Util.UtilPlayer;
-import eu.epicpvp.kcore.Util.UtilWorld;
-
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,6 +14,17 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import eu.epicpvp.kSkyblock.Gilden.SkyBlockGildenWorld;
+import eu.epicpvp.kSkyblock.World.SkyBlockWorld;
+import eu.epicpvp.kcore.ChunkGenerator.CleanroomChunkGenerator;
+import eu.epicpvp.kcore.Gilden.GildenManager;
+import eu.epicpvp.kcore.Listener.kListener;
+import eu.epicpvp.kcore.Translation.TranslationManager;
+import eu.epicpvp.kcore.Util.UtilFile;
+import eu.epicpvp.kcore.Util.UtilPlayer;
+import eu.epicpvp.kcore.Util.UtilWorld;
+import lombok.Getter;
 
 public class SkyBlockManager extends kListener{
 	
@@ -50,13 +49,13 @@ public class SkyBlockManager extends kListener{
 	
 	public void loadSchematics(){
 		File folder = new File("plugins/kSkyBlock/schematics");
-		Log("Schemtics: ");
+		logMessage("Schemtics: ");
 		if(!folder.exists())folder.mkdirs();
 		for(File file : folder.listFiles()){
 			if(file.isFile()){
 				if(file.getName().contains(".schematic")){
 					schematics.add(file.getName().replaceAll(".schematic", ""));
-					Log(file.getName().replaceAll(".schematic", ""));
+					logMessage(file.getName().replaceAll(".schematic", ""));
 					if(!file.getName().replaceAll(".schematic", "").equalsIgnoreCase("gilde")){
 						addWorld(file.getName().replaceAll(".schematic", ""), 100, 0);
 					}
@@ -124,7 +123,7 @@ public class SkyBlockManager extends kListener{
 	@EventHandler
 	public void Join(PlayerJoinEvent ev){
 		ev.setJoinMessage(null);
-		ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+Language.getText(ev.getPlayer(), "WHEREIS_TEXT","SkyBlock"));
+		ev.getPlayer().sendMessage(TranslationManager.getText(ev.getPlayer(), "PREFIX")+TranslationManager.getText(ev.getPlayer(), "WHEREIS_TEXT","SkyBlock"));
 		ev.getPlayer().teleport(Bukkit.getWorld("world").getSpawnLocation());
 	}
 	

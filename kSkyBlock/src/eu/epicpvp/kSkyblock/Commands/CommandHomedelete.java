@@ -1,16 +1,16 @@
 package eu.epicpvp.kSkyblock.Commands;
 
-import eu.epicpvp.kSkyblock.World.SkyBlockWorld;
-import eu.epicpvp.kcore.Command.CommandHandler.Sender;
-import eu.epicpvp.kcore.Language.Language;
-import eu.epicpvp.kcore.Util.UtilPlayer;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import eu.epicpvp.kSkyblock.World.SkyBlockWorld;
+import eu.epicpvp.kcore.Command.CommandHandler.Sender;
+import eu.epicpvp.kcore.Translation.TranslationManager;
+import eu.epicpvp.kcore.Util.UtilPlayer;
 
 public class CommandHomedelete implements CommandExecutor{
 	
@@ -27,7 +27,7 @@ public class CommandHomedelete implements CommandExecutor{
 	public boolean onCommand(CommandSender cs, Command cmd, String arg2,String[] args) {
 		player = (Player)cs;
 		if(args.length==0){
-			player.sendMessage(Language.getText(player, "PREFIX")+"/homedelete [Name]");
+			player.sendMessage(TranslationManager.getText(player, "PREFIX")+"/homedelete [Name]");
 		}else{
 			if(UtilPlayer.isOnline(args[0])){
 				if(cmda.manager.haveIsland(player)){
@@ -42,10 +42,10 @@ public class CommandHomedelete implements CommandExecutor{
 						}
 					}
 					cmda.userData.getConfig(target).save();
-					player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "HOME_SKYBLOCK_DELETE",target.getName()));
+					player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "HOME_SKYBLOCK_DELETE",target.getName()));
 				}
 			}else{
-				player.sendMessage(Language.getText(player, "PLAYER_IS_OFFLINE",args[0]));
+				player.sendMessage(TranslationManager.getText(player, "PLAYER_IS_OFFLINE",args[0]));
 			}
 		}
 		return false;

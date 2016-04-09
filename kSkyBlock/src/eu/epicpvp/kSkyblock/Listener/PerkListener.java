@@ -1,12 +1,12 @@
 package eu.epicpvp.kSkyblock.Listener;
 
-import eu.epicpvp.kcore.Kit.PerkManager;
-import eu.epicpvp.kcore.Listener.kListener;
-import eu.epicpvp.kcore.UserDataConfig.Events.UserDataConfigLoadEvent;
-
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import eu.epicpvp.kcore.Kit.PerkManager;
+import eu.epicpvp.kcore.Listener.kListener;
+import eu.epicpvp.kcore.UserDataConfig.Events.UserDataConfigLoadEvent;
 
 public class PerkListener extends kListener{
 	

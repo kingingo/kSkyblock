@@ -5,26 +5,6 @@ import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.UUID;
 
-import lombok.Getter;
-import lombok.Setter;
-import eu.epicpvp.kSkyblock.SkyBlockManager;
-import eu.epicpvp.kSkyblock.Util.UtilSchematic;
-import eu.epicpvp.kcore.Gilden.GildenManager;
-import eu.epicpvp.kcore.Gilden.Events.GildeLoadEvent;
-import eu.epicpvp.kcore.Language.Language;
-import eu.epicpvp.kcore.Listener.kListener;
-import eu.epicpvp.kcore.MySQL.MySQLErr;
-import eu.epicpvp.kcore.MySQL.Events.MySQLErrorEvent;
-import eu.epicpvp.kcore.PacketAPI.Packets.kPacketPlayOutWorldBorder;
-import eu.epicpvp.kcore.Permission.PermissionType;
-import eu.epicpvp.kcore.Update.UpdateType;
-import eu.epicpvp.kcore.Update.Event.UpdateEvent;
-import eu.epicpvp.kcore.Util.UtilBlock;
-import eu.epicpvp.kcore.Util.UtilEvent;
-import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
-import eu.epicpvp.kcore.Util.UtilPlayer;
-import eu.epicpvp.kcore.Util.UtilWorld;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -47,9 +27,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -61,6 +41,26 @@ import org.bukkit.inventory.InventoryHolder;
 
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
+
+import eu.epicpvp.kSkyblock.SkyBlockManager;
+import eu.epicpvp.kSkyblock.Util.UtilSchematic;
+import eu.epicpvp.kcore.Gilden.GildenManager;
+import eu.epicpvp.kcore.Gilden.Events.GildeLoadEvent;
+import eu.epicpvp.kcore.Listener.kListener;
+import eu.epicpvp.kcore.MySQL.MySQLErr;
+import eu.epicpvp.kcore.MySQL.Events.MySQLErrorEvent;
+import eu.epicpvp.kcore.PacketAPI.Packets.kPacketPlayOutWorldBorder;
+import eu.epicpvp.kcore.Permission.PermissionType;
+import eu.epicpvp.kcore.Translation.TranslationManager;
+import eu.epicpvp.kcore.Update.UpdateType;
+import eu.epicpvp.kcore.Update.Event.UpdateEvent;
+import eu.epicpvp.kcore.Util.UtilBlock;
+import eu.epicpvp.kcore.Util.UtilEvent;
+import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
+import eu.epicpvp.kcore.Util.UtilPlayer;
+import eu.epicpvp.kcore.Util.UtilWorld;
+import lombok.Getter;
+import lombok.Setter;
 
 public class SkyBlockGildenWorld extends kListener{
 
@@ -365,7 +365,7 @@ public class SkyBlockGildenWorld extends kListener{
 			Location loc1 = new Location(getWorld(), (max_x-(radius/2)) ,30, (max_z-(radius/2)) );
 			loc1.getWorld().loadChunk(loc1.getChunk());
 			UtilSchematic.pastePlate(session,loc1, new File("plugins/kSkyBlock/schematics/"+schematic+".schematic"));
-			Log("Die Insel von der Gilde "+gilde+"(Entities:"+count+"/Bloecke:"+b_count+"/X:"+(max_x-(radius/2))+"/Z:"+(max_z-(radius/2))+") wurde erneuert.");
+			logMessage("Die Insel von der Gilde "+gilde+"(Entities:"+count+"/Bloecke:"+b_count+"/X:"+(max_x-(radius/2))+"/Z:"+(max_z-(radius/2))+") wurde erneuert.");
 			return true;
 		}
 		return false;
@@ -418,7 +418,7 @@ public class SkyBlockGildenWorld extends kListener{
 			Location loc1 = new Location(getWorld(), (max_x-(radius/2)) ,30, (max_z-(radius/2)) );
 			loc1.getWorld().loadChunk(loc1.getChunk());
 			UtilSchematic.pastePlate(session,loc1, new File("plugins/kSkyBlock/schematics/"+schematic+".schematic"));
-			Log("Die Insel von der Gilde "+gilde+"(Entities:"+count+"/Bloecke:"+b_count+"/X:"+(max_x-(radius/2))+"/Z:"+(max_z-(radius/2))+") wurde resetet.");
+			logMessage("Die Insel von der Gilde "+gilde+"(Entities:"+count+"/Bloecke:"+b_count+"/X:"+(max_x-(radius/2))+"/Z:"+(max_z-(radius/2))+") wurde resetet.");
 			getManager().getDelete().add(player.getName().toLowerCase());
 			return true;
 		}
@@ -452,14 +452,14 @@ public class SkyBlockGildenWorld extends kListener{
 			for(int i = 0; i< (anzahl-a) ;i++){
 				addIsland(null,null,schematic,false);
 			}
-			Log((anzahl-a)+" Inseln wurden hinzugef§gt!");
+			logMessage((anzahl-a)+" Inseln wurden hinzugef§gt!");
 		}
 	}
 	
 	public boolean addIsland(Player player,String gilde,String schematic,boolean recyceln){
 		if(player!=null){
 			if(getManager().getDelete().contains(player.getName().toLowerCase())){
-				player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "SKYBLOCK_REMOVE_ISLAND_ONE"));
+				player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "SKYBLOCK_REMOVE_ISLAND_ONE"));
 				return false;
 			}
 		}
@@ -472,7 +472,7 @@ public class SkyBlockGildenWorld extends kListener{
 				islands.remove(island);
 				islands.put(gilde, new Location(world,x,0,z));
 				getManager().getInstance().getMysql().Update(isAsync(),"UPDATE list_gilden_Sky_world SET gilde='"+gilde+"' WHERE gilde='"+island+"'");
-				Log("Die Insel von der Gilde "+gilde+"(X:"+x+",Z:"+z+") wurde recycelt.");
+				logMessage("Die Insel von der Gilde "+gilde+"(X:"+x+",Z:"+z+") wurde recycelt.");
 				return true;
 			}
 		}
@@ -491,7 +491,7 @@ public class SkyBlockGildenWorld extends kListener{
 		}
 		islands.put(gilde, new Location(world,X,0,Z));
 		getManager().getInstance().getMysql().Update(isAsync(),"INSERT INTO list_gilden_Sky_world (gilde,X,Z) VALUES ('"+gilde+"','"+X+"','"+Z+"');");
-		Log("Die Insel von der Gilde "+gilde+"(X:"+(X-(radius/2))+",Z:"+(Z-(radius/2))+") wurde erstellt.");
+		logMessage("Die Insel von der Gilde "+gilde+"(X:"+(X-(radius/2))+",Z:"+(Z-(radius/2))+") wurde erstellt.");
 		return true;
 	}
 	
@@ -573,11 +573,11 @@ public class SkyBlockGildenWorld extends kListener{
 		    } catch (Exception err) {
 		    	Bukkit.getPluginManager().callEvent(new MySQLErrorEvent(MySQLErr.QUERY,err,getManager().getInstance().getMysql()));
 		    }
-			Log("X: "+X+" Z:"+Z);
+			logMessage("X: "+X+" Z:"+Z);
 		}else{
 			X=radius;
 			Z=0;
-			Log("X: "+X+" Z:"+Z);
+			logMessage("X: "+X+" Z:"+Z);
 		}
 		
 		
@@ -595,7 +595,7 @@ public class SkyBlockGildenWorld extends kListener{
 	    } catch (Exception err) {
 	    	Bukkit.getPluginManager().callEvent(new MySQLErrorEvent(MySQLErr.QUERY,err,getManager().getInstance().getMysql()));
 	    }
-		Log(islands.size()+" Inseln wurden Geladen!");
+		logMessage(islands.size()+" Inseln wurden Geladen!");
 		solveXandZ();
 	}
 	

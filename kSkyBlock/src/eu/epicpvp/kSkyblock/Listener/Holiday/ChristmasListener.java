@@ -14,7 +14,7 @@ public class ChristmasListener extends kListener{
 
 	public ChristmasListener(kSkyBlock skyblock) {
 		super(skyblock, "ChrismasListener");
-		Log("Enabled");
+		logMessage("Enabled");
 	}
 
 	@EventHandler

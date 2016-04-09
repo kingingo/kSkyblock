@@ -37,11 +37,9 @@ import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
 import dev.wolveringer.dataserver.gamestats.GameType;
 import dev.wolveringer.dataserver.gamestats.StatsKey;
-import lombok.Getter;
 import eu.epicpvp.kSkyblock.kSkyBlock;
 import eu.epicpvp.kcore.Events.ServerStatusUpdateEvent;
 import eu.epicpvp.kcore.GemsShop.Events.PlayerGemsBuyEvent;
-import eu.epicpvp.kcore.Language.Language;
 import eu.epicpvp.kcore.Listener.kListener;
 import eu.epicpvp.kcore.Permission.PermissionType;
 import eu.epicpvp.kcore.Permission.Events.PlayerLoadPermissionEvent;
@@ -49,6 +47,7 @@ import eu.epicpvp.kcore.Scoreboard.Events.PlayerSetScoreboardEvent;
 import eu.epicpvp.kcore.SignShop.Events.SignShopUseEvent;
 import eu.epicpvp.kcore.StatsManager.Event.PlayerStatsChangeEvent;
 import eu.epicpvp.kcore.StatsManager.Event.PlayerStatsLoadedEvent;
+import eu.epicpvp.kcore.Translation.TranslationManager;
 import eu.epicpvp.kcore.Update.UpdateType;
 import eu.epicpvp.kcore.Update.Event.UpdateEvent;
 import eu.epicpvp.kcore.UserStores.Events.PlayerCreateUserStoreEvent;
@@ -59,6 +58,7 @@ import eu.epicpvp.kcore.Util.UtilPlayer;
 import eu.epicpvp.kcore.Util.UtilScoreboard;
 import eu.epicpvp.kcore.Util.UtilServer;
 import eu.epicpvp.kcore.Util.UtilWorldGuard;
+import lombok.Getter;
 
 public class SkyBlockListener extends kListener{
 
@@ -303,7 +303,7 @@ public class SkyBlockListener extends kListener{
 					Bukkit.getPlayer(ev.getPlayername()).getInventory().addItem(new ItemStack(Material.DIAMOND,2));
 					Bukkit.getPlayer(ev.getPlayername()).getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
 					Bukkit.getPlayer(ev.getPlayername()).getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
-					Bukkit.getPlayer(ev.getPlayername()).sendMessage(Language.getText(Bukkit.getPlayer(ev.getPlayername()), "PREFIX")+Language.getText(Bukkit.getPlayer(ev.getPlayername()), "VOTE_THX"));
+					Bukkit.getPlayer(ev.getPlayername()).sendMessage(TranslationManager.getText(Bukkit.getPlayer(ev.getPlayername()), "PREFIX")+TranslationManager.getText(Bukkit.getPlayer(ev.getPlayername()), "VOTE_THX"));
 				}
 			}
 		}
@@ -332,7 +332,7 @@ public class SkyBlockListener extends kListener{
 						player.teleport(Bukkit.getWorld("world").getSpawnLocation());
 						player.setAllowFlight(false);
 						player.setFlying(false);
-						player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "kFLY_PVP_FLAG"));
+						player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "kFLY_PVP_FLAG"));
 					}
 					
 					if(player.isOnGround()){
@@ -383,7 +383,7 @@ public class SkyBlockListener extends kListener{
 		}else{
 			if(!getManager().getAntiLogout().is(ev.getPlayer())){
 				if(cmd.equalsIgnoreCase("/homes")||cmd.equalsIgnoreCase("/etpa")||cmd.equalsIgnoreCase("/fly")||cmd.equalsIgnoreCase("/kfly")||cmd.equalsIgnoreCase("/tpaccet")||cmd.equalsIgnoreCase("/tpyes")||cmd.equalsIgnoreCase("/tpask")||cmd.equalsIgnoreCase("/etpaccept")||cmd.equalsIgnoreCase("/ewarp")||cmd.equalsIgnoreCase("/tpa")||cmd.equalsIgnoreCase("/eback")||cmd.equalsIgnoreCase("/ehome")||cmd.equalsIgnoreCase("/tpaccept")||cmd.equalsIgnoreCase("/back")||cmd.equalsIgnoreCase("/home")||cmd.equalsIgnoreCase("/spawn")||cmd.equalsIgnoreCase("/espawn")||cmd.equalsIgnoreCase("/warp")){
-					ev.getPlayer().sendMessage(Language.getText(ev.getPlayer(), "PREFIX")+"§cDu kannst den Befehl §b"+cmd+"§c nicht in Kampf ausf§hren!");
+					ev.getPlayer().sendMessage(TranslationManager.getText(ev.getPlayer(), "PREFIX")+"§cDu kannst den Befehl §b"+cmd+"§c nicht in Kampf ausf§hren!");
 					ev.setCancelled(true);
 				}
 			}else{

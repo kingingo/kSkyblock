@@ -2,16 +2,16 @@ package eu.epicpvp.kSkyblock.Commands;
 
 import java.util.HashMap;
 
-import eu.epicpvp.kSkyblock.SkyBlockManager;
-import eu.epicpvp.kcore.Command.CommandHandler.Sender;
-import eu.epicpvp.kcore.Language.Language;
-import eu.epicpvp.kcore.UserDataConfig.UserDataConfig;
-
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import eu.epicpvp.kSkyblock.SkyBlockManager;
+import eu.epicpvp.kcore.Command.CommandHandler.Sender;
+import eu.epicpvp.kcore.Translation.TranslationManager;
+import eu.epicpvp.kcore.UserDataConfig.UserDataConfig;
 
 public class CommandHomeaccept implements CommandExecutor{
 	
@@ -37,14 +37,14 @@ public class CommandHomeaccept implements CommandExecutor{
 			if(list.containsKey(player)){
 				if(list.get(player).isOnline()){
 					userData.getConfig(list.get(player)).setLocation("homes."+list_name.get(player), list_loc.get(player));
-					list.get(player).sendMessage(Language.getText(list.get(player), "PREFIX")+Language.getText(list.get(player), "HOME_SET",list_name.get(player)));
-					player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "ACCEPT"));
+					list.get(player).sendMessage(TranslationManager.getText(list.get(player), "PREFIX")+TranslationManager.getText(list.get(player), "HOME_SET",list_name.get(player)));
+					player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "ACCEPT"));
 					list_name.remove(player);
 					list_loc.remove(player);
 					list.remove(player);
 				}
 			}else{
-				player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "NO_ANFRAGE"));
+				player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "NO_ANFRAGE"));
 			}
 		}
 		return false;

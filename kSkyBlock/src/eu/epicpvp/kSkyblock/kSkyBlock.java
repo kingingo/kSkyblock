@@ -117,7 +117,6 @@ import eu.epicpvp.kcore.Kit.Perks.PerkNoHunger;
 import eu.epicpvp.kcore.Kit.Perks.PerkNoWaterdamage;
 import eu.epicpvp.kcore.Kit.Perks.PerkPotionClear;
 import eu.epicpvp.kcore.Kit.Perks.PerkRunner;
-import eu.epicpvp.kcore.Language.Language;
 import eu.epicpvp.kcore.Listener.BungeeCordFirewall.BungeeCordFirewallListener;
 import eu.epicpvp.kcore.Listener.Chat.ChatListener;
 import eu.epicpvp.kcore.Listener.Command.ListenerCMD;
@@ -133,6 +132,7 @@ import eu.epicpvp.kcore.Pet.Commands.CommandPet;
 import eu.epicpvp.kcore.Pet.Shop.PlayerPetHandler;
 import eu.epicpvp.kcore.StatsManager.StatsManager;
 import eu.epicpvp.kcore.TeleportManager.TeleportManager;
+import eu.epicpvp.kcore.Translation.TranslationManager;
 import eu.epicpvp.kcore.Update.Updater;
 import eu.epicpvp.kcore.UserDataConfig.UserDataConfig;
 import eu.epicpvp.kcore.UserStores.UserStores;
@@ -190,225 +190,225 @@ public class kSkyBlock extends JavaPlugin {
 	
 	public void onEnable(){
 		try{
-		long time = System.currentTimeMillis();
-		loadConfig();
-		this.Updater=new Updater(this);
-		this.client = UtilServer.createClient(this,ClientType.OTHER, getConfig().getString("Config.Client.Host"), getConfig().getInt("Config.Client.Port"), "SkyBlock");
-		this.mysql=new MySQL(getFConfig().getString("Config.MySQL.User"),getFConfig().getString("Config.MySQL.Password"),getFConfig().getString("Config.MySQL.Host"),getFConfig().getString("Config.MySQL.DB"),this);
-		Language.load(mysql);
-		this.permissionManager=new PermissionManager(this);
-		this.statsManager=new StatsManager(this, client, GameType.SKYBLOCK);
-		this.money=new StatsManager(this, client, GameType.Money);
-		this.userData=new UserDataConfig(this);
-		this.hologram=new Hologram(this);
-		this.hologram.RemoveText();
-		this.cmd=new CommandHandler(this);
-		this.base=new InventoryBase(this);
-		UtilServer.createGemsShop(new GemsShop(getHologram(),getMoney(), getCmd(), getBase(), getPermissionManager(), ServerType.SKYBLOCK));
-		this.petManager=new PetManager(this);
-		this.petHandler= new PlayerPetHandler(ServerType.SKYBLOCK,mysql, getPetManager(), getBase(), getPermissionManager());
-		this.petHandler.setAsync(true);
-		this.teleport=new TeleportManager(getCmd(), getPermissionManager(), 5);
-		this.perkManager=new PerkManager(this,new Perk[]{new PerkNoWaterdamage(),new PerkArrowPotionEffect(),new PerkHat(),new PerkGoldenApple(),new PerkNoHunger(),new PerkHealPotion(1),new PerkNoFiredamage(),new PerkRunner(0.35F),new PerkDoubleJump(),new PerkDoubleXP(),new PerkDropper(),new PerkGetXP(),new PerkPotionClear(),new PerkItemName(cmd)});
-		this.antiLogout=new AntiLogoutManager(this,AntiLogoutType.KILL,5);
-
-		this.cmd.register(CommandDebug.class, new CommandDebug());
-		this.cmd.register(CommandGiveAll.class, new CommandGiveAll());
-		this.cmd.register(CommandPet.class, new CommandPet(getPetHandler()));
-		this.cmd.register(CommandCMDMute.class, new CommandCMDMute(this));	
-		this.cmd.register(CommandPvPMute.class, new CommandPvPMute(this));	
-		this.cmd.register(CommandChatMute.class, new CommandChatMute(this));
-		this.cmd.register(CommandTrackingRange.class, new CommandTrackingRange());
-		this.cmd.register(CommandToggle.class, new CommandToggle(this));
-		this.cmd.register(CommandMoney.class, new CommandMoney(getStatsManager(),getMysql(),ServerType.SKYBLOCK));
-		this.cmd.register(CommandMsg.class, new CommandMsg());
-		this.cmd.register(CommandR.class, new CommandR(this));
-		this.cmd.register(CommandSocialspy.class, new CommandSocialspy(this));
-		this.cmd.register(CommandFly.class, new CommandFly(this));
-		this.cmd.register(CommandHandel.class, new CommandHandel(this));
-		this.cmd.register(CommandJump.class, new CommandJump(this));
-		this.cmd.register(CommandFeed.class, new CommandFeed());
-		this.cmd.register(CommandRepair.class, new CommandRepair());
-		this.cmd.register(CommandTag.class, new CommandTag());
-		this.cmd.register(CommandNacht.class, new CommandNacht());
-		this.cmd.register(CommandHeal.class, new CommandHeal());
-		this.cmd.register(CommandHome.class, new CommandHome(getUserData(), teleport,this.cmd));
-		this.cmd.register(CommandSpawnmob.class, new CommandSpawnmob());
-		this.cmd.register(CommandSpawner.class, new CommandSpawner());
-		this.cmd.register(CommandSetHome.class, new CommandSetHome(getUserData(), getPermissionManager()));
-		this.cmd.register(CommandSonne.class, new CommandSonne());
-		this.cmd.register(CommandDelHome.class, new CommandDelHome(getUserData()));
-		this.cmd.register(CommandWarp.class, new CommandWarp(getTeleport()));
-		this.cmd.register(CommandKit.class, new CommandKit(getUserData(),cmd));
-		this.cmd.register(CommandSpawn.class, new CommandSpawn(getTeleport()));
-		this.cmd.register(CommandClearInventory.class, new CommandClearInventory());
-		this.cmd.register(CommadSkyBlock.class, new CommadSkyBlock(this));	
-		this.cmd.register(CommandRenameItem.class, new CommandRenameItem());
-		this.cmd.register(CommandInvsee.class, new CommandInvsee(mysql));
-		this.cmd.register(CommandUserShop.class, new CommandUserShop(getTeleport()));
-		this.cmd.register(CommandEnderchest.class, new CommandEnderchest(mysql));
-		this.cmd.register(CommandParty.class, new CommandParty(this));
-		this.cmd.register(CommandBroadcast.class, new CommandBroadcast());
-		this.cmd.register(CommandTppos.class, new CommandTppos());
-		this.cmd.register(CommandItem.class, new CommandItem());
-		this.cmd.register(CommandTp.class, new CommandTp());
-		this.cmd.register(CommandTpHere.class, new CommandTpHere());
-		this.cmd.register(CommandVanish.class, new CommandVanish(this));
-		this.cmd.register(CommandkSpawn.class, new CommandkSpawn(getAntiLogout()));
-		this.cmd.register(CommandMore.class, new CommandMore());
-		this.cmd.register(CommandFlyspeed.class, new CommandFlyspeed());
-		this.cmd.register(CommandGive.class, new CommandGive());
-		this.cmd.register(CommandLocations.class, new CommandLocations(this));
-		this.cmd.register(CommandPerk.class, new CommandPerk(perkManager));
-		this.cmd.register(CommandSuffix.class, new CommandSuffix(getUserData()));
-		this.cmd.register(CommandAmboss.class, new CommandAmboss());
-		this.cmd.register(CommandNear.class, new CommandNear());
-		this.cmd.register(CommandRemoveEnchantment.class, new CommandRemoveEnchantment());
-		this.cmd.register(CommandEnchantmentTable.class, new CommandEnchantmentTable());
-		this.cmd.register(CommandExt.class, new CommandExt());
-		this.cmd.register(CommandWorkbench.class, new CommandWorkbench());
-		this.cmd.register(CommandHead.class, new CommandHead());
-		this.cmd.register(CommandPotion.class, new CommandPotion(getPermissionManager()));
-		this.cmd.register(CommandFill.class, new CommandFill());
-		this.cmd.register(CommandGiveGems.class, new CommandGiveGems(getMoney()));
-		this.cmd.register(CommandGiveCoins.class, new CommandGiveCoins(getMoney()));
-		this.cmd.register(CommandAddEpics.class, new CommandAddEpics(getStatsManager()));
-		
-		UtilServer.createDeliveryPet(new DeliveryPet(getBase(),null,new DeliveryObject[]{
-			new DeliveryObject(new String[]{"","§7Click for Vote!","","§ePvP Rewards:","§7   200 Epics","§7   1x Inventory Repair","","§eGame Rewards:","§7   25 Gems","§7   100 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},PermissionType.DELIVERY_PET_VOTE,false,28,"§aVote for EpicPvP",Material.PAPER,Material.REDSTONE_BLOCK,new Click(){
-
-					@Override
-					public void onClick(Player p, ActionType a,Object obj) {
-						p.closeInventory();
-						p.sendMessage(Language.getText(p,"PREFIX")+"§7-----------------------------------------");
-						p.sendMessage(Language.getText(p,"PREFIX")+" ");
-						p.sendMessage(Language.getText(p,"PREFIX")+"Vote Link:§a http://goo.gl/wxdAj4");
-						p.sendMessage(Language.getText(p,"PREFIX")+" ");
-						p.sendMessage(Language.getText(p,"PREFIX")+"§7-----------------------------------------");
-					}
-					
-				},-1),
-				new DeliveryObject(new String[]{"§aOnly for §eVIP§a!","","§ePvP Rewards:","§7   200 Epics","§7   10 Level","","§eGame Rewards:","§7   200 Coins","§7   2x TTT Paesse","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},PermissionType.DELIVERY_PET_VIP_WEEK,true,11,"§cRank §eVIP§c Reward",Material.getMaterial(342),Material.MINECART,new Click(){
-
-					@Override
-					public void onClick(Player p, ActionType a,Object obj) {
-						getStatsManager().add(p, StatsKey.MONEY,200);
-						p.setLevel(p.getLevel()+10);
-						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","200"}));
-					}
-					
-				},TimeSpan.DAY*7),
-				new DeliveryObject(new String[]{"§aOnly for §6ULTRA§a!","","§ePvP Rewards:","§7   300 Epics","§7   15 Level","","§eGame Rewards:","§7   300 Coins","§7   2x TTT Paesse","","§eSkyBlock Rewards:","§7   300 Epics","§7   4x Diamonds","§7   4x Iron Ingot","§7   4x Gold Ingot"},PermissionType.DELIVERY_PET_ULTRA_WEEK,true,12,"§cRank §6ULTRA§c Reward",Material.getMaterial(342),Material.MINECART,new Click(){
-
-					@Override
-					public void onClick(Player p, ActionType a,Object obj) {
-						getStatsManager().add(p, StatsKey.MONEY,300);
-						p.getInventory().addItem(new ItemStack(Material.DIAMOND,2));
-						p.getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
-						p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
-						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","300"}));
-					}
-					
-				},TimeSpan.DAY*7),
-				new DeliveryObject(new String[]{"§aOnly for §aLEGEND§a!","","§ePvP Rewards:","§7   400 Epics","§7   20 Level","","§eGame Rewards:","§7   400 Coins","§7   3x TTT Paesse","","§eSkyBlock Rewards:","§7   400 Epics","§7   6x Diamonds","§7   6x Iron Ingot","§7   6x Gold Ingot"},PermissionType.DELIVERY_PET_LEGEND_WEEK,true,13,"§cRank §5LEGEND§c Reward",Material.getMaterial(342),Material.MINECART,new Click(){
-
-					@Override
-					public void onClick(Player p, ActionType a,Object obj) {
-						getStatsManager().add(p, StatsKey.MONEY,400);
-						p.getInventory().addItem(new ItemStack(Material.DIAMOND,4));
-						p.getInventory().addItem(new ItemStack(Material.IRON_INGOT,4));
-						p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,4));
-						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","400"}));
-					}
-					
-				},TimeSpan.DAY*7),
-				new DeliveryObject(new String[]{"§aOnly for §bMVP§a!","","§ePvP Rewards:","§7   500 Epics","§7   25 Level","","§eGame Rewards:","§7   500 Coins","§7   3x TTT Paesse","","§eSkyBlock Rewards:","§7   500 Epics","§7   8x Diamonds","§7   8x Iron Ingot","§7   8x Gold Ingot"},PermissionType.DELIVERY_PET_MVP_WEEK,true,14,"§cRank §3MVP§c Reward",Material.getMaterial(342),Material.MINECART,new Click(){
-
-					@Override
-					public void onClick(Player p, ActionType a,Object obj) {
-						getStatsManager().add(p, StatsKey.MONEY,500);
-						p.getInventory().addItem(new ItemStack(Material.DIAMOND,4));
-						p.getInventory().addItem(new ItemStack(Material.IRON_INGOT,4));
-						p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,4));
-						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","500"}));
-					}
-					
-				},TimeSpan.DAY*7),
-				new DeliveryObject(new String[]{"§aOnly for §bMVP§c+§a!","","§ePvP Rewards:","§7   600 Epics","§7   30 Level","","§eGame Rewards:","§7   600 Coins","§7   4x TTT Paesse","","§eSkyBlock Rewards:","§7   600 Epics","§7   10x Diamonds","§7   10x Iron Ingot","§7   10x Gold Ingot"},PermissionType.DELIVERY_PET_MVPPLUS_WEEK,true,15,"§cRank §9MVP§e+§c Reward",Material.getMaterial(342),Material.MINECART,new Click(){
-
-					@Override
-					public void onClick(Player p, ActionType a,Object obj) {
-						getStatsManager().add(p, StatsKey.MONEY,600);
-						p.getInventory().addItem(new ItemStack(Material.DIAMOND,6));
-						p.getInventory().addItem(new ItemStack(Material.IRON_INGOT,6));
-						p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,6));
-						p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","600"}));
-					}
-					
-				},TimeSpan.DAY*7),
-				new DeliveryObject(new String[]{"§7/twitter [TwitterName]","","§ePvP Rewards:","§7   300 Epics","§7   15 Level","","§eGame Rewards:","§7   300 Coins","","§eSkyBlock Rewards:","§7   300 Epics","§7   15 Level"},PermissionType.DELIVERY_PET_TWITTER,false,34,"§cTwitter Reward",Material.getMaterial(351),4,new Click(){
-
-					@Override
-					public void onClick(Player p, ActionType a,Object obj) {
-//						String s1 = getMysql().getString("SELECT twitter FROM BG_TWITTER WHERE uuid='"+UtilPlayer.getRealUUID(p)+"'");
-//						if(s1.equalsIgnoreCase("null")){
-//							p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_ACC_NOT"));
-//						}else{
-//							getPacketManager().SendPacket("DATA", new TWIITTER_IS_PLAYER_FOLLOWER(s1, p.getName()));
-//							p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_CHECK"));
-//						}
-					}
-					
-				},TimeSpan.DAY*7),
-		},"§bThe Delivery Jockey!",EntityType.CHICKEN,CommandLocations.getLocation("DeliveryPet"),ServerType.SKYBLOCK,getHologram(),getMysql())
-		);
-
-		this.manager=new SkyBlockManager(this);
-		this.ha=new CommandHomeaccept(manager);
-		getAntiLogout().setStats(statsManager);
-		new SkyBlockListener(this);
-		new EnderpearlListener(this);
-		new EnderChestListener(getUserData());
-		Bukkit.getWorld("world").setStorm(false);
-		AACHack a = new AACHack("SKYBLOCK", mysql,client);
-		a.setAntiLogoutManager(getAntiLogout());
-		this.itemShop = new ItemShop(getStatsManager(), getCmd());
-		new UserStores(statsManager);
-		perkManager.setPerkEntity(CommandLocations.getLocation("perk"));
-		new PerkListener(perkManager);
-		new BungeeCordFirewallListener(mysql,cmd, "sky");
-		new ListenerCMD(this);
-		new ChatListener(this,new SkyBlockGildenManager(manager, mysql, GildenType.SKY, cmd,getStatsManager()),permissionManager,getUserData());
-		
-		if(Calendar.getHoliday()!=null){
-			switch(Calendar.holiday){
-			case WEIHNACHTEN:
-					new ChristmasListener(this);
-				break;
-			}
-		}
-		setTutorialCreature(CommandLocations.getLocation("tutorial"));
-		UtilServer.createLagListener(this.cmd);
-		new VoteListener(this,true, new Callback<String>() {
+			long time = System.currentTimeMillis();
+			TranslationManager.init(this);
+			loadConfig();
+			this.Updater=new Updater(this);
+			this.client = UtilServer.createClient(this,ClientType.OTHER, getConfig().getString("Config.Client.Host"), getConfig().getInt("Config.Client.Port"), "SkyBlock");
+			this.mysql=new MySQL(getFConfig().getString("Config.MySQL.User"),getFConfig().getString("Config.MySQL.Password"),getFConfig().getString("Config.MySQL.Host"),getFConfig().getString("Config.MySQL.DB"),this);
+			this.permissionManager=new PermissionManager(this);
+			this.statsManager=new StatsManager(this, client, GameType.SKYBLOCK);
+			this.money=new StatsManager(this, client, GameType.Money);
+			this.userData=new UserDataConfig(this);
+			this.hologram=new Hologram(this);
+			this.hologram.RemoveText();
+			this.cmd=new CommandHandler(this);
+			this.base=new InventoryBase(this);
+			UtilServer.createGemsShop(new GemsShop(getHologram(),getMoney(), getCmd(), getBase(), getPermissionManager(), ServerType.SKYBLOCK));
+			this.petManager=new PetManager(this);
+			this.petHandler= new PlayerPetHandler(ServerType.SKYBLOCK,mysql, getPetManager(), getBase(), getPermissionManager());
+			this.petHandler.setAsync(true);
+			this.teleport=new TeleportManager(getCmd(), getPermissionManager(), 5);
+			this.perkManager=new PerkManager(this,new Perk[]{new PerkNoWaterdamage(),new PerkArrowPotionEffect(),new PerkHat(),new PerkGoldenApple(),new PerkNoHunger(),new PerkHealPotion(1),new PerkNoFiredamage(),new PerkRunner(0.35F),new PerkDoubleJump(),new PerkDoubleXP(),new PerkDropper(),new PerkGetXP(),new PerkPotionClear(),new PerkItemName(cmd)});
+			this.antiLogout=new AntiLogoutManager(this,AntiLogoutType.KILL,5);
+	
+			this.cmd.register(CommandDebug.class, new CommandDebug());
+			this.cmd.register(CommandGiveAll.class, new CommandGiveAll());
+			this.cmd.register(CommandPet.class, new CommandPet(getPetHandler()));
+			this.cmd.register(CommandCMDMute.class, new CommandCMDMute(this));	
+			this.cmd.register(CommandPvPMute.class, new CommandPvPMute(this));	
+			this.cmd.register(CommandChatMute.class, new CommandChatMute(this));
+			this.cmd.register(CommandTrackingRange.class, new CommandTrackingRange());
+			this.cmd.register(CommandToggle.class, new CommandToggle(this));
+			this.cmd.register(CommandMoney.class, new CommandMoney(getStatsManager(),getMysql(),ServerType.SKYBLOCK));
+			this.cmd.register(CommandMsg.class, new CommandMsg());
+			this.cmd.register(CommandR.class, new CommandR(this));
+			this.cmd.register(CommandSocialspy.class, new CommandSocialspy(this));
+			this.cmd.register(CommandFly.class, new CommandFly(this));
+			this.cmd.register(CommandHandel.class, new CommandHandel(this));
+			this.cmd.register(CommandJump.class, new CommandJump(this));
+			this.cmd.register(CommandFeed.class, new CommandFeed());
+			this.cmd.register(CommandRepair.class, new CommandRepair());
+			this.cmd.register(CommandTag.class, new CommandTag());
+			this.cmd.register(CommandNacht.class, new CommandNacht());
+			this.cmd.register(CommandHeal.class, new CommandHeal());
+			this.cmd.register(CommandHome.class, new CommandHome(getUserData(), teleport,this.cmd));
+			this.cmd.register(CommandSpawnmob.class, new CommandSpawnmob());
+			this.cmd.register(CommandSpawner.class, new CommandSpawner());
+			this.cmd.register(CommandSetHome.class, new CommandSetHome(getUserData(), getPermissionManager()));
+			this.cmd.register(CommandSonne.class, new CommandSonne());
+			this.cmd.register(CommandDelHome.class, new CommandDelHome(getUserData()));
+			this.cmd.register(CommandWarp.class, new CommandWarp(getTeleport()));
+			this.cmd.register(CommandKit.class, new CommandKit(getUserData(),cmd));
+			this.cmd.register(CommandSpawn.class, new CommandSpawn(getTeleport()));
+			this.cmd.register(CommandClearInventory.class, new CommandClearInventory());
+			this.cmd.register(CommadSkyBlock.class, new CommadSkyBlock(this));	
+			this.cmd.register(CommandRenameItem.class, new CommandRenameItem());
+			this.cmd.register(CommandInvsee.class, new CommandInvsee(mysql));
+			this.cmd.register(CommandUserShop.class, new CommandUserShop(getTeleport()));
+			this.cmd.register(CommandEnderchest.class, new CommandEnderchest(mysql));
+			this.cmd.register(CommandParty.class, new CommandParty(this));
+			this.cmd.register(CommandBroadcast.class, new CommandBroadcast());
+			this.cmd.register(CommandTppos.class, new CommandTppos());
+			this.cmd.register(CommandItem.class, new CommandItem());
+			this.cmd.register(CommandTp.class, new CommandTp());
+			this.cmd.register(CommandTpHere.class, new CommandTpHere());
+			this.cmd.register(CommandVanish.class, new CommandVanish(this));
+			this.cmd.register(CommandkSpawn.class, new CommandkSpawn(getAntiLogout()));
+			this.cmd.register(CommandMore.class, new CommandMore());
+			this.cmd.register(CommandFlyspeed.class, new CommandFlyspeed());
+			this.cmd.register(CommandGive.class, new CommandGive());
+			this.cmd.register(CommandLocations.class, new CommandLocations(this));
+			this.cmd.register(CommandPerk.class, new CommandPerk(perkManager));
+			this.cmd.register(CommandSuffix.class, new CommandSuffix(getUserData()));
+			this.cmd.register(CommandAmboss.class, new CommandAmboss());
+			this.cmd.register(CommandNear.class, new CommandNear());
+			this.cmd.register(CommandRemoveEnchantment.class, new CommandRemoveEnchantment());
+			this.cmd.register(CommandEnchantmentTable.class, new CommandEnchantmentTable());
+			this.cmd.register(CommandExt.class, new CommandExt());
+			this.cmd.register(CommandWorkbench.class, new CommandWorkbench());
+			this.cmd.register(CommandHead.class, new CommandHead());
+			this.cmd.register(CommandPotion.class, new CommandPotion(getPermissionManager()));
+			this.cmd.register(CommandFill.class, new CommandFill());
+			this.cmd.register(CommandGiveGems.class, new CommandGiveGems(getMoney()));
+			this.cmd.register(CommandGiveCoins.class, new CommandGiveCoins(getMoney()));
+			this.cmd.register(CommandAddEpics.class, new CommandAddEpics(getStatsManager()));
 			
-			@Override
-			public void call(String playerName) {
-				if(UtilPlayer.isOnline(playerName)){
-					Player player = Bukkit.getPlayer(playerName);
-					
-					if(UtilServer.getDeliveryPet()!=null){
-						UtilServer.getDeliveryPet().deliveryUSE(player, "§aVote for EpicPvP", true);
-					}
-					
-					getStatsManager().addDouble(player, 200, StatsKey.MONEY);
-					player.getInventory().addItem(new ItemStack(Material.DIAMOND,2));
-					player.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
-					player.getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
-					player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "VOTE_THX"));
+			UtilServer.createDeliveryPet(new DeliveryPet(getBase(),null,new DeliveryObject[]{
+				new DeliveryObject(new String[]{"","§7Click for Vote!","","§ePvP Rewards:","§7   200 Epics","§7   1x Inventory Repair","","§eGame Rewards:","§7   25 Gems","§7   100 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},PermissionType.DELIVERY_PET_VOTE,false,28,"§aVote for EpicPvP",Material.PAPER,Material.REDSTONE_BLOCK,new Click(){
+	
+						@Override
+						public void onClick(Player p, ActionType a,Object obj) {
+							p.closeInventory();
+							p.sendMessage(TranslationManager.getText(p,"PREFIX")+"§7-----------------------------------------");
+							p.sendMessage(TranslationManager.getText(p,"PREFIX")+" ");
+							p.sendMessage(TranslationManager.getText(p,"PREFIX")+"Vote Link:§a http://goo.gl/wxdAj4");
+							p.sendMessage(TranslationManager.getText(p,"PREFIX")+" ");
+							p.sendMessage(TranslationManager.getText(p,"PREFIX")+"§7-----------------------------------------");
+						}
+						
+					},-1),
+					new DeliveryObject(new String[]{"§aOnly for §eVIP§a!","","§ePvP Rewards:","§7   200 Epics","§7   10 Level","","§eGame Rewards:","§7   200 Coins","§7   2x TTT Paesse","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},PermissionType.DELIVERY_PET_VIP_WEEK,true,11,"§cRank §eVIP§c Reward",Material.getMaterial(342),Material.MINECART,new Click(){
+	
+						@Override
+						public void onClick(Player p, ActionType a,Object obj) {
+							getStatsManager().add(p, StatsKey.MONEY,200);
+							p.setLevel(p.getLevel()+10);
+							p.sendMessage(TranslationManager.getText(p, "PREFIX")+TranslationManager.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","200"}));
+						}
+						
+					},TimeSpan.DAY*7),
+					new DeliveryObject(new String[]{"§aOnly for §6ULTRA§a!","","§ePvP Rewards:","§7   300 Epics","§7   15 Level","","§eGame Rewards:","§7   300 Coins","§7   2x TTT Paesse","","§eSkyBlock Rewards:","§7   300 Epics","§7   4x Diamonds","§7   4x Iron Ingot","§7   4x Gold Ingot"},PermissionType.DELIVERY_PET_ULTRA_WEEK,true,12,"§cRank §6ULTRA§c Reward",Material.getMaterial(342),Material.MINECART,new Click(){
+	
+						@Override
+						public void onClick(Player p, ActionType a,Object obj) {
+							getStatsManager().add(p, StatsKey.MONEY,300);
+							p.getInventory().addItem(new ItemStack(Material.DIAMOND,2));
+							p.getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
+							p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
+							p.sendMessage(TranslationManager.getText(p, "PREFIX")+TranslationManager.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","300"}));
+						}
+						
+					},TimeSpan.DAY*7),
+					new DeliveryObject(new String[]{"§aOnly for §aLEGEND§a!","","§ePvP Rewards:","§7   400 Epics","§7   20 Level","","§eGame Rewards:","§7   400 Coins","§7   3x TTT Paesse","","§eSkyBlock Rewards:","§7   400 Epics","§7   6x Diamonds","§7   6x Iron Ingot","§7   6x Gold Ingot"},PermissionType.DELIVERY_PET_LEGEND_WEEK,true,13,"§cRank §5LEGEND§c Reward",Material.getMaterial(342),Material.MINECART,new Click(){
+	
+						@Override
+						public void onClick(Player p, ActionType a,Object obj) {
+							getStatsManager().add(p, StatsKey.MONEY,400);
+							p.getInventory().addItem(new ItemStack(Material.DIAMOND,4));
+							p.getInventory().addItem(new ItemStack(Material.IRON_INGOT,4));
+							p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,4));
+							p.sendMessage(TranslationManager.getText(p, "PREFIX")+TranslationManager.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","400"}));
+						}
+						
+					},TimeSpan.DAY*7),
+					new DeliveryObject(new String[]{"§aOnly for §bMVP§a!","","§ePvP Rewards:","§7   500 Epics","§7   25 Level","","§eGame Rewards:","§7   500 Coins","§7   3x TTT Paesse","","§eSkyBlock Rewards:","§7   500 Epics","§7   8x Diamonds","§7   8x Iron Ingot","§7   8x Gold Ingot"},PermissionType.DELIVERY_PET_MVP_WEEK,true,14,"§cRank §3MVP§c Reward",Material.getMaterial(342),Material.MINECART,new Click(){
+	
+						@Override
+						public void onClick(Player p, ActionType a,Object obj) {
+							getStatsManager().add(p, StatsKey.MONEY,500);
+							p.getInventory().addItem(new ItemStack(Material.DIAMOND,4));
+							p.getInventory().addItem(new ItemStack(Material.IRON_INGOT,4));
+							p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,4));
+							p.sendMessage(TranslationManager.getText(p, "PREFIX")+TranslationManager.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","500"}));
+						}
+						
+					},TimeSpan.DAY*7),
+					new DeliveryObject(new String[]{"§aOnly for §bMVP§c+§a!","","§ePvP Rewards:","§7   600 Epics","§7   30 Level","","§eGame Rewards:","§7   600 Coins","§7   4x TTT Paesse","","§eSkyBlock Rewards:","§7   600 Epics","§7   10x Diamonds","§7   10x Iron Ingot","§7   10x Gold Ingot"},PermissionType.DELIVERY_PET_MVPPLUS_WEEK,true,15,"§cRank §9MVP§e+§c Reward",Material.getMaterial(342),Material.MINECART,new Click(){
+	
+						@Override
+						public void onClick(Player p, ActionType a,Object obj) {
+							getStatsManager().add(p, StatsKey.MONEY,600);
+							p.getInventory().addItem(new ItemStack(Material.DIAMOND,6));
+							p.getInventory().addItem(new ItemStack(Material.IRON_INGOT,6));
+							p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,6));
+							p.sendMessage(TranslationManager.getText(p, "PREFIX")+TranslationManager.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","600"}));
+						}
+						
+					},TimeSpan.DAY*7),
+					new DeliveryObject(new String[]{"§7/twitter [TwitterName]","","§ePvP Rewards:","§7   300 Epics","§7   15 Level","","§eGame Rewards:","§7   300 Coins","","§eSkyBlock Rewards:","§7   300 Epics","§7   15 Level"},PermissionType.DELIVERY_PET_TWITTER,false,34,"§cTwitter Reward",Material.getMaterial(351),4,new Click(){
+	
+						@Override
+						public void onClick(Player p, ActionType a,Object obj) {
+	//						String s1 = getMysql().getString("SELECT twitter FROM BG_TWITTER WHERE uuid='"+UtilPlayer.getRealUUID(p)+"'");
+	//						if(s1.equalsIgnoreCase("null")){
+	//							p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_ACC_NOT"));
+	//						}else{
+	//							getPacketManager().SendPacket("DATA", new TWIITTER_IS_PLAYER_FOLLOWER(s1, p.getName()));
+	//							p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_CHECK"));
+	//						}
+						}
+						
+					},TimeSpan.DAY*7),
+			},"§bThe Delivery Jockey!",EntityType.CHICKEN,CommandLocations.getLocation("DeliveryPet"),ServerType.SKYBLOCK,getHologram(),getMysql())
+			);
+	
+			this.manager=new SkyBlockManager(this);
+			this.ha=new CommandHomeaccept(manager);
+			getAntiLogout().setStats(statsManager);
+			new SkyBlockListener(this);
+			new EnderpearlListener(this);
+			new EnderChestListener(getUserData());
+			Bukkit.getWorld("world").setStorm(false);
+			AACHack a = new AACHack("SKYBLOCK", mysql,client);
+			a.setAntiLogoutManager(getAntiLogout());
+			this.itemShop = new ItemShop(getStatsManager(), getCmd());
+			new UserStores(statsManager);
+			perkManager.setPerkEntity(CommandLocations.getLocation("perk"));
+			new PerkListener(perkManager);
+			new BungeeCordFirewallListener(mysql,cmd, "sky");
+			new ListenerCMD(this);
+			new ChatListener(this,new SkyBlockGildenManager(manager, mysql, GildenType.SKY, cmd,getStatsManager()),permissionManager,getUserData());
+			
+			if(Calendar.getHoliday()!=null){
+				switch(Calendar.holiday){
+				case WEIHNACHTEN:
+						new ChristmasListener(this);
+					break;
 				}
 			}
-		});
-		DebugLog(time, 45, this.getClass().getName());
+			setTutorialCreature(CommandLocations.getLocation("tutorial"));
+			UtilServer.createLagListener(this.cmd);
+			new VoteListener(this,true, new Callback<String>() {
+				
+				@Override
+				public void call(String playerName) {
+					if(UtilPlayer.isOnline(playerName)){
+						Player player = Bukkit.getPlayer(playerName);
+						
+						if(UtilServer.getDeliveryPet()!=null){
+							UtilServer.getDeliveryPet().deliveryUSE(player, "§aVote for EpicPvP", true);
+						}
+						
+						getStatsManager().addDouble(player, 200, StatsKey.MONEY);
+						player.getInventory().addItem(new ItemStack(Material.DIAMOND,2));
+						player.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
+						player.getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
+						player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "VOTE_THX"));
+					}
+				}
+			});
+			DebugLog(time, 45, this.getClass().getName());
 		}catch(Exception e){
 			UtilException.catchException(e, "skyblock", Bukkit.getIp(), mysql);
 		}

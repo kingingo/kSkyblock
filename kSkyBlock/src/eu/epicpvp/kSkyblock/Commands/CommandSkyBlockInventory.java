@@ -1,14 +1,14 @@
 package eu.epicpvp.kSkyblock.Commands;
 
-import lombok.Getter;
-import eu.epicpvp.kcore.Command.CommandHandler.Sender;
-import eu.epicpvp.kcore.Inventory.InventoryBase;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import eu.epicpvp.kcore.Command.CommandHandler.Sender;
+import eu.epicpvp.kcore.Inventory.InventoryBase;
+import lombok.Getter;
 
 public class CommandSkyBlockInventory implements CommandExecutor{
 	

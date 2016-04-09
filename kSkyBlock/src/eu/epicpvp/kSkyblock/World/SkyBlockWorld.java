@@ -6,30 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-import lombok.Getter;
-import lombok.Setter;
-import eu.epicpvp.kSkyblock.SkyBlockManager;
-import eu.epicpvp.kSkyblock.Util.UtilSchematic;
-import eu.epicpvp.kcore.AntiLogout.Events.AntiLogoutAddPlayerEvent;
-import eu.epicpvp.kcore.Command.Commands.Events.PlayerSetHomeEvent;
-import eu.epicpvp.kcore.Language.Language;
-import eu.epicpvp.kcore.Listener.kListener;
-import eu.epicpvp.kcore.MySQL.MySQLErr;
-import eu.epicpvp.kcore.MySQL.Events.MySQLErrorEvent;
-import eu.epicpvp.kcore.PacketAPI.Packets.kPacketPlayOutWorldBorder;
-import eu.epicpvp.kcore.Permission.PermissionType;
-import eu.epicpvp.kcore.TeleportManager.Teleporter;
-import eu.epicpvp.kcore.TeleportManager.Events.PlayerTeleportedEvent;
-import eu.epicpvp.kcore.Update.UpdateType;
-import eu.epicpvp.kcore.Update.Event.UpdateEvent;
-import eu.epicpvp.kcore.Util.UtilBlock;
-import eu.epicpvp.kcore.Util.UtilEvent;
-import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
-import eu.epicpvp.kcore.Util.UtilPlayer;
-import eu.epicpvp.kcore.Util.UtilScoreboard;
-import eu.epicpvp.kcore.Util.UtilServer;
-import eu.epicpvp.kcore.Util.UtilWorld;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -53,9 +29,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -70,6 +46,27 @@ import org.bukkit.scoreboard.Scoreboard;
 
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
+
+import eu.epicpvp.kSkyblock.SkyBlockManager;
+import eu.epicpvp.kSkyblock.Util.UtilSchematic;
+import eu.epicpvp.kcore.AntiLogout.Events.AntiLogoutAddPlayerEvent;
+import eu.epicpvp.kcore.Command.Commands.Events.PlayerSetHomeEvent;
+import eu.epicpvp.kcore.Listener.kListener;
+import eu.epicpvp.kcore.MySQL.MySQLErr;
+import eu.epicpvp.kcore.MySQL.Events.MySQLErrorEvent;
+import eu.epicpvp.kcore.PacketAPI.Packets.kPacketPlayOutWorldBorder;
+import eu.epicpvp.kcore.Permission.PermissionType;
+import eu.epicpvp.kcore.TeleportManager.Teleporter;
+import eu.epicpvp.kcore.TeleportManager.Events.PlayerTeleportedEvent;
+import eu.epicpvp.kcore.Translation.TranslationManager;
+import eu.epicpvp.kcore.Update.UpdateType;
+import eu.epicpvp.kcore.Update.Event.UpdateEvent;
+import eu.epicpvp.kcore.Util.UtilPlayer;
+import eu.epicpvp.kcore.Util.UtilScoreboard;
+import eu.epicpvp.kcore.Util.UtilServer;
+import eu.epicpvp.kcore.Util.UtilWorld;
+import lombok.Getter;
+import lombok.Setter;
 
 public class SkyBlockWorld extends kListener{
 
@@ -166,12 +163,12 @@ public class SkyBlockWorld extends kListener{
 					UtilScoreboard.resetScore(owner.getScoreboard(),player.getName(), DisplaySlot.SIDEBAR);
 					getManager().getInstance().getPermissionManager().setTabList(player);
 					player.teleport(Bukkit.getWorld("world").getSpawnLocation());
-					if(withMSG)player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "SKYBLOCK_PARTY_VERLASSEN"));
+					if(withMSG)player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "SKYBLOCK_PARTY_VERLASSEN"));
 					break;
 				}
 			}
 			if(!b){
-				if(withMSG)player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "SKYBLOCK_PARTY_NO"));
+				if(withMSG)player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "SKYBLOCK_PARTY_NO"));
 				return false;
 			}
 			return true;
@@ -192,21 +189,21 @@ public class SkyBlockWorld extends kListener{
 				}
 				return true;
 			}else{
-				owner.sendMessage(Language.getText(player, "PREFIX")+Language.getText(owner, "SKYBLOCK_PARTY_PLAYER_NOT"));
+				owner.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(owner, "SKYBLOCK_PARTY_PLAYER_NOT"));
 				return false;
 			}
 		}else{
-			owner.sendMessage(Language.getText(player, "PREFIX")+Language.getText(owner, "SKYBLOCK_PARTY_NO_OWNER"));
+			owner.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(owner, "SKYBLOCK_PARTY_NO_OWNER"));
 			return false;
 		}
 	}
 	
 	public void sendChatParty(Player owner,String name){
 		if(getPartys().containsKey(owner)){
-			owner.sendMessage(Language.getText(owner, "PREFIX")+Language.getText(owner, name));
+			owner.sendMessage(TranslationManager.getText(owner, "PREFIX")+TranslationManager.getText(owner, name));
 			for(String player : getPartys().get(owner)){
 				if(UtilPlayer.isOnline(player)){
-					Bukkit.getPlayer(player).sendMessage(Language.getText(Bukkit.getPlayer(player), "PREFIX")+Language.getText(Bukkit.getPlayer(player), name));
+					Bukkit.getPlayer(player).sendMessage(TranslationManager.getText(Bukkit.getPlayer(player), "PREFIX")+TranslationManager.getText(Bukkit.getPlayer(player), name));
 				}
 			}
 		}
@@ -214,10 +211,10 @@ public class SkyBlockWorld extends kListener{
 	
 	public void sendChatParty(Player owner,String name,Object[] input){
 		if(getPartys().containsKey(owner)){
-			owner.sendMessage(Language.getText(owner, "PREFIX")+Language.getText(owner, name, input));
+			owner.sendMessage(TranslationManager.getText(owner, "PREFIX")+TranslationManager.getText(owner, name, input));
 			for(String player : getPartys().get(owner)){
 				if(UtilPlayer.isOnline(player)){
-					Bukkit.getPlayer(player).sendMessage(Language.getText(Bukkit.getPlayer(player), "PREFIX")+Language.getText(Bukkit.getPlayer(player), name, input));
+					Bukkit.getPlayer(player).sendMessage(TranslationManager.getText(Bukkit.getPlayer(player), "PREFIX")+TranslationManager.getText(Bukkit.getPlayer(player), name, input));
 				}
 			}
 		}
@@ -225,10 +222,10 @@ public class SkyBlockWorld extends kListener{
 	
 	public void sendChatParty(Player owner,String name,Object input){
 		if(getPartys().containsKey(owner)){
-			owner.sendMessage(Language.getText(owner, "PREFIX")+Language.getText(owner, name, input));
+			owner.sendMessage(TranslationManager.getText(owner, "PREFIX")+TranslationManager.getText(owner, name, input));
 			for(String player : getPartys().get(owner)){
 				if(UtilPlayer.isOnline(player)){
-					Bukkit.getPlayer(player).sendMessage(Language.getText(Bukkit.getPlayer(player), "PREFIX")+Language.getText(Bukkit.getPlayer(player), name, input));
+					Bukkit.getPlayer(player).sendMessage(TranslationManager.getText(Bukkit.getPlayer(player), "PREFIX")+TranslationManager.getText(Bukkit.getPlayer(player), name, input));
 				}
 			}
 		}
@@ -262,7 +259,7 @@ public class SkyBlockWorld extends kListener{
 				if(!getPartys().containsKey(owner))return false;
 					
 				if(getPartys().get(owner).size()>=8){
-					p.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "SKYBLOCK_PARTY_VOLL"));
+					p.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "SKYBLOCK_PARTY_VOLL"));
 					return false;
 				}else{
 					getPartys().get(owner).add(p.getName().toLowerCase());
@@ -273,11 +270,11 @@ public class SkyBlockWorld extends kListener{
 					return true;
 				}
 			}else{
-				p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_PARTY_IN"));
+				p.sendMessage(TranslationManager.getText(p, "PREFIX")+TranslationManager.getText(p, "SKYBLOCK_PARTY_IN"));
 				return false;
 			}
 		}else{
-			p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "SKYBLOCK_PARTY_EINLADEN_NO"));
+			p.sendMessage(TranslationManager.getText(p, "PREFIX")+TranslationManager.getText(p, "SKYBLOCK_PARTY_EINLADEN_NO"));
 			return false;
 		}
 	}
@@ -290,29 +287,29 @@ public class SkyBlockWorld extends kListener{
 				if(!isInParty(invite)){
 					if(!getParty_einladungen().containsKey(einladen.toLowerCase())||getParty_einladungen().containsKey(einladen.toLowerCase())&&getParty_einladungen().get(einladen).getName().equalsIgnoreCase(owner.getName())){
 						if(getPartys().get(owner).size()>=8){
-							owner.sendMessage(Language.getText(owner, "PREFIX")+Language.getText(owner, "SKYBLOCK_PARTY_SIZE",8));
+							owner.sendMessage(TranslationManager.getText(owner, "PREFIX")+TranslationManager.getText(owner, "SKYBLOCK_PARTY_SIZE",8));
 							return false;
 						}else{
 							getParty_einladungen().remove(einladen.toLowerCase());
 							getParty_einladungen().put(einladen.toLowerCase(), owner);
-							owner.sendMessage(Language.getText(owner, "PREFIX")+Language.getText(owner, "SKYBLOCK_PARTY_EINLADEN",invite.getName()));
-							invite.sendMessage(Language.getText(invite, "PREFIX")+Language.getText(invite, "SKYBLOCK_PARTY_EINLADEN_INVITE",owner.getName()));
+							owner.sendMessage(TranslationManager.getText(owner, "PREFIX")+TranslationManager.getText(owner, "SKYBLOCK_PARTY_EINLADEN",invite.getName()));
+							invite.sendMessage(TranslationManager.getText(invite, "PREFIX")+TranslationManager.getText(invite, "SKYBLOCK_PARTY_EINLADEN_INVITE",owner.getName()));
 							return true;
 						}
 					}else{
-						owner.sendMessage(Language.getText(owner, "PREFIX")+Language.getText(owner, "SKYBLOCK_PARTY_EINLADEN_IS_IN",einladen));
+						owner.sendMessage(TranslationManager.getText(owner, "PREFIX")+TranslationManager.getText(owner, "SKYBLOCK_PARTY_EINLADEN_IS_IN",einladen));
 						return false;
 					}
 				}else{
-					owner.sendMessage(Language.getText(owner, "PREFIX")+Language.getText(owner, "SKYBLOCK_PARTY_EINLADEN_IS_IN"));
+					owner.sendMessage(TranslationManager.getText(owner, "PREFIX")+TranslationManager.getText(owner, "SKYBLOCK_PARTY_EINLADEN_IS_IN"));
 					return false;
 				}
 			}else{
-				owner.sendMessage(Language.getText(owner, "PREFIX")+Language.getText(owner, "PLAYER_IS_OFFLINE",einladen));
+				owner.sendMessage(TranslationManager.getText(owner, "PREFIX")+TranslationManager.getText(owner, "PLAYER_IS_OFFLINE",einladen));
 				return false;
 			}
 		}else{
-			owner.sendMessage(Language.getText(owner, "PREFIX")+Language.getText(owner, "SKYBLOCK_PARTY_NO"));
+			owner.sendMessage(TranslationManager.getText(owner, "PREFIX")+TranslationManager.getText(owner, "SKYBLOCK_PARTY_NO"));
 			return false;
 		}
 	}
@@ -363,8 +360,8 @@ public class SkyBlockWorld extends kListener{
 							getManager().getInstance().getHa().list.put( player , ev.getPlayer());
 							getManager().getInstance().getHa().list_loc.put(player, ev.getHome());
 							getManager().getInstance().getHa().list_name.put(player, ev.getName());
-							player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "HOME_QUESTION",ev.getPlayer().getName()));
-							ev.setReason(Language.getText(player, "HOME_ISLAND"));
+							player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "HOME_QUESTION",ev.getPlayer().getName()));
+							ev.setReason(TranslationManager.getText(player, "HOME_ISLAND"));
 							ev.setCancelled(true);
 							break;
 						}
@@ -710,7 +707,7 @@ public class SkyBlockWorld extends kListener{
 			Location loc1 = new Location(getWorld(), (max_x-(radius/2)) ,90, (max_z-(radius/2)) );
 			loc1.getWorld().loadChunk(loc1.getChunk());
 			UtilSchematic.pastePlate(session,loc1, new File("plugins/kSkyBlock/schematics/"+schematic+".schematic"));
-			Log("Die Insel von den Spieler "+uuid+"(Entities:"+count+"/Bloecke:"+b_count+") wurde erneuert.");
+			logMessage("Die Insel von den Spieler "+uuid+"(Entities:"+count+"/Bloecke:"+b_count+") wurde erneuert.");
 			return true;
 		}
 		return false;
@@ -718,7 +715,7 @@ public class SkyBlockWorld extends kListener{
 	
 	public boolean removeIsland(Player player){
 		if(getManager().getDelete().contains(player.getName().toLowerCase())){
-			player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "SKYBLOCK_REMOVE_ISLAND_ONE"));
+			player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "SKYBLOCK_REMOVE_ISLAND_ONE"));
 			return false;
 		}
 		UUID uuid = UtilPlayer.getRealUUID(player);
@@ -762,7 +759,7 @@ public class SkyBlockWorld extends kListener{
 				}
 			}
 			islands.remove(uuid.toString());
-			Log("Die Insel von den Spieler "+player.getName()+"(Entities:"+count+"/Bloecke:"+b_count+") wurde resetet.");
+			logMessage("Die Insel von den Spieler "+player.getName()+"(Entities:"+count+"/Bloecke:"+b_count+") wurde resetet.");
 			uuid = UUID.randomUUID();
 			getManager().getInstance().getMysql().Update(isAsync(),"UPDATE list_skyblock_worlds SET uuid='!"+uuid+"' WHERE X='"+loc.getBlockX()+"' AND Z='"+loc.getBlockZ()+"' AND worldName='"+world.getName()+"'");
 			islands.put("!"+uuid.toString(), loc);
@@ -802,7 +799,7 @@ public class SkyBlockWorld extends kListener{
 			for(int i = 0; i< (anzahl-a) ;i++){
 				addIsland(null,schematic,false);
 			}
-			Log((anzahl-a)+" Inseln wurden hinzugef§gt!");
+			logMessage((anzahl-a)+" Inseln wurden hinzugef§gt!");
 		}
 	}
 	
@@ -815,7 +812,7 @@ public class SkyBlockWorld extends kListener{
 				islands.remove(island);
 				islands.put(uuid.toString(), new Location(world,x,0,z));
 				getManager().getInstance().getMysql().Update(isAsync(),"UPDATE list_skyblock_worlds SET uuid='"+uuid+"' WHERE worldName='"+world.getName()+"' AND uuid='"+island+"' AND X='"+x+"' AND Z='"+z+"'");
-				Log("Die Insel von den Spieler "+uuid+"(X:"+x+",Z:"+z+") wurde recycelt.");
+				logMessage("Die Insel von den Spieler "+uuid+"(X:"+x+",Z:"+z+") wurde recycelt.");
 				return;
 			}
 		}
@@ -839,7 +836,7 @@ public class SkyBlockWorld extends kListener{
 		islands.put(u, new Location(world,X,0,Z));
 		setBiome(u, Biome.JUNGLE);
 		getManager().getInstance().getMysql().Update(isAsync(),"INSERT INTO list_skyblock_worlds (uuid,worldName,X,Z) VALUES ('"+u+"','"+getWorld().getName()+"','"+X+"','"+Z+"');");
-		Log("Die Insel von den Spieler "+u+"(X:"+(X-(radius/2))+",Z:"+(Z-(radius/2))+") wurde erstellt.");
+		logMessage("Die Insel von den Spieler "+u+"(X:"+(X-(radius/2))+",Z:"+(Z-(radius/2))+") wurde erstellt.");
 	}
 	
 	public boolean isInIsland(Player player,Location loc){
@@ -921,11 +918,11 @@ public class SkyBlockWorld extends kListener{
 		    } catch (Exception err) {
 		    	Bukkit.getPluginManager().callEvent(new MySQLErrorEvent(MySQLErr.QUERY,err,getManager().getInstance().getMysql()));
 		    }
-			Log("X: "+X+" Z:"+Z);
+			logMessage("X: "+X+" Z:"+Z);
 		}else{
 			X=radius;
 			Z=0;
-			Log("X: "+X+" Z:"+Z);
+			logMessage("X: "+X+" Z:"+Z);
 		}
 	}
 	
@@ -941,7 +938,7 @@ public class SkyBlockWorld extends kListener{
 	    } catch (Exception err) {
 	    	Bukkit.getPluginManager().callEvent(new MySQLErrorEvent(MySQLErr.QUERY,err,getManager().getInstance().getMysql()));
 	    }
-		Log(islands.size()+" Inseln wurden Geladen!");
+		logMessage(islands.size()+" Inseln wurden Geladen!");
 		solveXandZ();
 	}
 	
