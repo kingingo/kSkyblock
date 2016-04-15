@@ -132,7 +132,7 @@ import eu.epicpvp.kcore.Pet.Commands.CommandPet;
 import eu.epicpvp.kcore.Pet.Shop.PlayerPetHandler;
 import eu.epicpvp.kcore.StatsManager.StatsManager;
 import eu.epicpvp.kcore.TeleportManager.TeleportManager;
-import eu.epicpvp.kcore.Translation.TranslationManager;
+import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.Update.Updater;
 import eu.epicpvp.kcore.UserDataConfig.UserDataConfig;
 import eu.epicpvp.kcore.UserStores.UserStores;
@@ -191,7 +191,6 @@ public class kSkyBlock extends JavaPlugin {
 	public void onEnable(){
 		try{
 			long time = System.currentTimeMillis();
-			TranslationManager.init(this);
 			loadConfig();
 			this.Updater=new Updater(this);
 			this.client = UtilServer.createClient(this,ClientType.OTHER, getConfig().getString("Config.Client.Host"), getConfig().getInt("Config.Client.Port"), "SkyBlock");
@@ -280,11 +279,11 @@ public class kSkyBlock extends JavaPlugin {
 						@Override
 						public void onClick(Player p, ActionType a,Object obj) {
 							p.closeInventory();
-							p.sendMessage(TranslationManager.getText(p,"PREFIX")+"§7-----------------------------------------");
-							p.sendMessage(TranslationManager.getText(p,"PREFIX")+" ");
-							p.sendMessage(TranslationManager.getText(p,"PREFIX")+"Vote Link:§a http://goo.gl/wxdAj4");
-							p.sendMessage(TranslationManager.getText(p,"PREFIX")+" ");
-							p.sendMessage(TranslationManager.getText(p,"PREFIX")+"§7-----------------------------------------");
+							p.sendMessage(TranslationHandler.getText(p,"PREFIX")+"§7-----------------------------------------");
+							p.sendMessage(TranslationHandler.getText(p,"PREFIX")+" ");
+							p.sendMessage(TranslationHandler.getText(p,"PREFIX")+"Vote Link:§a http://goo.gl/wxdAj4");
+							p.sendMessage(TranslationHandler.getText(p,"PREFIX")+" ");
+							p.sendMessage(TranslationHandler.getText(p,"PREFIX")+"§7-----------------------------------------");
 						}
 						
 					},-1),
@@ -294,7 +293,7 @@ public class kSkyBlock extends JavaPlugin {
 						public void onClick(Player p, ActionType a,Object obj) {
 							getStatsManager().add(p, StatsKey.MONEY,200);
 							p.setLevel(p.getLevel()+10);
-							p.sendMessage(TranslationManager.getText(p, "PREFIX")+TranslationManager.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","200"}));
+							p.sendMessage(TranslationHandler.getText(p, "PREFIX")+TranslationHandler.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","200"}));
 						}
 						
 					},TimeSpan.DAY*7),
@@ -306,7 +305,7 @@ public class kSkyBlock extends JavaPlugin {
 							p.getInventory().addItem(new ItemStack(Material.DIAMOND,2));
 							p.getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
 							p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
-							p.sendMessage(TranslationManager.getText(p, "PREFIX")+TranslationManager.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","300"}));
+							p.sendMessage(TranslationHandler.getText(p, "PREFIX")+TranslationHandler.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","300"}));
 						}
 						
 					},TimeSpan.DAY*7),
@@ -318,7 +317,7 @@ public class kSkyBlock extends JavaPlugin {
 							p.getInventory().addItem(new ItemStack(Material.DIAMOND,4));
 							p.getInventory().addItem(new ItemStack(Material.IRON_INGOT,4));
 							p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,4));
-							p.sendMessage(TranslationManager.getText(p, "PREFIX")+TranslationManager.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","400"}));
+							p.sendMessage(TranslationHandler.getText(p, "PREFIX")+TranslationHandler.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","400"}));
 						}
 						
 					},TimeSpan.DAY*7),
@@ -330,7 +329,7 @@ public class kSkyBlock extends JavaPlugin {
 							p.getInventory().addItem(new ItemStack(Material.DIAMOND,4));
 							p.getInventory().addItem(new ItemStack(Material.IRON_INGOT,4));
 							p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,4));
-							p.sendMessage(TranslationManager.getText(p, "PREFIX")+TranslationManager.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","500"}));
+							p.sendMessage(TranslationHandler.getText(p, "PREFIX")+TranslationHandler.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","500"}));
 						}
 						
 					},TimeSpan.DAY*7),
@@ -342,7 +341,7 @@ public class kSkyBlock extends JavaPlugin {
 							p.getInventory().addItem(new ItemStack(Material.DIAMOND,6));
 							p.getInventory().addItem(new ItemStack(Material.IRON_INGOT,6));
 							p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,6));
-							p.sendMessage(TranslationManager.getText(p, "PREFIX")+TranslationManager.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","600"}));
+							p.sendMessage(TranslationHandler.getText(p, "PREFIX")+TranslationHandler.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","600"}));
 						}
 						
 					},TimeSpan.DAY*7),
@@ -376,7 +375,7 @@ public class kSkyBlock extends JavaPlugin {
 			new UserStores(statsManager);
 			perkManager.setPerkEntity(CommandLocations.getLocation("perk"));
 			new PerkListener(perkManager);
-			new BungeeCordFirewallListener(mysql,cmd, "sky");
+			new BungeeCordFirewallListener(this,UtilServer.getCommandHandler());
 			new ListenerCMD(this);
 			new ChatListener(this,new SkyBlockGildenManager(manager, mysql, GildenType.SKY, cmd,getStatsManager()),permissionManager,getUserData());
 			
@@ -404,7 +403,7 @@ public class kSkyBlock extends JavaPlugin {
 						player.getInventory().addItem(new ItemStack(Material.DIAMOND,2));
 						player.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
 						player.getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
-						player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "VOTE_THX"));
+						player.sendMessage(TranslationHandler.getText(player, "PREFIX")+TranslationHandler.getText(player, "VOTE_THX"));
 					}
 				}
 			});

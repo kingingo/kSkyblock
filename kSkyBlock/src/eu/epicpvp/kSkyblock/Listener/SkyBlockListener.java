@@ -47,7 +47,7 @@ import eu.epicpvp.kcore.Scoreboard.Events.PlayerSetScoreboardEvent;
 import eu.epicpvp.kcore.SignShop.Events.SignShopUseEvent;
 import eu.epicpvp.kcore.StatsManager.Event.PlayerStatsChangeEvent;
 import eu.epicpvp.kcore.StatsManager.Event.PlayerStatsLoadedEvent;
-import eu.epicpvp.kcore.Translation.TranslationManager;
+import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.Update.UpdateType;
 import eu.epicpvp.kcore.Update.Event.UpdateEvent;
 import eu.epicpvp.kcore.UserStores.Events.PlayerCreateUserStoreEvent;
@@ -95,9 +95,10 @@ public class SkyBlockListener extends kListener{
 	public void statsMONEY(PlayerStatsChangeEvent ev){
 		if(ev.getManager().getType() != GameType.Money){
 			if(ev.getStats() == StatsKey.MONEY){
-				if(UtilPlayer.isOnline(ev.getPlayername())){
-					UtilScoreboard.resetScore(Bukkit.getPlayer(ev.getPlayername()).getScoreboard(), 5, DisplaySlot.SIDEBAR);
-					UtilScoreboard.setScore(Bukkit.getPlayer(ev.getPlayername()).getScoreboard(),UtilMath.trim(2, getManager().getStatsManager().getDouble(Bukkit.getPlayer(ev.getPlayername()), StatsKey.MONEY))+"$", DisplaySlot.SIDEBAR, 5);
+				if(UtilPlayer.isOnline(ev.getPlayerId())){
+					Player player = UtilPlayer.searchExact(ev.getPlayerId());
+					UtilScoreboard.resetScore(player.getScoreboard(), 5, DisplaySlot.SIDEBAR);
+					UtilScoreboard.setScore(player.getScoreboard(),UtilMath.trim(2, getManager().getStatsManager().getDouble(player, StatsKey.MONEY))+"$", DisplaySlot.SIDEBAR, 5);
 				}
 			}
 		}
@@ -134,7 +135,7 @@ public class SkyBlockListener extends kListener{
 //			if(UtilPlayer.isOnline(tw.getPlayer())){
 //				Player p = Bukkit.getPlayer(tw.getPlayer());
 //				if(!tw.isFollow()){
-//					getManager().getMysql().Update("DELETE FROM BG_TWITTER WHERE uuid='" + UtilPlayer.getRealUUID(p) + "'");
+//					getManager().getMysql().Update("DELETE FROM BG_TWITTER WHERE uuid='" + UtilPlayer.getPlayerId(p) + "'");
 //					p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_FOLLOW_N"));
 //					p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_REMOVE"));
 //				}else{
@@ -289,25 +290,25 @@ public class SkyBlockListener extends kListener{
 		if(ev.getPlayer().getScoreboard()==null)ev.getPlayer().setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 	}
 	
-	@EventHandler
-	public void loadedStats(PlayerStatsLoadedEvent ev){
-		if(ev.getManager().getType() != GameType.Money){
-			if(UtilPlayer.isOnline(ev.getPlayername())){
-				if(vote_list.contains( UtilPlayer.getRealUUID(Bukkit.getPlayer(ev.getPlayername())) )){
-					if(UtilServer.getDeliveryPet()!=null){
-						 UtilServer.getDeliveryPet().deliveryUSE(Bukkit.getPlayer(ev.getPlayername()), "§aVote for EpicPvP", true);
-					 }
-					
-					vote_list.remove(UtilPlayer.getRealUUID(Bukkit.getPlayer(ev.getPlayername())));
-					manager.getStatsManager().add(Bukkit.getPlayer(ev.getPlayername()), StatsKey.MONEY,200);
-					Bukkit.getPlayer(ev.getPlayername()).getInventory().addItem(new ItemStack(Material.DIAMOND,2));
-					Bukkit.getPlayer(ev.getPlayername()).getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
-					Bukkit.getPlayer(ev.getPlayername()).getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
-					Bukkit.getPlayer(ev.getPlayername()).sendMessage(TranslationManager.getText(Bukkit.getPlayer(ev.getPlayername()), "PREFIX")+TranslationManager.getText(Bukkit.getPlayer(ev.getPlayername()), "VOTE_THX"));
-				}
-			}
-		}
-	}
+//	@EventHandler
+//	public void loadedStats(PlayerStatsLoadedEvent ev){
+//		if(ev.getManager().getType() != GameType.Money){
+//			if(UtilPlayer.isOnline(ev.getPlayername())){
+//				if(vote_list.contains( UtilPlayer.getPlayerId(Bukkit.getPlayer(ev.getPlayername())) )){
+//					if(UtilServer.getDeliveryPet()!=null){
+//						 UtilServer.getDeliveryPet().deliveryUSE(Bukkit.getPlayer(ev.getPlayername()), "§aVote for EpicPvP", true);
+//					 }
+//					
+//					vote_list.remove(UtilPlayer.getPlayerId(ev.getPlayername()));
+//					manager.getStatsManager().add(Bukkit.getPlayer(ev.getPlayername()), StatsKey.MONEY,200);
+//					Bukkit.getPlayer(ev.getPlayername()).getInventory().addItem(new ItemStack(Material.DIAMOND,2));
+//					Bukkit.getPlayer(ev.getPlayername()).getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
+//					Bukkit.getPlayer(ev.getPlayername()).getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
+//					Bukkit.getPlayer(ev.getPlayername()).sendMessage(TranslationManager.getText(Bukkit.getPlayer(ev.getPlayername()), "PREFIX")+TranslationManager.getText(Bukkit.getPlayer(ev.getPlayername()), "VOTE_THX"));
+//				}
+//			}
+//		}
+//	}
 	
 	@EventHandler
 	public void update(ServerStatusUpdateEvent ev){
@@ -332,7 +333,7 @@ public class SkyBlockListener extends kListener{
 						player.teleport(Bukkit.getWorld("world").getSpawnLocation());
 						player.setAllowFlight(false);
 						player.setFlying(false);
-						player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "kFLY_PVP_FLAG"));
+						player.sendMessage(TranslationHandler.getText(player, "PREFIX")+TranslationHandler.getText(player, "kFLY_PVP_FLAG"));
 					}
 					
 					if(player.isOnGround()){
@@ -383,7 +384,7 @@ public class SkyBlockListener extends kListener{
 		}else{
 			if(!getManager().getAntiLogout().is(ev.getPlayer())){
 				if(cmd.equalsIgnoreCase("/homes")||cmd.equalsIgnoreCase("/etpa")||cmd.equalsIgnoreCase("/fly")||cmd.equalsIgnoreCase("/kfly")||cmd.equalsIgnoreCase("/tpaccet")||cmd.equalsIgnoreCase("/tpyes")||cmd.equalsIgnoreCase("/tpask")||cmd.equalsIgnoreCase("/etpaccept")||cmd.equalsIgnoreCase("/ewarp")||cmd.equalsIgnoreCase("/tpa")||cmd.equalsIgnoreCase("/eback")||cmd.equalsIgnoreCase("/ehome")||cmd.equalsIgnoreCase("/tpaccept")||cmd.equalsIgnoreCase("/back")||cmd.equalsIgnoreCase("/home")||cmd.equalsIgnoreCase("/spawn")||cmd.equalsIgnoreCase("/espawn")||cmd.equalsIgnoreCase("/warp")){
-					ev.getPlayer().sendMessage(TranslationManager.getText(ev.getPlayer(), "PREFIX")+"§cDu kannst den Befehl §b"+cmd+"§c nicht in Kampf ausf§hren!");
+					ev.getPlayer().sendMessage(TranslationHandler.getText(ev.getPlayer(), "PREFIX")+"§cDu kannst den Befehl §b"+cmd+"§c nicht in Kampf ausf§hren!");
 					ev.setCancelled(true);
 				}
 			}else{

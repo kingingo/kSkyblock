@@ -51,7 +51,7 @@ import eu.epicpvp.kcore.MySQL.MySQLErr;
 import eu.epicpvp.kcore.MySQL.Events.MySQLErrorEvent;
 import eu.epicpvp.kcore.PacketAPI.Packets.kPacketPlayOutWorldBorder;
 import eu.epicpvp.kcore.Permission.PermissionType;
-import eu.epicpvp.kcore.Translation.TranslationManager;
+import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.Update.UpdateType;
 import eu.epicpvp.kcore.Update.Event.UpdateEvent;
 import eu.epicpvp.kcore.Util.UtilBlock;
@@ -459,7 +459,7 @@ public class SkyBlockGildenWorld extends kListener{
 	public boolean addIsland(Player player,String gilde,String schematic,boolean recyceln){
 		if(player!=null){
 			if(getManager().getDelete().contains(player.getName().toLowerCase())){
-				player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "SKYBLOCK_REMOVE_ISLAND_ONE"));
+				player.sendMessage(TranslationHandler.getText(player, "PREFIX")+TranslationHandler.getText(player, "SKYBLOCK_REMOVE_ISLAND_ONE"));
 				return false;
 			}
 		}

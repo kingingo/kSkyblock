@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import eu.epicpvp.kcore.Command.CommandHandler.Sender;
-import eu.epicpvp.kcore.Translation.TranslationManager;
+import eu.epicpvp.kcore.Translation.TranslationHandler;
 import lombok.Getter;
 
 public class CommandHomedeny implements CommandExecutor{
@@ -25,13 +25,13 @@ public class CommandHomedeny implements CommandExecutor{
 		if(args.length==0){
 			if(cmda.list.containsKey(player)){
 				if(cmda.list.get(player).isOnline()){
-					player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "DENY"));
+					player.sendMessage(TranslationHandler.getText(player, "PREFIX")+TranslationHandler.getText(player, "DENY"));
 					cmda.list_name.remove(player);
 					cmda.list_loc.remove(player);
 					cmda.list.remove(player);
 				}
 			}else{
-				player.sendMessage(TranslationManager.getText(player, "PREFIX")+TranslationManager.getText(player, "NO_ANFRAGE"));
+				player.sendMessage(TranslationHandler.getText(player, "PREFIX")+TranslationHandler.getText(player, "NO_ANFRAGE"));
 			}
 		}
 		return false;

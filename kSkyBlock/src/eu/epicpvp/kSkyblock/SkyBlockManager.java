@@ -20,7 +20,7 @@ import eu.epicpvp.kSkyblock.World.SkyBlockWorld;
 import eu.epicpvp.kcore.ChunkGenerator.CleanroomChunkGenerator;
 import eu.epicpvp.kcore.Gilden.GildenManager;
 import eu.epicpvp.kcore.Listener.kListener;
-import eu.epicpvp.kcore.Translation.TranslationManager;
+import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.Util.UtilFile;
 import eu.epicpvp.kcore.Util.UtilPlayer;
 import eu.epicpvp.kcore.Util.UtilWorld;
@@ -43,7 +43,7 @@ public class SkyBlockManager extends kListener{
 	public SkyBlockManager(kSkyBlock instance){
 		super(instance,"SkyBlockManager");
 		this.instance=instance;
-		getInstance().getMysql().Update("CREATE TABLE IF NOT EXISTS list_skyblock_worlds(UUID varchar(100),worldName varchar(30),X int,Z int)");
+		getInstance().getMysql().Update("CREATE TABLE IF NOT EXISTS list_skyblock_worlds(playerId varchar(100),worldName varchar(30),X int,Z int)");
 		loadSchematics();	
 	}
 	
@@ -117,23 +117,23 @@ public class SkyBlockManager extends kListener{
 	
 	@EventHandler
 	public void AsyncLogin(AsyncPlayerPreLoginEvent ev){
-		for(SkyBlockWorld world : worlds)world.loadIslandPlayer(UtilPlayer.getRealUUID(ev.getName(),ev.getUniqueId()));
+		for(SkyBlockWorld world : worlds)world.loadIslandPlayer(UtilPlayer.getPlayerId(ev.getName()));
 	}
 	
 	@EventHandler
 	public void Join(PlayerJoinEvent ev){
 		ev.setJoinMessage(null);
-		ev.getPlayer().sendMessage(TranslationManager.getText(ev.getPlayer(), "PREFIX")+TranslationManager.getText(ev.getPlayer(), "WHEREIS_TEXT","SkyBlock"));
+		ev.getPlayer().sendMessage(TranslationHandler.getText(ev.getPlayer(), "PREFIX")+TranslationHandler.getText(ev.getPlayer(), "WHEREIS_TEXT","SkyBlock"));
 		ev.getPlayer().teleport(Bukkit.getWorld("world").getSpawnLocation());
 	}
 	
 	public SkyBlockWorld getIsland(Player player){
-		return getIsland(UtilPlayer.getRealUUID(player));
+		return getIsland(UtilPlayer.getPlayerId(player));
 	}
 	
-	public SkyBlockWorld getIsland(UUID uuid){
+	public SkyBlockWorld getIsland(int playerId){
 		for(SkyBlockWorld world : worlds){
-			if(world.haveIsland(uuid)){
+			if(world.haveIsland(playerId)){
 				return world;
 			}
 		}
@@ -141,12 +141,12 @@ public class SkyBlockManager extends kListener{
 	}
 	
 	public boolean haveIsland(Player player){
-		return haveIsland(UtilPlayer.getRealUUID(player));
+		return haveIsland(UtilPlayer.getPlayerId(player));
 	}
 	
-	public boolean haveIsland(UUID player){
+	public boolean haveIsland(int playerId){
 		for(SkyBlockWorld world : worlds){
-			if(world.haveIsland(player)){
+			if(world.haveIsland(playerId)){
 				return true;
 			}
 		}
