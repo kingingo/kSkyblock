@@ -32,6 +32,7 @@ import eu.epicpvp.kcore.AntiLogout.AntiLogoutType;
 import eu.epicpvp.kcore.Calendar.Calendar;
 import eu.epicpvp.kcore.Command.CommandHandler;
 import eu.epicpvp.kcore.Command.Admin.CommandAddEpics;
+import eu.epicpvp.kcore.Command.Admin.CommandAdminStats;
 import eu.epicpvp.kcore.Command.Admin.CommandBroadcast;
 import eu.epicpvp.kcore.Command.Admin.CommandCMDMute;
 import eu.epicpvp.kcore.Command.Admin.CommandChatMute;
@@ -272,6 +273,7 @@ public class kSkyBlock extends JavaPlugin {
 			this.cmd.register(CommandGiveGems.class, new CommandGiveGems(getMoney()));
 			this.cmd.register(CommandGiveCoins.class, new CommandGiveCoins(getMoney()));
 			this.cmd.register(CommandAddEpics.class, new CommandAddEpics(getStatsManager()));
+			this.cmd.register(CommandAdminStats.class, new CommandAdminStats(getStatsManager()));
 			
 			UtilServer.createDeliveryPet(new DeliveryPet(getBase(),null,new DeliveryObject[]{
 				new DeliveryObject(new String[]{"","§7Click for Vote!","","§ePvP Rewards:","§7   200 Epics","§7   1x Inventory Repair","","§eGame Rewards:","§7   25 Gems","§7   100 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},PermissionType.DELIVERY_PET_VOTE,false,28,"§aVote for EpicPvP",Material.PAPER,Material.REDSTONE_BLOCK,new Click(){
@@ -321,7 +323,7 @@ public class kSkyBlock extends JavaPlugin {
 						}
 						
 					},TimeSpan.DAY*7),
-					new DeliveryObject(new String[]{"§aOnly for §bMVP§a!","","§ePvP Rewards:","§7   500 Epics","§7   25 Level","","§eGame Rewards:","§7   500 Coins","§7   3x TTT Paesse","","§eSkyBlock Rewards:","§7   500 Epics","§7   8x Diamonds","§7   8x Iron Ingot","§7   8x Gold Ingot"},PermissionType.DELIVERY_PET_MVP_WEEK,true,14,"§cRank §3MVP§c Reward",Material.getMaterial(342),Material.MINECART,new Click(){
+					new DeliveryObject(new String[]{"§aOnly for §bMVP§a!","","§ePvP Rewards:","§7   500 Epics","§7   25 Level","","§eGame Rewards:","§7   500 Coins","§7   3x TTT Paesse","","§eSkyBlock Rewards:","§7   500 Epics","§7   8x Diamonds","§7   8x Iron Ingot","§7   8x Gold Ingot"},PermissionType.DELIVERY_PET_MVP_WEEK,true,14,"§cRank §bMVP§c Reward",Material.getMaterial(342),Material.MINECART,new Click(){
 	
 						@Override
 						public void onClick(Player p, ActionType a,Object obj) {
@@ -333,7 +335,7 @@ public class kSkyBlock extends JavaPlugin {
 						}
 						
 					},TimeSpan.DAY*7),
-					new DeliveryObject(new String[]{"§aOnly for §bMVP§c+§a!","","§ePvP Rewards:","§7   600 Epics","§7   30 Level","","§eGame Rewards:","§7   600 Coins","§7   4x TTT Paesse","","§eSkyBlock Rewards:","§7   600 Epics","§7   10x Diamonds","§7   10x Iron Ingot","§7   10x Gold Ingot"},PermissionType.DELIVERY_PET_MVPPLUS_WEEK,true,15,"§cRank §9MVP§e+§c Reward",Material.getMaterial(342),Material.MINECART,new Click(){
+					new DeliveryObject(new String[]{"§aOnly for §bMVP§c+§a!","","§ePvP Rewards:","§7   600 Epics","§7   30 Level","","§eGame Rewards:","§7   600 Coins","§7   4x TTT Paesse","","§eSkyBlock Rewards:","§7   600 Epics","§7   10x Diamonds","§7   10x Iron Ingot","§7   10x Gold Ingot"},PermissionType.DELIVERY_PET_MVPPLUS_WEEK,true,15,"§cRank §bMVP§e+§c Reward",Material.getMaterial(342),Material.MINECART,new Click(){
 	
 						@Override
 						public void onClick(Player p, ActionType a,Object obj) {

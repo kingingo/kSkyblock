@@ -821,17 +821,17 @@ public class SkyBlockWorld extends kListener{
 		return (loc.getX()-radius) <= loc1.getX() && (loc.getZ()-radius) <= loc1.getZ() && loc.getBlockX() >= loc1.getBlockX() && loc.getBlockZ() >= loc1.getBlockZ();
 	}
 
-	public void setBiome(int playerId,Biome biome){
-		setBiome(playerId, biome);
+	public void setBiome(Player player,Biome biome){
+		setBiome(UtilPlayer.getPlayerId(player), biome);
 	}
 	
-	public void setBiome(String uuid,Biome biome){
-		if(islands.containsKey(uuid)){
-			int min_x = islands.get(uuid).getBlockX()-radius;
-			int max_x = islands.get(uuid).getBlockX();
+	public void setBiome(int playerId,Biome biome){
+		if(islands.containsKey(playerId)){
+			int min_x = islands.get(playerId).getBlockX()-radius;
+			int max_x = islands.get(playerId).getBlockX();
 			
-			int min_z = islands.get(uuid).getBlockZ()-radius;
-			int max_z = islands.get(uuid).getBlockZ();
+			int min_z = islands.get(playerId).getBlockZ()-radius;
+			int max_z = islands.get(playerId).getBlockZ();
 			
 			for(int x = min_x; x < max_x; x++){
 				for(int z = min_z; z < max_z; z++){
@@ -889,9 +889,9 @@ public class SkyBlockWorld extends kListener{
 	public void loadIslands(){
 		try
 	    {
-	      ResultSet rs = getManager().getInstance().getMysql().Query("SELECT `X`,`Z` FROM `list_skyblock_worlds` WHERE worldName='"+world.getName().toLowerCase()+"' playerId='-1';");
+	      ResultSet rs = getManager().getInstance().getMysql().Query("SELECT `X`,`Z` FROM `list_skyblock_worlds` WHERE worldName='"+world.getName().toLowerCase()+"' AND playerId='-1';");
 	      while (rs.next()) {
-	    	  empty_islands.add(new Location(world,rs.getInt(2),0,rs.getInt(3)));
+	    	  empty_islands.add(new Location(world,rs.getInt(1),0,rs.getInt(2)));
 	      }
 	      rs.close();
 	    } catch (Exception err) {
