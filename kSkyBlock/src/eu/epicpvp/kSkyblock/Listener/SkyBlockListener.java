@@ -80,7 +80,7 @@ public class SkyBlockListener extends kListener{
 				UtilServer.getUserData().getConfig(ev.getPlayer()).save();
 				
 				UtilScoreboard.resetScore(ev.getPlayer().getScoreboard(), 2, DisplaySlot.SIDEBAR);
-				UtilScoreboard.setScore(ev.getPlayer().getScoreboard(), ""+UtilServer.getUserData().getConfig(ev.getPlayer()).getInt("Stores"), DisplaySlot.SIDEBAR, 2);
+				UtilScoreboard.setScore(ev.getPlayer().getScoreboard(), "§7"+UtilServer.getUserData().getConfig(ev.getPlayer()).getInt("Stores"), DisplaySlot.SIDEBAR, 2);
 			}
 		}
 	}
@@ -88,7 +88,7 @@ public class SkyBlockListener extends kListener{
 	@EventHandler
 	public void userstore(PlayerCreateUserStoreEvent ev){
 		UtilScoreboard.resetScore(ev.getPlayer().getScoreboard(), 2, DisplaySlot.SIDEBAR);
-		UtilScoreboard.setScore(ev.getPlayer().getScoreboard(), ""+UtilServer.getUserData().getConfig(ev.getPlayer()).getInt("Stores"), DisplaySlot.SIDEBAR, 2);
+		UtilScoreboard.setScore(ev.getPlayer().getScoreboard(), "§7"+UtilServer.getUserData().getConfig(ev.getPlayer()).getInt("Stores"), DisplaySlot.SIDEBAR, 2);
 	}
 	
 	@EventHandler
@@ -98,7 +98,7 @@ public class SkyBlockListener extends kListener{
 				if(UtilPlayer.isOnline(ev.getPlayerId())){
 					Player player = UtilPlayer.searchExact(ev.getPlayerId());
 					UtilScoreboard.resetScore(player.getScoreboard(), 5, DisplaySlot.SIDEBAR);
-					UtilScoreboard.setScore(player.getScoreboard(),UtilMath.trim(2, getManager().getStatsManager().getDouble(player, StatsKey.MONEY))+"$", DisplaySlot.SIDEBAR, 5);
+					UtilScoreboard.setScore(player.getScoreboard(),"§7"+UtilMath.trim(2, getManager().getStatsManager().getDouble(player, StatsKey.MONEY))+"$", DisplaySlot.SIDEBAR, 5);
 				}
 			}
 		}
@@ -173,10 +173,10 @@ public class SkyBlockListener extends kListener{
 	@EventHandler
 	public void onSign(SignShopUseEvent ev){
 		if(!ev.getPlayer().getWorld().getName().equalsIgnoreCase("world")){
-			ev.getSign().setLine(0, "N§!");
-			ev.getSign().setLine(1, "N§!");
-			ev.getSign().setLine(2, "N§!");
-			ev.getSign().setLine(3, "N§!");
+			ev.getSign().setLine(0, "Nö!");
+			ev.getSign().setLine(1, "Nö!");
+			ev.getSign().setLine(2, "Nö!");
+			ev.getSign().setLine(3, "Nö!");
 			ev.getSign().update(true);
 			ev.setCancelled(true);
 		}
@@ -247,12 +247,11 @@ public class SkyBlockListener extends kListener{
 	@EventHandler
 	public void Quit(PlayerQuitEvent ev){
 		ev.setQuitMessage(null);
-		getManager().getStatsManager().save(ev.getPlayer());
 	}
 	
 	@EventHandler
 	public void Kick(PlayerKickEvent ev){
-		System.out.println("[EpicPvP] "+ev.getPlayer().getName()+" L:"+ev.getLeaveMessage()+" R:"+ev.getReason());
+		System.out.println("[ClashMC] "+ev.getPlayer().getName()+" L:"+ev.getLeaveMessage()+" R:"+ev.getReason());
 	}
 	
 	
@@ -321,7 +320,7 @@ public class SkyBlockListener extends kListener{
 		getManager().getStatsManager().loadPlayer(ev.getPlayer());
 		getManager().getMoney().loadPlayer(ev.getPlayer());
 		getManager().getManager().getGilden_world().getGilde().loadPlayer(ev.getPlayer());
-		TabTitle.setHeaderAndFooter(ev.getPlayer(), "§eEpicPvP§8.§eeu §8| §aSkyBlock Server", "§aTeamSpeak: §7ts.EpicPvP.eu §8| §eWebsite: §7EpicPvP.eu");
+		UtilPlayer.setTab(ev.getPlayer(), "SkyBlock-Server");
 	}
 	
 	@EventHandler
@@ -384,7 +383,7 @@ public class SkyBlockListener extends kListener{
 		}else{
 			if(!getManager().getAntiLogout().is(ev.getPlayer())){
 				if(cmd.equalsIgnoreCase("/homes")||cmd.equalsIgnoreCase("/etpa")||cmd.equalsIgnoreCase("/fly")||cmd.equalsIgnoreCase("/kfly")||cmd.equalsIgnoreCase("/tpaccet")||cmd.equalsIgnoreCase("/tpyes")||cmd.equalsIgnoreCase("/tpask")||cmd.equalsIgnoreCase("/etpaccept")||cmd.equalsIgnoreCase("/ewarp")||cmd.equalsIgnoreCase("/tpa")||cmd.equalsIgnoreCase("/eback")||cmd.equalsIgnoreCase("/ehome")||cmd.equalsIgnoreCase("/tpaccept")||cmd.equalsIgnoreCase("/back")||cmd.equalsIgnoreCase("/home")||cmd.equalsIgnoreCase("/spawn")||cmd.equalsIgnoreCase("/espawn")||cmd.equalsIgnoreCase("/warp")){
-					ev.getPlayer().sendMessage(TranslationHandler.getText(ev.getPlayer(), "PREFIX")+"§cDu kannst den Befehl §b"+cmd+"§c nicht in Kampf ausf§hren!");
+					ev.getPlayer().sendMessage(TranslationHandler.getText(ev.getPlayer(), "PREFIX")+"§cDu kannst den Befehl §b"+cmd+"§c nicht in Kampf ausführen!");
 					ev.setCancelled(true);
 				}
 			}else{

@@ -71,7 +71,7 @@
 		<dependency>
 			<groupId>eu.epicpvp</groupId>
 			<artifactId>ViaVersion</artifactId>
-			<version>1.0</version>
+			<version>0.7.6</version>
 		</dependency>
 		<dependency>
 			<groupId>net.minecraft</groupId>

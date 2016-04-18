@@ -128,6 +128,7 @@ import eu.epicpvp.kcore.Listener.VoteListener.VoteListener;
 import eu.epicpvp.kcore.MySQL.MySQL;
 import eu.epicpvp.kcore.Permission.PermissionManager;
 import eu.epicpvp.kcore.Permission.PermissionType;
+import eu.epicpvp.kcore.Permission.Group.GroupTyp;
 import eu.epicpvp.kcore.Pet.PetManager;
 import eu.epicpvp.kcore.Pet.Commands.CommandPet;
 import eu.epicpvp.kcore.Pet.Shop.PlayerPetHandler;
@@ -196,7 +197,7 @@ public class kSkyBlock extends JavaPlugin {
 			this.Updater=new Updater(this);
 			this.client = UtilServer.createClient(this,ClientType.OTHER, getConfig().getString("Config.Client.Host"), getConfig().getInt("Config.Client.Port"), "SkyBlock");
 			this.mysql=new MySQL(getFConfig().getString("Config.MySQL.User"),getFConfig().getString("Config.MySQL.Password"),getFConfig().getString("Config.MySQL.Host"),getFConfig().getString("Config.MySQL.DB"),this);
-			this.permissionManager=new PermissionManager(this);
+			this.permissionManager=new PermissionManager(this,GroupTyp.SKY);
 			this.statsManager=new StatsManager(this, client, GameType.SKYBLOCK);
 			this.money=new StatsManager(this, client, GameType.Money);
 			this.userData=new UserDataConfig(this);
@@ -211,7 +212,8 @@ public class kSkyBlock extends JavaPlugin {
 			this.teleport=new TeleportManager(getCmd(), getPermissionManager(), 5);
 			this.perkManager=new PerkManager(this,new Perk[]{new PerkNoWaterdamage(),new PerkArrowPotionEffect(),new PerkHat(),new PerkGoldenApple(),new PerkNoHunger(),new PerkHealPotion(1),new PerkNoFiredamage(),new PerkRunner(0.35F),new PerkDoubleJump(),new PerkDoubleXP(),new PerkDropper(),new PerkGetXP(),new PerkPotionClear(),new PerkItemName(cmd)});
 			this.antiLogout=new AntiLogoutManager(this,AntiLogoutType.KILL,5);
-	
+
+			UtilTime.setTimeManager(getPermissionManager());
 			this.cmd.register(CommandDebug.class, new CommandDebug());
 			this.cmd.register(CommandGiveAll.class, new CommandGiveAll());
 			this.cmd.register(CommandPet.class, new CommandPet(getPetHandler()));
@@ -427,7 +429,7 @@ public class kSkyBlock extends JavaPlugin {
 		//   §8»§7 
 		InventoryPageBase page = new InventoryPageBase(InventorySize._54, "Tutorial Villager");
 		
-page.setItem(4, UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[]{"§8»§7 Gems und Ränge kannst du im Onlineshop ","§7  unter §6shop.EpicPvP.de§7 kaufen."}, "§bInfo's"));
+page.setItem(4, UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[]{"§8»§7 Gems und Ränge kannst du im Onlineshop ","§7  unter §6shop.ClashMC.eu§7 kaufen."}, "§bInfo's"));
 		
 		page.setItem(20, UtilItem.Item(new ItemStack(Material.BARRIER), new String[]{}, "§cComing soon..."));
 		
@@ -437,7 +439,7 @@ page.setItem(4, UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[]{"§
 		
 		page.setItem(31, UtilItem.Item(new ItemStack(Material.CHEST), new String[]{"§8»§7 Mit '§6/Shop§7' kannst du das Shop-Menü öffnen und","§7  unter verschiedenen Kategorien deine","§7  Items auswählen und §6kaufen§7 oder §6verkaufen§7. ","§7  Items kaufen kannst du mit einem links Klick auf","§7  das gewünschte Item und mit einem rechts Klick, ","§7  kannst du deine Items verkaufen. "}, "§6Shop"));
 		
-		page.setItem(24, UtilItem.Item(new ItemStack(Material.SIGN), new String[]{"§8»§7 Mit §7'§6[UserStore]§7' in der erste Zeile und den","§7  gewünschten Preis in der zweiten, kannst","§7  du deinen eigenen Shop erstellen. Darunter muss ","§7  eine Kiste, mit nur dem Item, welches du im","§7  Shop anbieten möchtest sein. Sobald du","§7  dies gemacht hast wird dir der Befehl §7'§6/Mystore§7'","§7  freigeschalten. Dies ermöglicht dir die","§7  Administration deiner Shop's.","§7  Du kannst mit '§6/Setusershop§7' deinen","§7  Shop-Warp setzen und dich mit","§7  '§6/Usershop <Spieler>§7' zu denn","§7  jeweiligen Shop telepotieren.","§7  Jeder Spieler kann fünf gratis Shop's erstellen,","§7  jeder weitere kostet dich§a 25 Gems§7.","§7  Diese erhältst du durch §7'§6/Vote§7' oder","§7  im Onlineshop:","§7  »§e shop.EpicPvP.de"}, "§6Usershop"));
+		page.setItem(24, UtilItem.Item(new ItemStack(Material.SIGN), new String[]{"§8»§7 Mit §7'§6[UserStore]§7' in der erste Zeile und den","§7  gewünschten Preis in der zweiten, kannst","§7  du deinen eigenen Shop erstellen. Darunter muss ","§7  eine Kiste, mit nur dem Item, welches du im","§7  Shop anbieten möchtest sein. Sobald du","§7  dies gemacht hast wird dir der Befehl §7'§6/Mystore§7'","§7  freigeschalten. Dies ermöglicht dir die","§7  Administration deiner Shop's.","§7  Du kannst mit '§6/Setusershop§7' deinen","§7  Shop-Warp setzen und dich mit","§7  '§6/Usershop <Spieler>§7' zu denn","§7  jeweiligen Shop telepotieren.","§7  Jeder Spieler kann fünf gratis Shop's erstellen,","§7  jeder weitere kostet dich§a 25 Gems§7.","§7  Diese erhältst du durch §7'§6/Vote§7' oder","§7  im Onlineshop:","§7  »§e shop.ClashMC.eu"}, "§6Usershop"));
 		
 		page.setItem(42, UtilItem.Item(new ItemStack(Material.TRIPWIRE_HOOK), new String[]{"§8»§7 Mit dem §7'§6/Handel§7' Befehl kannst","§7  du sicher mit anderen Spielern handeln.","§7  Du kannst deine Items in das linke","§7  Feld ziehen und siehst dann im rechten, ","§7  welche Items dir im Tausch dagegen angeboten","§7  werden. Unten kannst du dann auf §7'§6Accept§7'","§7  das Angebot akzeptieren. Sobald das dann","§7  auch der Tauschpartner","§7  macht, ist der Handel abgeschlossen. "}, "§6Handel"));
 		
