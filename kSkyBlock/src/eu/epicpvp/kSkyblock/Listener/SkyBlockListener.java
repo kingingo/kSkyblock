@@ -117,7 +117,7 @@ public class SkyBlockListener extends kListener{
 //			
 //			if(UtilPlayer.isOnline(vote.getPlayer())){
 //				if(UtilServer.getDeliveryPet()!=null){
-//					 UtilServer.getDeliveryPet().deliveryUSE(Bukkit.getPlayer(vote.getPlayer()), "§aVote for EpicPvP", true);
+//					 UtilServer.getDeliveryPet().deliveryUSE(Bukkit.getPlayer(vote.getPlayer()), "§aVote for ClashMC", true);
 //				 }
 //				
 //				player=Bukkit.getPlayer(vote.getPlayer());
@@ -295,7 +295,7 @@ public class SkyBlockListener extends kListener{
 //			if(UtilPlayer.isOnline(ev.getPlayername())){
 //				if(vote_list.contains( UtilPlayer.getPlayerId(Bukkit.getPlayer(ev.getPlayername())) )){
 //					if(UtilServer.getDeliveryPet()!=null){
-//						 UtilServer.getDeliveryPet().deliveryUSE(Bukkit.getPlayer(ev.getPlayername()), "§aVote for EpicPvP", true);
+//						 UtilServer.getDeliveryPet().deliveryUSE(Bukkit.getPlayer(ev.getPlayername()), "§aVote for ClashMC", true);
 //					 }
 //					
 //					vote_list.remove(UtilPlayer.getPlayerId(ev.getPlayername()));
