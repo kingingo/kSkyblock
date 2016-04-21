@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import eu.epicpvp.kSkyblock.Gilden.SkyBlockGildenWorld;
 import eu.epicpvp.kSkyblock.World.SkyBlockWorld;
+import eu.epicpvp.kSkyblock.World.SkyBlockWorldConverter;
 import eu.epicpvp.kcore.ChunkGenerator.CleanroomChunkGenerator;
 import eu.epicpvp.kcore.Gilden.GildenManager;
 import eu.epicpvp.kcore.Listener.kListener;
@@ -87,11 +88,13 @@ public class SkyBlockManager extends kListener{
 	
 	public SkyBlockWorld addIsland(Player player){
 		for(SkyBlockWorld world : worlds){
-			if(player.hasPermission("epicpvp.skyblock.schematic."+world.getSchematic())){
+			if(world instanceof SkyBlockWorldConverter)continue;
+//			if(player.hasPermission("epicpvp.skyblock.schematic."+world.getSchematic())){
 				world.addIsland(player);
 				return world;
-			}
+//			}
 		}
+		
 		return null;
 	}
 	
@@ -106,18 +109,16 @@ public class SkyBlockManager extends kListener{
 	public void Quit(PlayerQuitEvent ev){
 		ev.setQuitMessage(null);
 	}
-
-//	@EventHandler
-//	public void PacketReceive(PacketReceiveEvent ev){
-//		if(ev.getPacket() instanceof WORLD_CHANGE_DATA){
-//			WORLD_CHANGE_DATA packet = (WORLD_CHANGE_DATA)ev.getPacket();
-//			for(World world : Bukkit.getWorlds())UtilPlayer.setWorldChangeUUID(world, packet.getOld_uuid(), packet.getNew_uuid());
-//		}
-//	}
 	
 	@EventHandler
 	public void AsyncLogin(AsyncPlayerPreLoginEvent ev){
-		for(SkyBlockWorld world : worlds)world.loadIslandPlayer(UtilPlayer.getPlayerId(ev.getName()));
+		for(SkyBlockWorld world : worlds){
+			if(world instanceof SkyBlockWorldConverter){
+				((SkyBlockWorldConverter)world).loadIslandPlayer(ev.getName(),ev.getUniqueId());
+			}else{
+				world.loadIslandPlayer(UtilPlayer.getPlayerId(ev.getName()));
+			}
+		}
 	}
 	
 	@EventHandler
@@ -181,10 +182,6 @@ public class SkyBlockManager extends kListener{
 		return false;
 	}
 	
-	public void loadWorld(String worldName){
-		addWorld(worldName,100,0);
-	}
-	
 	public void setConifg(String path,int paste){
 		getInstance().getFConfig().set(path,paste);
 		try {
@@ -206,17 +203,25 @@ public class SkyBlockManager extends kListener{
 	public void addWorld(String worldName,int radius,int generate){
 		if(!UtilFile.existPath(new File(worldName))){
 			setConifg("Config.World."+worldName+".Radius", radius);
+			setConifg("Config.World."+worldName+".Space", 0);
+			setConifg("Config.World."+worldName+".Convert", "false");
 			setConifg("Config.World."+worldName+".GenerateIsland", generate);
 			setConifg("Config.World."+worldName+".CreatureLimit", 50);
 			WorldCreator wc = new WorldCreator(worldName);
 			wc.generator(new CleanroomChunkGenerator(".0,AIR"));
-			SkyBlockWorld sw = new SkyBlockWorld(this,worldName,Bukkit.createWorld(wc),radius,generate,50);
+			SkyBlockWorld sw = new SkyBlockWorld(this,worldName,Bukkit.createWorld(wc),radius,0,generate,50);
 			sw.setAsync(true);
 			worlds.add(sw);
 		}else{
 			WorldCreator wc = new WorldCreator(worldName);
 			wc.generator(new CleanroomChunkGenerator(".0,AIR"));
-			SkyBlockWorld sw = new SkyBlockWorld(this,worldName,UtilWorld.LoadWorld(wc),getInstance().getFConfig().getInt("Config.World."+worldName+".Radius"),getInstance().getFConfig().getInt("Config.World."+worldName+".GenerateIsland"),getInstance().getConfig().getInt("Config.World."+worldName+".CreatureLimit"));
+			SkyBlockWorld sw;
+			if(getInstance().getFConfig().getString("Config.World."+worldName+".Convert").equalsIgnoreCase("false")){
+				sw = new SkyBlockWorld(this,worldName,UtilWorld.LoadWorld(wc),getInstance().getFConfig().getInt("Config.World."+worldName+".Radius"),getInstance().getFConfig().getInt("Config.World."+worldName+".Space"),getInstance().getFConfig().getInt("Config.World."+worldName+".GenerateIsland"),getInstance().getConfig().getInt("Config.World."+worldName+".CreatureLimit"));
+			}else{
+				sw = new SkyBlockWorldConverter(this,worldName,UtilWorld.LoadWorld(wc),getInstance().getFConfig().getInt("Config.World."+worldName+".Radius"),getInstance().getFConfig().getInt("Config.World."+worldName+".Space"),getInstance().getFConfig().getInt("Config.World."+worldName+".GenerateIsland"),getInstance().getConfig().getInt("Config.World."+worldName+".CreatureLimit"));
+			}
+			
 			sw.setAsync(true);
 			worlds.add(sw);
 		}

@@ -118,6 +118,7 @@ import eu.epicpvp.kcore.Kit.Perks.PerkNoHunger;
 import eu.epicpvp.kcore.Kit.Perks.PerkNoWaterdamage;
 import eu.epicpvp.kcore.Kit.Perks.PerkPotionClear;
 import eu.epicpvp.kcore.Kit.Perks.PerkRunner;
+import eu.epicpvp.kcore.Kit.Perks.PerkStrength;
 import eu.epicpvp.kcore.Listener.AntiCrashListener.AntiCrashListener;
 import eu.epicpvp.kcore.Listener.BungeeCordFirewall.BungeeCordFirewallListener;
 import eu.epicpvp.kcore.Listener.Chat.ChatListener;
@@ -431,7 +432,7 @@ public class kSkyBlock extends JavaPlugin {
 		//   §8»§7 
 		InventoryPageBase page = new InventoryPageBase(InventorySize._54, "Tutorial Villager");
 		
-page.setItem(4, UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[]{"§8»§7 Gems und Ränge kannst du im Onlineshop ","§7  unter §6shop.ClashMC.eu§7 kaufen."}, "§bInfo's"));
+		page.setItem(4, UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[]{"§8»§7 Gems und Ränge kannst du im Onlineshop ","§7  unter §6shop.ClashMC.eu§7 kaufen."}, "§bInfo's"));
 		
 		page.setItem(20, UtilItem.Item(new ItemStack(Material.BARRIER), new String[]{}, "§cComing soon..."));
 		

@@ -60,6 +60,7 @@ import eu.epicpvp.kcore.TeleportManager.Events.PlayerTeleportedEvent;
 import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.Update.UpdateType;
 import eu.epicpvp.kcore.Update.Event.UpdateEvent;
+import eu.epicpvp.kcore.Util.UtilLocation;
 import eu.epicpvp.kcore.Util.UtilPlayer;
 import eu.epicpvp.kcore.Util.UtilScoreboard;
 import eu.epicpvp.kcore.Util.UtilServer;
@@ -80,6 +81,7 @@ public class SkyBlockWorld extends kListener{
 	private int X=0;
 	private int Z=0;
 	private int radius;
+	private int space;
 	@Getter
 	private String schematic;
 	private int creature_limit;
@@ -94,13 +96,14 @@ public class SkyBlockWorld extends kListener{
 	@Setter
 	private boolean async=false;
 	
-	public SkyBlockWorld(SkyBlockManager manager,String schematic,World world,int radius,int anzahl,int creature_limit) {
+	public SkyBlockWorld(SkyBlockManager manager,String schematic,World world,int radius,int space,int anzahl,int creature_limit) {
 		super(manager.getInstance(),"SkyBlockWorld:"+world.getName());
 		this.manager=manager;
 		this.world=world;
 		this.creature_limit=creature_limit;
 		this.schematic=schematic;
-		this.radius=radius;
+		this.radius=radius+space;
+		this.space=space;
 		this.session=new EditSession(new BukkitWorld(getWorld()), 999999999);
 		loadIslands();
 		addIslands(anzahl);
@@ -618,7 +621,7 @@ public class SkyBlockWorld extends kListener{
 	
 	public kPacketPlayOutWorldBorder getIslandBorder(int playerId){
 		if(islands.containsKey(playerId)){
-			return UtilWorld.createWorldBorder(new Location(getWorld(), (islands.get(playerId).getX()-(radius/2)) ,90, (islands.get(playerId).getZ()-(radius/2)) ), radius, 25, 10);
+			return UtilWorld.createWorldBorder(new Location(getWorld(), ((islands.get(playerId).getX())-((radius)/2)) ,90, ((islands.get(playerId).getZ())-((radius)/2)) ), radius-space, 25, 10);
 		}else{
 			return null;
 		}
@@ -644,11 +647,11 @@ public class SkyBlockWorld extends kListener{
 	}
 	
 	public boolean addIsland(Player player){
-		if(player.hasPermission("epicpvp.skyblock.schematic."+schematic)){
+//		if(player.hasPermission("epicpvp.skyblock.schematic."+schematic)){
 			addIsland(UtilPlayer.getPlayerId(player), schematic,true);
 			return true;
-		}
-		return true;
+//		}
+//		return true;
 	}
 	
 	public void newIsland(Player player){
@@ -818,7 +821,30 @@ public class SkyBlockWorld extends kListener{
 	}
 	
 	public boolean isInIsland(Location loc,Location loc1){
-		return (loc.getX()-radius) <= loc1.getX() && (loc.getZ()-radius) <= loc1.getZ() && loc.getBlockX() >= loc1.getBlockX() && loc.getBlockZ() >= loc1.getBlockZ();
+//		int MinZ = ((loc.getBlockZ())-((radius)/2) - ((radius-space)/2));
+//		int MaxZ = ((loc.getBlockZ()-(radius/2)) + ((radius-space)/2));
+//		
+//		int MinX = ((loc.getBlockX()-(radius/2)) - ((radius-space)/2));
+//		int MaxX = ((loc.getBlockX()-(radius/2)) + ((radius-space)/2));
+//		System.out.println("X: "+MaxX+" Z: "+MaxZ);
+//			for (int z = MinZ; z < MaxZ; z++) {
+//				new Location(loc.getWorld(), MaxX, 90, z).getBlock().setType(Material.BEDROCK);
+//			}
+//
+//			for (int z = MaxZ; z > MinZ; z--) {
+//				new Location(loc.getWorld(), MinX, 90, z).getChunk().load();
+//				new Location(loc.getWorld(), MinX, 90, z).getBlock().setType(Material.BEDROCK);
+//			}
+//			
+//			for (int x = MaxX; x > MinX; x--) {
+//				new Location(loc.getWorld(), x, 90, MaxZ).getBlock().setType(Material.BEDROCK);
+//			}
+//
+//			for (int x = MinX; x < MaxX; x++) {
+//				new Location(loc.getWorld(), x, 90, MinZ).getBlock().setType(Material.BEDROCK);
+//			}
+		
+		return ((loc.getBlockX()-(radius/2)) - ((radius-space)/2)) <= loc1.getX() && ((loc.getBlockZ()-(radius/2)) - ((radius-space)/2)) <= loc1.getZ() && ((loc.getBlockX()-(radius/2)) + ((radius-space)/2)) >= loc1.getX()&& ((loc.getBlockZ()-(radius/2)) + ((radius-space)/2)) >= loc1.getZ();
 	}
 
 	public void setBiome(Player player,Biome biome){
@@ -900,5 +926,4 @@ public class SkyBlockWorld extends kListener{
 		logMessage(empty_islands.size()+" Inseln wurden Geladen!");
 		solveXandZ();
 	}
-	
 }
