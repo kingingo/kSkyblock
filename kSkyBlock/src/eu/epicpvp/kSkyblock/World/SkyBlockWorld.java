@@ -26,6 +26,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -458,6 +459,7 @@ public class SkyBlockWorld extends kListener{
 	@EventHandler
 	public void CreatureSpawn(CreatureSpawnEvent ev){
 		if(ev.getSpawnReason() != SpawnReason.CUSTOM){
+			
 			for(int playerId : islands.keySet()){
 				if(isInIsland(playerId,ev.getLocation())){
 					int a = 0;
@@ -542,15 +544,16 @@ public class SkyBlockWorld extends kListener{
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void interact(PlayerInteractEvent ev){
-		if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()){
+		if(ev.getPlayer().getWorld().getUID()==getWorld().getUID()&&!ev.isCancelled()&&!ev.getPlayer().isOp()){
 			if(ev.getPlayer().getItemInHand()!=null){
 				if(islands.containsKey(UtilPlayer.getPlayerId(ev.getPlayer()))&&isInIsland(UtilPlayer.getPlayerId(ev.getPlayer()), ev.getClickedBlock().getLocation())) {
 					return;
 				}
+				
 				if(getParty_island().containsKey(ev.getPlayer().getName().toLowerCase())&&isInIsland(getParty_island().get(ev.getPlayer().getName().toLowerCase()), ev.getClickedBlock().getLocation())){
 					return;
 				}
-				
+
 				ev.setCancelled(true);
 			}
 		}
@@ -572,7 +575,7 @@ public class SkyBlockWorld extends kListener{
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void Break(BlockBreakEvent ev){
-		if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()){
+		if(ev.getPlayer().getWorld().getUID()==getWorld().getUID()&&!ev.isCancelled()&&!ev.getPlayer().isOp()){
 			if(ev.getBlock()==null)return;
 			if(islands.containsKey(UtilPlayer.getPlayerId(ev.getPlayer()))&&isInIsland(UtilPlayer.getPlayerId(ev.getPlayer()), ev.getBlock().getLocation())) {
 				return;

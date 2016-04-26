@@ -11,6 +11,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -84,6 +85,11 @@ public class SkyBlockListener extends kListener{
 			}
 		}
 	}
+	
+	@EventHandler
+	 public void BlockBurn(BlockBurnEvent ev){
+		 ev.setCancelled(true);
+	 }
 	
 	@EventHandler
 	public void userstore(PlayerCreateUserStoreEvent ev){

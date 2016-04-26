@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffectType;
 
 import dev.wolveringer.client.Callback;
 import dev.wolveringer.client.ClientWrapper;
@@ -115,6 +116,7 @@ import eu.epicpvp.kcore.Kit.Perks.PerkHealPotion;
 import eu.epicpvp.kcore.Kit.Perks.PerkItemName;
 import eu.epicpvp.kcore.Kit.Perks.PerkNoFiredamage;
 import eu.epicpvp.kcore.Kit.Perks.PerkNoHunger;
+import eu.epicpvp.kcore.Kit.Perks.PerkNoPotion;
 import eu.epicpvp.kcore.Kit.Perks.PerkNoWaterdamage;
 import eu.epicpvp.kcore.Kit.Perks.PerkPotionClear;
 import eu.epicpvp.kcore.Kit.Perks.PerkRunner;
@@ -212,7 +214,7 @@ public class kSkyBlock extends JavaPlugin {
 			this.petHandler= new PlayerPetHandler(ServerType.SKYBLOCK,mysql, getPetManager(), getBase(), getPermissionManager());
 			this.petHandler.setAsync(true);
 			this.teleport=new TeleportManager(getCmd(), getPermissionManager(), 5);
-			this.perkManager=new PerkManager(this,new Perk[]{new PerkNoWaterdamage(),new PerkArrowPotionEffect(),new PerkHat(),new PerkGoldenApple(),new PerkNoHunger(),new PerkHealPotion(1),new PerkNoFiredamage(),new PerkRunner(0.35F),new PerkDoubleJump(),new PerkDoubleXP(),new PerkDropper(),new PerkGetXP(),new PerkPotionClear(),new PerkItemName(cmd)});
+			this.perkManager=new PerkManager(this,new Perk[]{new PerkStrength(),new PerkNoPotion(PotionEffectType.POISON),new PerkNoWaterdamage(),new PerkArrowPotionEffect(),new PerkHat(),new PerkGoldenApple(),new PerkNoHunger(),new PerkHealPotion(1),new PerkNoFiredamage(),new PerkRunner(0.35F),new PerkDoubleJump(),new PerkDoubleXP(),new PerkDropper(),new PerkGetXP(),new PerkPotionClear(),new PerkItemName(cmd)});
 			this.antiLogout=new AntiLogoutManager(this,AntiLogoutType.KILL,5);
 
 			UtilTime.setTimeManager(getPermissionManager());
@@ -265,7 +267,7 @@ public class kSkyBlock extends JavaPlugin {
 			this.cmd.register(CommandLocations.class, new CommandLocations(this));
 			this.cmd.register(CommandPerk.class, new CommandPerk(perkManager));
 			this.cmd.register(CommandSuffix.class, new CommandSuffix(getUserData()));
-			this.cmd.register(CommandAmboss.class, new CommandAmboss());
+//			this.cmd.register(CommandAmboss.class, new CommandAmboss());
 			this.cmd.register(CommandNear.class, new CommandNear());
 			this.cmd.register(CommandRemoveEnchantment.class, new CommandRemoveEnchantment());
 			this.cmd.register(CommandEnchantmentTable.class, new CommandEnchantmentTable());
