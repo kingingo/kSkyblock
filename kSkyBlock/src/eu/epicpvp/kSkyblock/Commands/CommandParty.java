@@ -72,7 +72,7 @@ public class CommandParty implements CommandExecutor{
 						}
 					}
 					if(!b)p.sendMessage(TranslationHandler.getText(p, "PREFIX")+TranslationHandler.getText(p, "SKYBLOCK_PARTY_EINLADEN_NO"));
-				}else if(args[0].equalsIgnoreCase("schlie§en")||args[0].equalsIgnoreCase("verlassen")||args[0].equalsIgnoreCase("leave")||args[0].equalsIgnoreCase("close")){
+				}else if(args[0].equalsIgnoreCase("schließen")||args[0].equalsIgnoreCase("verlassen")||args[0].equalsIgnoreCase("leave")||args[0].equalsIgnoreCase("close")){
 					SkyBlockWorld world = getInstance().getManager().getParty(p);
 					if(world!=null){
 						world.verlassenParty(p,true);

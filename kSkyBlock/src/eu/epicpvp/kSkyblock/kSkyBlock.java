@@ -33,6 +33,7 @@ import eu.epicpvp.kcore.AntiLogout.AntiLogoutType;
 import eu.epicpvp.kcore.Calendar.Calendar;
 import eu.epicpvp.kcore.Command.CommandHandler;
 import eu.epicpvp.kcore.Command.Admin.CommandAddEpics;
+import eu.epicpvp.kcore.Command.Admin.CommandAddSlots;
 import eu.epicpvp.kcore.Command.Admin.CommandAdminStats;
 import eu.epicpvp.kcore.Command.Admin.CommandBroadcast;
 import eu.epicpvp.kcore.Command.Admin.CommandCMDMute;
@@ -186,8 +187,6 @@ public class kSkyBlock extends JavaPlugin {
 	@Getter
 	private Hologram hologram;
 	@Getter
-	private InventoryBase base;
-	@Getter
 	private PetManager petManager;
 	@Getter
 	private PlayerPetHandler petHandler;
@@ -199,7 +198,7 @@ public class kSkyBlock extends JavaPlugin {
 			long time = System.currentTimeMillis();
 			loadConfig();
 			this.Updater=new Updater(this);
-			this.client = UtilServer.createClient(this,ClientType.OTHER, getConfig().getString("Config.Client.Host"), getConfig().getInt("Config.Client.Port"), "SkyBlock");
+			this.client = UtilServer.createClient(this,ClientType.OTHER, getConfig().getString("Config.Client.Host"), getConfig().getInt("Config.Client.Port"), "Sky");
 			this.mysql=new MySQL(getFConfig().getString("Config.MySQL.User"),getFConfig().getString("Config.MySQL.Password"),getFConfig().getString("Config.MySQL.Host"),getFConfig().getString("Config.MySQL.DB"),this);
 			this.permissionManager=new PermissionManager(this,GroupTyp.SKY);
 			this.statsManager=new StatsManager(this, client, GameType.SKYBLOCK);
@@ -208,10 +207,9 @@ public class kSkyBlock extends JavaPlugin {
 			this.hologram=new Hologram(this);
 			this.hologram.RemoveText();
 			this.cmd=new CommandHandler(this);
-			this.base=new InventoryBase(this);
-			UtilServer.createGemsShop(new GemsShop(getHologram(),getMoney(), getCmd(), getBase(), getPermissionManager(), ServerType.SKYBLOCK));
+			UtilServer.createGemsShop(new GemsShop(getHologram(),getMoney(), getCmd(), UtilInv.getBase(), getPermissionManager(), ServerType.SKYBLOCK));
 			this.petManager=new PetManager(this);
-			this.petHandler= new PlayerPetHandler(ServerType.SKYBLOCK,mysql, getPetManager(), getBase(), getPermissionManager());
+			this.petHandler= new PlayerPetHandler(ServerType.SKYBLOCK,mysql, getPetManager(), getPermissionManager());
 			this.petHandler.setAsync(true);
 			this.teleport=new TeleportManager(getCmd(), getPermissionManager(), 5);
 			this.perkManager=new PerkManager(this,new Perk[]{new PerkStrength(),new PerkNoPotion(PotionEffectType.POISON),new PerkNoWaterdamage(),new PerkArrowPotionEffect(),new PerkHat(),new PerkGoldenApple(),new PerkNoHunger(),new PerkHealPotion(1),new PerkNoFiredamage(),new PerkRunner(0.35F),new PerkDoubleJump(),new PerkDoubleXP(),new PerkDropper(),new PerkGetXP(),new PerkPotionClear(),new PerkItemName(cmd)});
@@ -279,9 +277,10 @@ public class kSkyBlock extends JavaPlugin {
 			this.cmd.register(CommandGiveGems.class, new CommandGiveGems(getMoney()));
 			this.cmd.register(CommandGiveCoins.class, new CommandGiveCoins(getMoney()));
 			this.cmd.register(CommandAddEpics.class, new CommandAddEpics(getStatsManager()));
+			this.cmd.register(CommandAddSlots.class, new CommandAddSlots(UtilServer.getUserData()));
 			this.cmd.register(CommandAdminStats.class, new CommandAdminStats(getStatsManager()));
 			
-			UtilServer.createDeliveryPet(new DeliveryPet(getBase(),null,new DeliveryObject[]{
+			UtilServer.createDeliveryPet(new DeliveryPet( UtilInv.getBase(),null,new DeliveryObject[]{
 				new DeliveryObject(new String[]{"","§7Click for Vote!","","§ePvP Rewards:","§7   200 Epics","§7   1x Inventory Repair","","§eGame Rewards:","§7   25 Gems","§7   100 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},PermissionType.DELIVERY_PET_VOTE,false,28,"§aVote for ClashMC",Material.PAPER,Material.REDSTONE_BLOCK,new Click(){
 	
 						@Override
@@ -386,7 +385,8 @@ public class kSkyBlock extends JavaPlugin {
 			new BungeeCordFirewallListener(this,UtilServer.getCommandHandler());
 			new ListenerCMD(this);
 			new ChatListener(this,new SkyBlockGildenManager(manager, mysql, GildenType.SKY, cmd,getStatsManager()),permissionManager,getUserData());
-			new AntiCrashListener(getClient(), getMysql());
+			AntiCrashListener antiCrash = new AntiCrashListener(getClient(), getMysql());
+			antiCrash.setMovement(true);
 			
 			if(Calendar.getHoliday()!=null){
 				switch(Calendar.holiday){

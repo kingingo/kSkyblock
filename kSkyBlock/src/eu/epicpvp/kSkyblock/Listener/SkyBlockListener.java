@@ -18,6 +18,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -46,7 +47,7 @@ import eu.epicpvp.kcore.Permission.PermissionType;
 import eu.epicpvp.kcore.Permission.Events.PlayerLoadPermissionEvent;
 import eu.epicpvp.kcore.Scoreboard.Events.PlayerSetScoreboardEvent;
 import eu.epicpvp.kcore.SignShop.Events.SignShopUseEvent;
-import eu.epicpvp.kcore.StatsManager.Event.PlayerStatsChangeEvent;
+import eu.epicpvp.kcore.StatsManager.Event.PlayerStatsChangedEvent;
 import eu.epicpvp.kcore.StatsManager.Event.PlayerStatsLoadedEvent;
 import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.Update.UpdateType;
@@ -87,6 +88,12 @@ public class SkyBlockListener extends kListener{
 	}
 	
 	@EventHandler
+	public void tnt(EntityExplodeEvent ev){
+		ev.setCancelled(true);
+		ev.getEntity().remove();
+	}
+	
+	@EventHandler
 	 public void BlockBurn(BlockBurnEvent ev){
 		 ev.setCancelled(true);
 	 }
@@ -98,7 +105,7 @@ public class SkyBlockListener extends kListener{
 	}
 	
 	@EventHandler
-	public void statsMONEY(PlayerStatsChangeEvent ev){
+	public void statsMONEY(PlayerStatsChangedEvent ev){
 		if(ev.getManager().getType() != GameType.Money){
 			if(ev.getStats() == StatsKey.MONEY){
 				if(UtilPlayer.isOnline(ev.getPlayerId())){

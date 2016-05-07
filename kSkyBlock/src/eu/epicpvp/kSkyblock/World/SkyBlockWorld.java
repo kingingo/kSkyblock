@@ -146,7 +146,7 @@ public class SkyBlockWorld extends kListener{
 	
 	public boolean verlassenParty(Player player,boolean withMSG){
 		if(getPartys().containsKey(player)){
-			sendChatParty(player,"SKYBLOCK_PARTY_SCHLIE§EN");
+			sendChatParty(player,"SKYBLOCK_PARTY_SCHLIEßEN");
 			for(String p : getPartys().get(player)){
 				getParty_island().remove(p.toLowerCase());
 				if(UtilPlayer.isOnline(p)){
