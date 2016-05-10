@@ -16,6 +16,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -84,6 +85,13 @@ public class SkyBlockListener extends kListener{
 				UtilScoreboard.resetScore(ev.getPlayer().getScoreboard(), 2, DisplaySlot.SIDEBAR);
 				UtilScoreboard.setScore(ev.getPlayer().getScoreboard(), "§7"+UtilServer.getUserData().getConfig(ev.getPlayer()).getInt("Stores"), DisplaySlot.SIDEBAR, 2);
 			}
+		}
+	}
+	
+	@EventHandler
+	public void tntMinecartDamage(EntityDamageByEntityEvent event){
+		if (event.getDamager().getType() == EntityType.MINECART_TNT && event.getEntityType() == EntityType.MINECART_TNT) {
+			event.setCancelled(true);
 		}
 	}
 	
