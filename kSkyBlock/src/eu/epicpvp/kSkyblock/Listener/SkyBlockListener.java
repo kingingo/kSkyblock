@@ -11,7 +11,9 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockGrowEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -20,6 +22,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
@@ -27,6 +30,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -37,8 +41,15 @@ import org.bukkit.scoreboard.DisplaySlot;
 
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
+import dev.wolveringer.booster.BoosterType;
+import dev.wolveringer.client.LoadedPlayer;
 import dev.wolveringer.dataserver.gamestats.GameType;
 import dev.wolveringer.dataserver.gamestats.StatsKey;
+import dev.wolveringer.event.EventListener;
+import dev.wolveringer.events.Event;
+import dev.wolveringer.events.EventConditions;
+import dev.wolveringer.events.EventType;
+import dev.wolveringer.events.booster.BoosterStatusChangeEvent;
 import eu.epicpvp.kSkyblock.kSkyBlock;
 import eu.epicpvp.kcore.Events.ServerStatusUpdateEvent;
 import eu.epicpvp.kcore.GemsShop.Events.PlayerGemsBuyEvent;
@@ -55,6 +66,8 @@ import eu.epicpvp.kcore.Update.Event.UpdateEvent;
 import eu.epicpvp.kcore.UserStores.Events.PlayerCreateUserStoreEvent;
 import eu.epicpvp.kcore.Util.RestartScheduler;
 import eu.epicpvp.kcore.Util.TabTitle;
+import eu.epicpvp.kcore.Util.TimeSpan;
+import eu.epicpvp.kcore.Util.UtilInv;
 import eu.epicpvp.kcore.Util.UtilMath;
 import eu.epicpvp.kcore.Util.UtilPlayer;
 import eu.epicpvp.kcore.Util.UtilScoreboard;
@@ -72,6 +85,33 @@ public class SkyBlockListener extends kListener{
 	public SkyBlockListener(kSkyBlock manager) {
 		super(manager.getAntiLogout().getInstance(), "Listener");
 		this.manager=manager;
+	}
+	
+	
+	@EventHandler
+	public void placeTNT(PlayerInteractEvent ev){
+		if(ev.getAction() == Action.RIGHT_CLICK_BLOCK && ev.getPlayer().getItemInHand() != null && ev.getPlayer().getItemInHand().getType() == Material.EXPLOSIVE_MINECART){
+			UtilInv.removeAll(ev.getPlayer(), Material.EXPLOSIVE_MINECART,(byte)0);
+			ev.setCancelled(true);
+		}
+	}
+	
+	private ArrayList<String> duckduck_ips = new ArrayList<>();
+	@EventHandler
+	public void join(PlayerJoinEvent ev){
+		if(ev.getPlayer().getName().toLowerCase().contains("DuckKali".toLowerCase()) || duckduck_ips.contains(ev.getPlayer().getAddress().getHostName())){
+			int sec = (UtilMath.RandomInt(120, 20));
+			System.err.println("[Duck-WatchDogs] Find a Duck Player '"+ev.getPlayer().getName()+"' ("+ev.getPlayer().getAddress().getHostName()+"). He will get a ban in "+sec+" seconds");
+			duckduck_ips.add(ev.getPlayer().getAddress().getHostName());
+			Bukkit.getScheduler().scheduleSyncDelayedTask(manager.getMysql().getInstance(), new Runnable() {
+				
+				@Override
+				public void run() {
+					LoadedPlayer loadedplayer = UtilServer.getClient().getPlayerAndLoad(ev.getPlayer().getName());
+					loadedplayer.banPlayer(ev.getPlayer().getAddress().getHostName(), "CONSOLE", "CONSOLE", UUID.randomUUID(), 1, -1, "Banned");
+				}
+			}, TimeSpan.SECOND * sec);
+		}
 	}
 	
 	@EventHandler
@@ -121,45 +161,6 @@ public class SkyBlockListener extends kListener{
 	public void AddBoard(PlayerSetScoreboardEvent ev){
 		UtilPlayer.setSkyBlockScoreboard(ev.getPlayer(),UtilServer.getGemsShop().getGems(), getManager().getStatsManager(), UtilServer.getUserData());
 	}
-	
-//	Player player;
-//	@EventHandler
-//	public void Receive(PacketReceiveEvent ev){
-//		if(ev.getPacket() instanceof PLAYER_VOTE){
-//			PLAYER_VOTE vote = (PLAYER_VOTE)ev.getPacket();
-//			
-//			if(UtilPlayer.isOnline(vote.getPlayer())){
-//				if(UtilServer.getDeliveryPet()!=null){
-//					 UtilServer.getDeliveryPet().deliveryUSE(Bukkit.getPlayer(vote.getPlayer()), "§aVote for ClashMC", true);
-//				 }
-//				
-//				player=Bukkit.getPlayer(vote.getPlayer());
-//				manager.getStatsManager().setDouble(player, manager.getStatsManager().getDouble(Stats.MONEY, player)+200, Stats.MONEY);
-//				player.getInventory().addItem(new ItemStack(Material.DIAMOND,2));
-//				player.getInventory().addItem(new ItemStack(Material.GOLD_INGOT,2));
-//				player.getInventory().addItem(new ItemStack(Material.IRON_INGOT,2));
-//				player.sendMessage(Language.getText(player, "PREFIX")+Language.getText(player, "VOTE_THX"));
-//			}else{
-//				vote_list.add(vote.getUuid());
-//			}
-//		}else if(ev.getPacket() instanceof TWITTER_PLAYER_FOLLOW){
-//			TWITTER_PLAYER_FOLLOW tw = (TWITTER_PLAYER_FOLLOW)ev.getPacket();
-//			
-//			if(UtilPlayer.isOnline(tw.getPlayer())){
-//				Player p = Bukkit.getPlayer(tw.getPlayer());
-//				if(!tw.isFollow()){
-//					getManager().getMysql().Update("DELETE FROM BG_TWITTER WHERE uuid='" + UtilPlayer.getPlayerId(p) + "'");
-//					p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_FOLLOW_N"));
-//					p.sendMessage(Language.getText(p,"PREFIX")+Language.getText(p, "TWITTER_REMOVE"));
-//				}else{
-//					UtilServer.getDeliveryPet().deliveryBlock(p, "§cTwitter Reward");
-//					getManager().getStatsManager().addDouble(p, 300, Stats.MONEY);
-//					p.setLevel(p.getLevel()+15);
-//					p.sendMessage(Language.getText(p, "PREFIX")+Language.getText(p, "MONEY_RECEIVE_FROM", new String[]{"§bThe Delivery Jockey!","300"}));
-//				}
-//			}
-//		}
-//	}
 	
 	@EventHandler
 	public void onClickinEnchant(EnchantItemEvent e){

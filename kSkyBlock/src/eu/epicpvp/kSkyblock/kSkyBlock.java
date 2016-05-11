@@ -56,7 +56,6 @@ import eu.epicpvp.kcore.Command.Admin.CommandTpHere;
 import eu.epicpvp.kcore.Command.Admin.CommandTppos;
 import eu.epicpvp.kcore.Command.Admin.CommandTrackingRange;
 import eu.epicpvp.kcore.Command.Admin.CommandVanish;
-import eu.epicpvp.kcore.Command.Commands.CommandAmboss;
 import eu.epicpvp.kcore.Command.Commands.CommandClearInventory;
 import eu.epicpvp.kcore.Command.Commands.CommandDelHome;
 import eu.epicpvp.kcore.Command.Commands.CommandEnchantmentTable;
@@ -98,7 +97,6 @@ import eu.epicpvp.kcore.Gilden.SkyBlockGildenManager;
 import eu.epicpvp.kcore.Hologram.Hologram;
 import eu.epicpvp.kcore.Hologram.nametags.NameTagMessage;
 import eu.epicpvp.kcore.Hologram.nametags.NameTagType;
-import eu.epicpvp.kcore.Inventory.InventoryBase;
 import eu.epicpvp.kcore.Inventory.InventoryPageBase;
 import eu.epicpvp.kcore.Inventory.Item.Click;
 import eu.epicpvp.kcore.ItemShop.ItemShop;
@@ -397,6 +395,7 @@ public class kSkyBlock extends JavaPlugin {
 			}
 			setTutorialCreature(CommandLocations.getLocation("tutorial"));
 			UtilServer.createLagListener(this.cmd);
+//			new FarmBoosterListener(this);
 			new VoteListener(this,true, new Callback<String>() {
 				
 				@Override

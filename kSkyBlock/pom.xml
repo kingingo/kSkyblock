@@ -63,6 +63,13 @@
 		</repository>
 	</repositories>
 	<dependencies>
+		<!--Spigot API -->
+		<dependency>
+			<groupId>org.spigotmc</groupId>
+			<artifactId>spigot-api</artifactId>
+			<version>1.8.8-R0.1-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>eu.epicpvp</groupId>
 			<artifactId>core-core</artifactId>
@@ -85,13 +92,6 @@
 			<artifactId>aac</artifactId>
 			<version>1.0</version>
 			<type>jar</type>
-			<scope>provided</scope>
-		</dependency>
-		<!--Spigot API -->
-		<dependency>
-			<groupId>org.spigotmc</groupId>
-			<artifactId>spigot-api</artifactId>
-			<version>1.8.8-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<!--Bukkit API -->
