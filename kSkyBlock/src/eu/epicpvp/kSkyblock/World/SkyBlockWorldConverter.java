@@ -24,7 +24,7 @@ public class SkyBlockWorldConverter extends SkyBlockWorld{
 	}
 	
 	public void loadIslandPlayer(String playerName, UUID uuid){
-		LoadedPlayer loadedplayer = UtilServer.getClient().getPlayer(playerName);
+		LoadedPlayer loadedplayer = UtilServer.getClient().getPlayerAndLoad(playerName);
 		
 		if(!getIslands().containsKey(loadedplayer.getPlayerId())){
 			try
