@@ -205,7 +205,7 @@ public class kSkyBlock extends JavaPlugin {
 			this.hologram=new Hologram(this);
 			this.hologram.RemoveText();
 			this.cmd=new CommandHandler(this);
-			UtilServer.createGemsShop(new GemsShop(getHologram(),getMoney(), getCmd(), UtilInv.getBase(), getPermissionManager(), ServerType.SKYBLOCK));
+			UtilServer.createGemsShop(new GemsShop(ServerType.SKYBLOCK));
 			this.petManager=new PetManager(this);
 			this.petHandler= new PlayerPetHandler(ServerType.SKYBLOCK,mysql, getPetManager(), getPermissionManager());
 			this.petHandler.setAsync(true);
@@ -384,7 +384,6 @@ public class kSkyBlock extends JavaPlugin {
 			new ListenerCMD(this);
 			new ChatListener(this,new SkyBlockGildenManager(manager, mysql, GildenType.SKY, cmd,getStatsManager()),permissionManager,getUserData());
 			AntiCrashListener antiCrash = new AntiCrashListener(getClient(), getMysql());
-			antiCrash.setMovement(true);
 			
 			if(Calendar.getHoliday()!=null){
 				switch(Calendar.holiday){
