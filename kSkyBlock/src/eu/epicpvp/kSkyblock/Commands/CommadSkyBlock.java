@@ -1,7 +1,5 @@
 package eu.epicpvp.kSkyblock.Commands;
 
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
