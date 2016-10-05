@@ -2,9 +2,7 @@ package eu.epicpvp.kSkyblock;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.WorldCreator;
@@ -18,15 +16,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import eu.epicpvp.kSkyblock.Gilden.SkyBlockGildenWorld;
 import eu.epicpvp.kSkyblock.World.SkyBlockWorld;
-import eu.epicpvp.kSkyblock.World.SkyBlockWorldListener;
-import eu.epicpvp.kSkyblock.World.Inventory.SkyBlockInventoyHandler;
-import eu.epicpvp.kSkyblock.World.Island.Island;
-import eu.epicpvp.kSkyblock.World.Island.kPlayer;
+import eu.epicpvp.kSkyblock.World.SkyBlockWorldConverter;
 import eu.epicpvp.kcore.ChunkGenerator.CleanroomChunkGenerator;
 import eu.epicpvp.kcore.Gilden.GildenManager;
 import eu.epicpvp.kcore.Listener.kListener;
-import eu.epicpvp.kcore.MySQL.MySQLErr;
-import eu.epicpvp.kcore.MySQL.Events.MySQLErrorEvent;
 import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.Util.UtilFile;
 import eu.epicpvp.kcore.Util.UtilPlayer;
@@ -38,18 +31,6 @@ public class SkyBlockManager extends kListener{
 	@Getter
 	private kSkyBlock instance;
 	@Getter
-	private HashMap<Integer,kPlayer> players = new HashMap<>();
-
-//	@Getter
-//	private LoadingCache<Integer,kPlayer> players1 = CacheBuilder.newBuilder().maximumSize(500).expireAfterWrite(5, TimeUnit.MINUTES).build(new CacheLoader<Integer,kPlayer>() {
-//		public kPlayer load(Integer playerId) throws Exception {
-//			kPlayer kplayer = new kPlayer(playerId);
-//			kplayer.load();
-//			return kplayer;
-//		};
-//	});
-	
-	@Getter
 	private ArrayList<SkyBlockWorld> worlds = new ArrayList<>();
 	@Getter
 	private ArrayList<String> schematics = new ArrayList<>();
@@ -58,26 +39,12 @@ public class SkyBlockManager extends kListener{
 	private boolean whitelist = false;
 	@Getter
 	private SkyBlockGildenWorld gilden_world;
-	@Getter
-	private SkyBlockWorldListener skyblockWorldListener;
-	@Getter
-	private SkyBlockInventoyHandler skyblockInventoryHandler;
-	@Getter
-	private HashMap<String, String> invite;
-	
-	@Getter
-	private static SkyBlockManager manager;
 	
 	public SkyBlockManager(kSkyBlock instance){
 		super(instance,"SkyBlockManager");
 		this.instance=instance;
-		getInstance().getMysql().Update("CREATE TABLE IF NOT EXISTS list_skyblock_worlds(playerId int,worldName varchar(30),X int,Z int,properties longtext,lastLogin timestamp)");
-		getInstance().getMysql().Update("CREATE TABLE IF NOT EXISTS list_skyblock_worlds_friends(playerId int,ownerId int, worldName varchar(30),permission varchar(30))");
-		this.skyblockWorldListener = new SkyBlockWorldListener(this);
-		this.skyblockInventoryHandler = new SkyBlockInventoyHandler(this);
-		this.invite=new HashMap<>();
+		getInstance().getMysql().Update("CREATE TABLE IF NOT EXISTS list_skyblock_worlds(playerId varchar(100),worldName varchar(30),X int,Z int)");
 		loadSchematics();	
-		manager=this;
 	}
 	
 	public void loadSchematics(){
@@ -118,11 +85,15 @@ public class SkyBlockManager extends kListener{
 		
 	}
 	
-	public Island addIsland(Player player){
+	public SkyBlockWorld addIsland(Player player){
 		for(SkyBlockWorld world : worlds){
-			if(world.getMinecraftWorld().getName().equalsIgnoreCase("normal"))continue;
-			return world.addIsland(player);
+			if(world instanceof SkyBlockWorldConverter)continue;
+//			if(player.hasPermission("epicpvp.skyblock.schematic."+world.getSchematic())){
+				world.addIsland(player);
+				return world;
+//			}
 		}
+		
 		return null;
 	}
 	
@@ -138,34 +109,14 @@ public class SkyBlockManager extends kListener{
 		ev.setQuitMessage(null);
 	}
 	
-
-	@EventHandler
-	public void member(AsyncPlayerPreLoginEvent ev){
-		int playerId = UtilPlayer.getPlayerId(ev.getName());
-		
-		if(!getPlayers().containsKey(playerId)){
-			getPlayers().put(playerId, new kPlayer(playerId));
-			
-			kPlayer kplayer = getPlayers().get(playerId);
-			try {
-				ResultSet rs = getInstance().getMysql().Query("SELECT * FROM `list_skyblock_worlds_friends` WHERE playerId='"+playerId+"' AND permission='none';");
-				while (rs.next()) {
-					if(!kplayer.getMemberList().containsKey(rs.getInt("ownerId"))){
-						for(SkyBlockWorld world : worlds)
-							world.loadIslandPlayer(rs.getInt("ownerId"));
-					}
-				}
-				rs.close();
-			} catch (Exception err) {
-				Bukkit.getPluginManager().callEvent(new MySQLErrorEvent(MySQLErr.QUERY, err, getInstance().getMysql()));
-			}
-		}
-	}
-	
 	@EventHandler
 	public void AsyncLogin(AsyncPlayerPreLoginEvent ev){
 		for(SkyBlockWorld world : worlds){
-			world.loadIslandPlayer(UtilPlayer.getPlayerId(ev.getName()));
+			if(world instanceof SkyBlockWorldConverter){
+				((SkyBlockWorldConverter)world).loadIslandPlayer(ev.getName(),ev.getUniqueId());
+			}else{
+				world.loadIslandPlayer(UtilPlayer.getPlayerId(ev.getName()));
+			}
 		}
 	}
 	
@@ -176,14 +127,14 @@ public class SkyBlockManager extends kListener{
 		ev.getPlayer().teleport(Bukkit.getWorld("world").getSpawnLocation());
 	}
 	
-	public Island getIsland(Player player){
+	public SkyBlockWorld getIsland(Player player){
 		return getIsland(UtilPlayer.getPlayerId(player));
 	}
 	
-	public Island getIsland(int playerId){
+	public SkyBlockWorld getIsland(int playerId){
 		for(SkyBlockWorld world : worlds){
 			if(world.haveIsland(playerId)){
-				return world.getIsland(playerId);
+				return world;
 			}
 		}
 		return null;
@@ -197,6 +148,34 @@ public class SkyBlockManager extends kListener{
 		for(SkyBlockWorld world : worlds){
 			if(world.haveIsland(playerId)){
 				return true;
+			}
+		}
+		return false;
+	}
+	
+	public SkyBlockWorld getParty(Player player){
+		for(SkyBlockWorld world : worlds){
+			if(world.getPartys().containsKey(player)){
+				return world;
+			}
+			for(ArrayList<String> list : world.getPartys().values()){
+				if(list.contains(player.getName().toLowerCase())){
+					return world;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public boolean isInParty(Player player){
+		for(SkyBlockWorld world : worlds){
+			if(world.getPartys().containsKey(player)){
+				return true;
+			}
+			for(ArrayList<String> list : world.getPartys().values()){
+				if(list.contains(player.getName().toLowerCase())){
+					return true;
+				}
 			}
 		}
 		return false;
@@ -232,16 +211,18 @@ public class SkyBlockManager extends kListener{
 			SkyBlockWorld sw = new SkyBlockWorld(this,worldName,Bukkit.createWorld(wc),radius,0,generate,50);
 			sw.setAsync(true);
 			worlds.add(sw);
-			skyblockWorldListener.getWorlds().put(sw.getMinecraftWorld().getUID(), sw);
 		}else{
 			WorldCreator wc = new WorldCreator(worldName);
 			wc.generator(new CleanroomChunkGenerator(".0,AIR"));
 			SkyBlockWorld sw;
-			sw = new SkyBlockWorld(this,worldName,UtilWorld.LoadWorld(wc),getInstance().getFConfig().getInt("Config.World."+worldName+".Radius"),getInstance().getFConfig().getInt("Config.World."+worldName+".Space"),getInstance().getFConfig().getInt("Config.World."+worldName+".GenerateIsland"),getInstance().getConfig().getInt("Config.World."+worldName+".CreatureLimit"));
+			if(getInstance().getFConfig().getString("Config.World."+worldName+".Convert").equalsIgnoreCase("false")){
+				sw = new SkyBlockWorld(this,worldName,UtilWorld.LoadWorld(wc),getInstance().getFConfig().getInt("Config.World."+worldName+".Radius"),getInstance().getFConfig().getInt("Config.World."+worldName+".Space"),getInstance().getFConfig().getInt("Config.World."+worldName+".GenerateIsland"),getInstance().getConfig().getInt("Config.World."+worldName+".CreatureLimit"));
+			}else{
+				sw = new SkyBlockWorldConverter(this,worldName,UtilWorld.LoadWorld(wc),getInstance().getFConfig().getInt("Config.World."+worldName+".Radius"),getInstance().getFConfig().getInt("Config.World."+worldName+".Space"),getInstance().getFConfig().getInt("Config.World."+worldName+".GenerateIsland"),getInstance().getConfig().getInt("Config.World."+worldName+".CreatureLimit"));
+			}
 			
 			sw.setAsync(true);
 			worlds.add(sw);
-			skyblockWorldListener.getWorlds().put(sw.getMinecraftWorld().getUID(), sw);
 		}
 	}
 	

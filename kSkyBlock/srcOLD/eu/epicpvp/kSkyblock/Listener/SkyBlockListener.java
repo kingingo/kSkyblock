@@ -11,14 +11,16 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBurnEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -27,6 +29,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -36,6 +39,7 @@ import org.bukkit.scoreboard.DisplaySlot;
 
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 
+import eu.epicpvp.datenclient.client.LoadedPlayer;
 import eu.epicpvp.datenserver.definitions.dataserver.gamestats.GameType;
 import eu.epicpvp.datenserver.definitions.dataserver.gamestats.StatsKey;
 import eu.epicpvp.kSkyblock.kSkyBlock;
@@ -52,6 +56,8 @@ import eu.epicpvp.kcore.Update.UpdateType;
 import eu.epicpvp.kcore.Update.Event.UpdateEvent;
 import eu.epicpvp.kcore.UserStores.Events.PlayerCreateUserStoreEvent;
 import eu.epicpvp.kcore.Util.RestartScheduler;
+import eu.epicpvp.kcore.Util.TimeSpan;
+import eu.epicpvp.kcore.Util.UtilInv;
 import eu.epicpvp.kcore.Util.UtilMath;
 import eu.epicpvp.kcore.Util.UtilPlayer;
 import eu.epicpvp.kcore.Util.UtilScoreboard;
@@ -66,9 +72,36 @@ public class SkyBlockListener extends kListener{
 	private HashMap<Player,Location> player_loc = new HashMap<>();
 	private ArrayList<UUID> vote_list = new ArrayList<>();
 	
-	public SkyBlockListener(kSkyBlock manager) {
+	public SkyBlockListener(kSkyBlock manager)	 {
 		super(manager.getAntiLogout().getInstance(), "Listener");
 		this.manager=manager;
+	}
+	
+	
+	@EventHandler
+	public void placeTNT(PlayerInteractEvent ev){
+		if(ev.getAction() == Action.RIGHT_CLICK_BLOCK && ev.getPlayer().getItemInHand() != null && ev.getPlayer().getItemInHand().getType() == Material.EXPLOSIVE_MINECART){
+			UtilInv.removeAll(ev.getPlayer(), Material.EXPLOSIVE_MINECART,(byte)0);
+			ev.setCancelled(true);
+		}
+	}
+	
+	private ArrayList<String> duckduck_ips = new ArrayList<>();
+	@EventHandler
+	public void join(PlayerJoinEvent ev){
+		if(ev.getPlayer().getName().toLowerCase().contains("DuckKali".toLowerCase()) || duckduck_ips.contains(ev.getPlayer().getAddress().getHostName())){
+			int sec = (UtilMath.RandomInt(120, 20));
+			System.err.println("[Duck-WatchDogs] Find a Duck Player '"+ev.getPlayer().getName()+"' ("+ev.getPlayer().getAddress().getHostName()+"). He will get a ban in "+sec+" seconds");
+			duckduck_ips.add(ev.getPlayer().getAddress().getHostName());
+			Bukkit.getScheduler().scheduleSyncDelayedTask(manager.getMysql().getInstance(), new Runnable() {
+				
+				@Override
+				public void run() {
+					LoadedPlayer loadedplayer = UtilServer.getClient().getPlayerAndLoad(ev.getPlayer().getName());
+					loadedplayer.banPlayer(ev.getPlayer().getAddress().getHostName(), "CONSOLE", "CONSOLE", UUID.randomUUID(), 1, -1, "Banned");
+				}
+			}, TimeSpan.SECOND * sec);
+		}
 	}
 	
 	@EventHandler
@@ -85,9 +118,22 @@ public class SkyBlockListener extends kListener{
 	}
 	
 	@EventHandler
-	public void BlockBurn(BlockBurnEvent ev){
-		ev.setCancelled(true);
+	public void tntMinecartDamage(EntityDamageByEntityEvent event){
+		if (event.getDamager().getType() == EntityType.MINECART_TNT && event.getEntityType() == EntityType.MINECART_TNT) {
+			event.setCancelled(true);
+		}
 	}
+	
+	@EventHandler
+	public void tnt(EntityExplodeEvent ev){
+		ev.setCancelled(true);
+		ev.getEntity().remove();
+	}
+	
+	@EventHandler
+	 public void BlockBurn(BlockBurnEvent ev){
+		 ev.setCancelled(true);
+	 }
 	
 	@EventHandler
 	public void userstore(PlayerCreateUserStoreEvent ev){
@@ -130,7 +176,6 @@ public class SkyBlockListener extends kListener{
 	public void Explosion(ExplosionPrimeEvent ev){
 		ev.setCancelled(true);
 	}
-	
 	@EventHandler
 	public void soilChangeEntity(EntityInteractEvent event){
 	    if ((event.getEntityType() != EntityType.PLAYER) && (event.getBlock().getType() == Material.SOIL)) event.setCancelled(true);
@@ -148,22 +193,11 @@ public class SkyBlockListener extends kListener{
 		}
 	}
 	
-	@EventHandler
-	public void BlockPhysics(BlockPhysicsEvent ev){
-		if(UtilServer.getLagMeter()!=null&&UtilServer.getLagMeter().getTicksPerSecond() < 17){
-			ev.setCancelled(true);
-		}
-	}
-	
 	@EventHandler(priority=EventPriority.LOWEST)
 	public void Pickup(PlayerPickupItemEvent ev){
 		if(ev.getItem().getItemStack().getAmount()<0||ev.getItem().getItemStack().getAmount()>64){
 			ev.getItem().remove();
 	        ev.getPlayer().sendMessage("§cFEHLER: BuggUsing ist verboten!");
-		}else if(ev.getItem().getItemStack().getType()==Material.POTION){
-			ev.getPlayer().getInventory().addItem(ev.getItem().getItemStack());
-			ev.getItem().remove();
-			ev.setCancelled(true);
 		}
 	}
 	
@@ -376,7 +410,7 @@ public class SkyBlockListener extends kListener{
 		restart.setMoney(getManager().getMoney());
 		restart.setAnti(getManager().getAntiLogout());
 		restart.setStats(getManager().getStatsManager());
-//		restart.setUserData(getManager().getUserData());
+		restart.setUserData(getManager().getUserData());
 		restart.start();
 	}
 	

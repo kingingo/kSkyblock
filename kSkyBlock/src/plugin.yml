@@ -1,0 +1,5 @@
+name: kSkyBlock
+author: kingingo
+version: 1.7
+main: eu.epicpvp.kSkyblock.kSkyBlock
+depend: [kCore,DatenClient]

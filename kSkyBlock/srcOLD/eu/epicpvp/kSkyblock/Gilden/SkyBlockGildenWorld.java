@@ -10,6 +10,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.BrewingStand;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
@@ -34,8 +36,8 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.inventory.InventoryHolder;
 
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
@@ -47,9 +49,10 @@ import eu.epicpvp.kcore.Gilden.Events.GildeLoadEvent;
 import eu.epicpvp.kcore.Listener.kListener;
 import eu.epicpvp.kcore.MySQL.MySQLErr;
 import eu.epicpvp.kcore.MySQL.Events.MySQLErrorEvent;
-import eu.epicpvp.kcore.PacketAPI.Packets.WrapperPacketPlayOutWorldBorder;
 import eu.epicpvp.kcore.Permission.PermissionType;
 import eu.epicpvp.kcore.Translation.TranslationHandler;
+import eu.epicpvp.kcore.Update.UpdateType;
+import eu.epicpvp.kcore.Update.Event.UpdateEvent;
 import eu.epicpvp.kcore.Util.UtilBlock;
 import eu.epicpvp.kcore.Util.UtilEvent;
 import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
@@ -78,7 +81,7 @@ public class SkyBlockGildenWorld extends kListener{
 	@Getter
 	@Setter
 	private boolean async=false;
-
+	
 	public SkyBlockGildenWorld(SkyBlockManager manager,GildenManager gilde,World world,int radius,int anzahl,int creature_limit) {
 		super(manager.getInstance(),"SkyBlockGildenWorld:"+world.getName());
 		manager.getInstance().getMysql().Update(isAsync(),"CREATE TABLE IF NOT EXISTS list_gilden_Sky_world(gilde varchar(100),X int,Z int)");
@@ -92,8 +95,8 @@ public class SkyBlockGildenWorld extends kListener{
 		loadIslands();
 		addIslands(anzahl);
 	}
-
-	public WrapperPacketPlayOutWorldBorder getIslandBorder(Player player){
+	
+	public kPacketPlayOutWorldBorder getIslandBorder(Player player){
 		if(player.hasPermission(PermissionType.SKYBLOCK_ISLAND_BORDER_BYPASS.getPermissionToString())){
 			return null;
 		}
@@ -103,12 +106,12 @@ public class SkyBlockGildenWorld extends kListener{
 			return null;
 		}
 	}
-
+	
 	@EventHandler
 	public void Load(GildeLoadEvent ev){
 		loadIslandGilde(ev.getGilde());
 	}
-
+	
 	@EventHandler
 	public void Damage(EntityDamageByEntityEvent ev){
 		if(ev.getDamager().getWorld()==getWorld()){
@@ -129,7 +132,7 @@ public class SkyBlockGildenWorld extends kListener{
 			}
 		}
 	}
-
+	
 	@EventHandler
 	public void CreatureSpawn(CreatureSpawnEvent ev){
 		if(ev.getSpawnReason() != SpawnReason.CUSTOM){
@@ -149,25 +152,28 @@ public class SkyBlockGildenWorld extends kListener{
 			}
 		}
 	}
-
+	
 	@EventHandler
-	public void Fall(PlayerMoveEvent ev){
-		if(ev.getPlayer().getWorld().getUID() == getWorld().getUID() && !ev.getPlayer().isOnGround()&&ev.getPlayer().getLocation().getBlockY()<0){
-			ev.getPlayer().teleport(Bukkit.getWorld("world").getSpawnLocation());
-			ev.getPlayer().setHealth( UtilPlayer.getCraftPlayer(ev.getPlayer()).getMaxHealth() );
+	public void Fall(UpdateEvent ev){
+		if(ev.getType()!=UpdateType.SEC_3)return;
+		for(Player player : getWorld().getPlayers()){
+			if(!player.isOnGround()&&player.getLocation().getBlockY()<=12){
+				player.teleport(Bukkit.getWorld("world").getSpawnLocation());
+				player.setHealth( UtilPlayer.getCraftPlayer(player).getMaxHealth() );
+			}
 		}
 	}
-
+	
 	Player player;
     Location loc;
 	 @EventHandler(priority=EventPriority.LOWEST)
 	 public void onInventoryOpenEvent(InventoryOpenEvent event){
 		 if (event.getPlayer().getWorld()!=getWorld() || (event.isCancelled()) || (event.getInventory() == null) || (event.getInventory().getHolder() == null) || event.getPlayer().isOp())return;
-
+		    
 		    if (((event.getInventory().getHolder() instanceof Hopper)) ||((event.getInventory().getHolder() instanceof BrewingStand)) ||((event.getInventory().getHolder() instanceof Chest)) || ((event.getInventory().getHolder() instanceof DoubleChest)) || ((event.getInventory().getHolder() instanceof Furnace)) || ((event.getInventory().getHolder() instanceof Dispenser))) {
 			    player = (Player)event.getPlayer();
 			    loc = player.getLocation();
-
+			    
 			      if ((event.getInventory().getHolder() instanceof Chest)){
 			        loc = ((Chest)event.getInventory().getHolder()).getLocation();
 			      }
@@ -191,7 +197,7 @@ public class SkyBlockGildenWorld extends kListener{
 			      event.setCancelled(true);
 		    }
 	 }
-
+		
 		@EventHandler
 		public void onPlayerBucketFill(PlayerBucketFillEvent ev) {
 			if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()){
@@ -201,7 +207,7 @@ public class SkyBlockGildenWorld extends kListener{
 				ev.setCancelled(true);
 			}
 		}
-
+		
 		@EventHandler
 		public void onPlayerBucketEmpty(PlayerBucketEmptyEvent ev) {
 			if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()){
@@ -211,7 +217,7 @@ public class SkyBlockGildenWorld extends kListener{
 				ev.setCancelled(true);
 			}
 		}
-
+	 
 	 @EventHandler
 		public void Damage(EntityDamageEvent ev){
 			if(ev.getEntity().getWorld()==getWorld()){
@@ -220,7 +226,7 @@ public class SkyBlockGildenWorld extends kListener{
 				}
 			}
 		}
-
+	 
 	 @EventHandler
 		public void PotionSplash(PotionSplashEvent ev){
 			if(ev.getPotion().getLocation().getWorld()==getWorld()&&!ev.isCancelled()){
@@ -234,7 +240,7 @@ public class SkyBlockGildenWorld extends kListener{
 				}
 			}
 		}
-
+	
 	@EventHandler
 	public void PickUp(PlayerPickupItemEvent ev){
 		if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()){
@@ -244,7 +250,7 @@ public class SkyBlockGildenWorld extends kListener{
 			ev.setCancelled(true);
 		}
 	}
-
+	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void Place(BlockPlaceEvent ev){
 		if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()){
@@ -253,17 +259,17 @@ public class SkyBlockGildenWorld extends kListener{
 			ev.setCancelled(true);
 		}
 	}
-
+	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void interact(PlayerInteractEvent ev){
 		if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()&&UtilEvent.isAction(ev, ActionType.BLOCK)){
-			if(ev.getPlayer().getItemInHand()!=null&&UtilBlock.isBlock(ev.getPlayer().getItemInHand().getType())){
+			if(ev.getPlayer().getItemInHand()!=null&&UtilBlock.isBlock(ev.getPlayer().getItemInHand())){
 				if(gilde.isPlayerInGilde(ev.getPlayer())&&islands.containsKey(gilde.getPlayerGilde(ev.getPlayer()).toLowerCase()))if(isInIsland(ev.getPlayer(), ev.getClickedBlock().getLocation()))return;
 				ev.setCancelled(true);
 			}
 		}
 	}
-
+	
 	@EventHandler(priority=EventPriority.HIGHEST)
 	public void Break(BlockBreakEvent ev){
 		if(ev.getPlayer().getWorld()==getWorld()&&!ev.isCancelled()&&!ev.getPlayer().isOp()){
@@ -272,7 +278,7 @@ public class SkyBlockGildenWorld extends kListener{
 			ev.setCancelled(true);
 		}
 	}
-
+	
 	public void loadIslandGilde(String gilde){
 		gilde=gilde.toLowerCase();
 		if(!islands.containsKey(gilde)){
@@ -288,7 +294,7 @@ public class SkyBlockGildenWorld extends kListener{
 		    }
 		}
 	}
-
+	
 	public Location getIslandFixHome(String gilde){
 		gilde=gilde.toLowerCase();
 		Location loc = getIslandHome(gilde);
@@ -297,7 +303,7 @@ public class SkyBlockGildenWorld extends kListener{
 		loc.clone().add(0,-2,0).getBlock().setType(Material.GLASS);
 		return loc;
 	}
-
+	
 	public Location getIslandHome(String gilde){
 		gilde=gilde.toLowerCase();
 		if(islands.containsKey(gilde)){
@@ -305,7 +311,7 @@ public class SkyBlockGildenWorld extends kListener{
 		}
 		return null;
 	}
-
+	
 	public boolean addIsland(Player player,String gilde){
 		gilde=gilde.toLowerCase();
 		if(player.hasPermission(PermissionType.SKYBLOCK_GILDEN_ISLAND.getPermissionToString())){
@@ -313,69 +319,111 @@ public class SkyBlockGildenWorld extends kListener{
 		}
 		return false;
 	}
-
-//	public boolean newIsland(String gilde){
-//		gilde=gilde.toLowerCase();
-//		if(islands.containsKey(gilde)){
-//			Location loc = islands.get(gilde);
-//			int min_x = loc.getBlockX()-radius;
-//			int max_x = loc.getBlockX();
-//
-//			int min_z = loc.getBlockZ()-radius;
-//			int max_z = loc.getBlockZ();
-//
-//			int count=0;
-//			for(Entity e : world.getEntities()){
-//				if(!(e instanceof Player)){
-//					if(e.getLocation().getBlockX() > min_x&&e.getLocation().getBlockX()<max_x&&e.getLocation().getBlockZ()>min_z&&e.getLocation().getBlockZ()<max_z){
-//						e.remove();
-//						count++;
-//					}
-//				}
-//			}
-//
-//			Block block;
-//			BlockState state;
-//			InventoryHolder invHolder;
-//			int b_count=0;
-//			for(int x = min_x; x < max_x; x++){
-//				for(int z = min_z; z < max_z; z++){
-//					for(int y = 0; y < 256; y++){
-//						block=world.getBlockAt(x,y,z);
-//						if(block!=null&&(!block.isEmpty())){
-//							block.getDrops().clear();
-//							state=block.getState();
-//							if(state instanceof InventoryHolder){
-//								invHolder=(InventoryHolder)state;
-//								invHolder.getInventory().clear();
-//							}
-//							block.setType(Material.AIR);
-//							b_count++;
-//						}
-//					}
-//				}
-//			}
-//			Location loc1 = new Location(getWorld(), (max_x-(radius/2)) ,30, (max_z-(radius/2)) );
-//			loc1.getWorld().loadChunk(loc1.getChunk());
-//			UtilSchematic.pastePlate(session,loc1, new File("plugins/kSkyBlock/schematics/"+schematic+".schematic"));
-//			logMessage("Die Insel von der Gilde "+gilde+"(Entities:"+count+"/Bloecke:"+b_count+"/X:"+(max_x-(radius/2))+"/Z:"+(max_z-(radius/2))+") wurde erneuert.");
-//			return true;
-//		}
-//		return false;
-//	}
-
+	
+	public boolean newIsland(String gilde){
+		gilde=gilde.toLowerCase();
+		if(islands.containsKey(gilde)){
+			Location loc = islands.get(gilde);
+			int min_x = loc.getBlockX()-radius;
+			int max_x = loc.getBlockX();
+			
+			int min_z = loc.getBlockZ()-radius;
+			int max_z = loc.getBlockZ();
+			
+			int count=0;
+			for(Entity e : world.getEntities()){
+				if(!(e instanceof Player)){
+					if(e.getLocation().getBlockX() > min_x&&e.getLocation().getBlockX()<max_x&&e.getLocation().getBlockZ()>min_z&&e.getLocation().getBlockZ()<max_z){
+						e.remove();
+						count++;
+					}
+				}
+			}
+			
+			Block block;
+			BlockState state;
+			InventoryHolder invHolder;
+			int b_count=0;
+			for(int x = min_x; x < max_x; x++){
+				for(int z = min_z; z < max_z; z++){
+					for(int y = 0; y < 256; y++){
+						block=world.getBlockAt(x,y,z);
+						if(block!=null&&(!block.isEmpty())){
+							block.getDrops().clear();
+							state=block.getState();
+							if(state instanceof InventoryHolder){
+								invHolder=(InventoryHolder)state;
+								invHolder.getInventory().clear();
+							}
+							block.setType(Material.AIR);
+							b_count++;
+						}
+					}
+				}
+			}
+			Location loc1 = new Location(getWorld(), (max_x-(radius/2)) ,30, (max_z-(radius/2)) );
+			loc1.getWorld().loadChunk(loc1.getChunk());
+			UtilSchematic.pastePlate(session,loc1, new File("plugins/kSkyBlock/schematics/"+schematic+".schematic"));
+			logMessage("Die Insel von der Gilde "+gilde+"(Entities:"+count+"/Bloecke:"+b_count+"/X:"+(max_x-(radius/2))+"/Z:"+(max_z-(radius/2))+") wurde erneuert.");
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean removeIsland(Player player,String gilde){
 		gilde=gilde.toLowerCase();
 		if(islands.containsKey(gilde)){
+			Location loc = islands.get(gilde);
+			int min_x = loc.getBlockX()-radius;
+			int max_x = loc.getBlockX();
+			
+			int min_z = loc.getBlockZ()-radius;
+			int max_z = loc.getBlockZ();
+			
+			int count=0;
+			for(Entity e : world.getEntities()){
+				if(!(e instanceof Player)){
+					if(e.getLocation().getBlockX() > min_x&&e.getLocation().getBlockX()<max_x&&e.getLocation().getBlockZ()>min_z&&e.getLocation().getBlockZ()<max_z){
+						e.remove();
+						count++;
+					}
+				}
+			}
+			
+			Block block;
+			BlockState state;
+			InventoryHolder invHolder;
+			int b_count=0;
+			for(int x = min_x; x < max_x; x++){
+				for(int z = min_z; z < max_z; z++){
+					for(int y = 0; y < 256; y++){
+						block=world.getBlockAt(x,y,z);
+						if(block!=null&&(!block.isEmpty())){
+							block.getDrops().clear();
+							state=block.getState();
+							if(state instanceof InventoryHolder){
+								invHolder=(InventoryHolder)state;
+								invHolder.getInventory().clear();
+							}
+							block.setType(Material.AIR);
+							b_count++;
+						}
+					}
+				}
+			}
 			islands.remove(gilde);
-			getManager().getInstance().getMysql().Update(isAsync(),"DELETE FROM list_gilden_Sky_world WHERE X='"+loc.getBlockX()+"' AND Z='"+loc.getBlockZ()+"'");
-			logMessage("Die Insel von der Gilde "+gilde+" wurde gelöscht.");
+			getManager().getInstance().getMysql().Update(isAsync(),"UPDATE list_gilden_Sky_world SET gilde='!"+gilde+"' WHERE X='"+loc.getBlockX()+"' AND Z='"+loc.getBlockZ()+"'");
+			islands.put("!"+gilde, loc);
+			Location loc1 = new Location(getWorld(), (max_x-(radius/2)) ,30, (max_z-(radius/2)) );
+			loc1.getWorld().loadChunk(loc1.getChunk());
+			UtilSchematic.pastePlate(session,loc1, new File("plugins/kSkyBlock/schematics/"+schematic+".schematic"));
+			logMessage("Die Insel von der Gilde "+gilde+"(Entities:"+count+"/Bloecke:"+b_count+"/X:"+(max_x-(radius/2))+"/Z:"+(max_z-(radius/2))+") wurde resetet.");
 			getManager().getDelete().add(player.getName().toLowerCase());
 			return true;
 		}
 		return false;
 	}
-
+	
 	public int recycelnIslandAnzahl(){
 		int count = 0;
 		for(String player : islands.keySet()){
@@ -385,7 +433,7 @@ public class SkyBlockGildenWorld extends kListener{
 		}
 		return count;
 	}
-
+	
 	public String recycelnIsland(){
 		String island = null;
 		for(String player : islands.keySet()){
@@ -396,7 +444,7 @@ public class SkyBlockGildenWorld extends kListener{
 		}
 		return island;
 	}
-
+	
 	public void addIslands(int anzahl){
 		int a = recycelnIslandAnzahl();
 		if(a<anzahl){
@@ -406,7 +454,7 @@ public class SkyBlockGildenWorld extends kListener{
 			logMessage((anzahl-a)+" Inseln wurden hinzugef§gt!");
 		}
 	}
-
+	
 	public boolean addIsland(Player player,String gilde,String schematic,boolean recyceln){
 		if(player!=null){
 			if(getManager().getDelete().contains(player.getName().toLowerCase())){
@@ -427,7 +475,7 @@ public class SkyBlockGildenWorld extends kListener{
 				return true;
 			}
 		}
-
+			
 		if( Z == (radius*100)){
 			X+=radius;
 			Z=0;
@@ -445,11 +493,11 @@ public class SkyBlockGildenWorld extends kListener{
 		logMessage("Die Insel von der Gilde "+gilde+"(X:"+(X-(radius/2))+",Z:"+(Z-(radius/2))+") wurde erstellt.");
 		return true;
 	}
-
+	
 	public boolean isInIsland(Player player,Location loc){
 		return isInIsland(this.gilde.getPlayerGilde(player).toLowerCase(),loc);
 	}
-
+	
 	public boolean isInIsland(String gilde,Location loc){
 		gilde=gilde.toLowerCase();
 		if(islands.containsKey(gilde)){
@@ -457,28 +505,28 @@ public class SkyBlockGildenWorld extends kListener{
 		}
 		return false;
 	}
-
+	
 	public boolean isInIsland(Location loc,Location loc1){
 		return MinLoc(loc).getX() <= loc1.getX() && MinLoc(loc).getZ() <= loc1.getZ() && MaxLoc(loc).getBlockX() >= loc1.getBlockX() && MaxLoc(loc).getBlockZ() >= loc1.getBlockZ();
 	}
-
+	
 	public Location MinLoc(Location loc){
 		return new Location(loc.getWorld(),loc.getBlockX()-radius,0,loc.getBlockZ()-radius);
 	}
-
+	
 	public Location MaxLoc(Location loc){
 		return loc;
 	}
-
+	
 	public void setBiome(String gilde){
 		gilde=gilde.toLowerCase();
 		if(islands.containsKey(gilde)){
 			int min_x = islands.get(gilde).getBlockX()-radius;
 			int max_x = islands.get(gilde).getBlockX();
-
+			
 			int min_z = islands.get(gilde).getBlockZ()-radius;
 			int max_z = islands.get(gilde).getBlockZ();
-
+			
 			for(int x = min_x; x < max_x; x++){
 				for(int z = min_z; z < max_z; z++){
 					getWorld().setBiome(x, z, Biome.JUNGLE);
@@ -486,7 +534,7 @@ public class SkyBlockGildenWorld extends kListener{
 			}
 		}
 	}
-
+	
 	public int getCount(){
 		try
 	    {
@@ -500,7 +548,7 @@ public class SkyBlockGildenWorld extends kListener{
 	    }
 		return 0;
 	}
-
+	
 	public void solveXandZ(){
 		if(getCount()!=0){
 			try
@@ -513,7 +561,7 @@ public class SkyBlockGildenWorld extends kListener{
 		    } catch (Exception err) {
 		    	Bukkit.getPluginManager().callEvent(new MySQLErrorEvent(MySQLErr.QUERY,err,getManager().getInstance().getMysql()));
 		    }
-
+			
 			try
 		    {
 		      ResultSet rs = getManager().getInstance().getMysql().Query("SELECT `Z` FROM `list_gilden_Sky_world` WHERE X='"+X+"' ORDER BY Z DESC LIMIT 1;");
@@ -530,10 +578,10 @@ public class SkyBlockGildenWorld extends kListener{
 			Z=0;
 			logMessage("X: "+X+" Z:"+Z);
 		}
-
-
+		
+		
 	}
-
+	
 	public void loadIslands(){
 		try
 	    {
@@ -549,5 +597,5 @@ public class SkyBlockGildenWorld extends kListener{
 		logMessage(islands.size()+" Inseln wurden Geladen!");
 		solveXandZ();
 	}
-
+	
 }

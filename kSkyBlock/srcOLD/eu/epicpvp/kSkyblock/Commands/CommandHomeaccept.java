@@ -9,12 +9,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import eu.epicpvp.kSkyblock.SkyBlockManager;
-import eu.epicpvp.kSkyblock.World.Island.Island;
 import eu.epicpvp.kcore.Command.CommandHandler.Sender;
 import eu.epicpvp.kcore.Translation.TranslationHandler;
 import eu.epicpvp.kcore.UserDataConfig.UserDataConfig;
-import eu.epicpvp.kcore.Util.UtilPlayer;
-import eu.epicpvp.kcore.kConfig.kConfig;
 
 public class CommandHomeaccept implements CommandExecutor{
 	
@@ -39,15 +36,7 @@ public class CommandHomeaccept implements CommandExecutor{
 		if(args.length==0){
 			if(list.containsKey(player)){
 				if(list.get(player).isOnline()){
-					kConfig config = userData.getConfig(list.get(player));
-					config.setLocation("homes."+list_name.get(player), list_loc.get(player));
-					config.set("homes."+list_name.get(player)+".ownerId", UtilPlayer.getPlayerId(player));
-					
-					Island is = manager.getIsland(player);
-					if(is!=null){
-						is.addHome(UtilPlayer.getPlayerId(list.get(player)));
-					}
-					
+					userData.getConfig(list.get(player)).setLocation("homes."+list_name.get(player), list_loc.get(player));
 					list.get(player).sendMessage(TranslationHandler.getText(list.get(player), "PREFIX")+TranslationHandler.getText(list.get(player), "HOME_SET",list_name.get(player)));
 					player.sendMessage(TranslationHandler.getText(player, "PREFIX")+TranslationHandler.getText(player, "ACCEPT"));
 					list_name.remove(player);

@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 import com.google.common.base.Charsets;
 
-import dev.wolveringer.client.LoadedPlayer;
+import eu.epicpvp.datenclient.client.LoadedPlayer;
 import eu.epicpvp.kSkyblock.SkyBlockManager;
 import eu.epicpvp.kcore.MySQL.MySQLErr;
 import eu.epicpvp.kcore.MySQL.Events.MySQLErrorEvent;

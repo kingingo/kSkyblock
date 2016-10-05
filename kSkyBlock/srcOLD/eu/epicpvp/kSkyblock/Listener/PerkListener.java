@@ -6,7 +6,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import eu.epicpvp.kcore.Kit.PerkManager;
 import eu.epicpvp.kcore.Listener.kListener;
-import eu.epicpvp.kcore.Permission.Events.PlayerLoadPermissionEvent;
 import eu.epicpvp.kcore.UserDataConfig.Events.UserDataConfigLoadEvent;
 
 public class PerkListener extends kListener{
@@ -28,10 +27,4 @@ public class PerkListener extends kListener{
 		perkManager.removePlayer(ev.getPlayer());
 	}
 	
-	@EventHandler
-	public void loadPerm(PlayerLoadPermissionEvent ev){
-		if(perkManager.hasPlayer(ev.getPlayer())){
-			
-		}
-	}
 }
