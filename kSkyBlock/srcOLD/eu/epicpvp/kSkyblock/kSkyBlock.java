@@ -280,7 +280,7 @@ public class kSkyBlock extends JavaPlugin {
 			this.cmd.register(CommandAdminStats.class, new CommandAdminStats(getStatsManager()));
 			
 			UtilServer.createDeliveryPet(new DeliveryPet( UtilInv.getBase(),null,new DeliveryObject[]{
-				new DeliveryObject(new String[]{"","§7Click for Vote!","","§ePvP Rewards:","§7   200 Epics","§7   1x Inventory Repair","","§eGame Rewards:","§7   25 Gems","§7   100 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},PermissionType.DELIVERY_PET_VOTE,false,28,"§aVote for ClashMC",Material.PAPER,Material.REDSTONE_BLOCK,new Click(){
+				new DeliveryObject(new String[]{"","§7Click for Vote!","","§ePvP Rewards:","§7   200 Epics","§7   1x Inventory Repair","","§eGame Rewards:","§7   25 Gems","§7   100 Coins","","§eSkyBlock Rewards:","§7   200 Epics","§7   2x Diamonds","§7   2x Iron Ingot","§7   2x Gold Ingot"},PermissionType.DELIVERY_PET_VOTE,false,28,"§aVote for EpicPvP",Material.PAPER,Material.REDSTONE_BLOCK,new Click(){
 	
 						@Override
 						public void onClick(Player p, ActionType a,Object obj) {
@@ -404,7 +404,7 @@ public class kSkyBlock extends JavaPlugin {
 						Player player = Bukkit.getPlayer(playerName);
 						
 						if(UtilServer.getDeliveryPet()!=null){
-							UtilServer.getDeliveryPet().deliveryUSE(player, "§aVote for ClashMC", true);
+							UtilServer.getDeliveryPet().deliveryUSE(player, "§aVote for EpicPvP", true);
 						}
 						
 						getStatsManager().addDouble(player, 200, StatsKey.MONEY);
@@ -433,7 +433,7 @@ public class kSkyBlock extends JavaPlugin {
 		//   §8»§7 
 		InventoryPageBase page = new InventoryPageBase(InventorySize._54, "Tutorial Villager");
 		
-		page.setItem(4, UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[]{"§8»§7 Gems und Ränge kannst du im Onlineshop ","§7  unter §6shop.ClashMC.eu§7 kaufen."}, "§bInfo's"));
+		page.setItem(4, UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[]{"§8»§7 Gems und Ränge kannst du im Onlineshop ","§7  unter §6shop.EpicPvP.eu§7 kaufen."}, "§bInfo's"));
 		
 		page.setItem(20, UtilItem.Item(new ItemStack(Material.BARRIER), new String[]{}, "§cComing soon..."));
 		
@@ -443,7 +443,7 @@ public class kSkyBlock extends JavaPlugin {
 		
 		page.setItem(31, UtilItem.Item(new ItemStack(Material.CHEST), new String[]{"§8»§7 Mit '§6/Shop§7' kannst du das Shop-Menü öffnen und","§7  unter verschiedenen Kategorien deine","§7  Items auswählen und §6kaufen§7 oder §6verkaufen§7. ","§7  Items kaufen kannst du mit einem links Klick auf","§7  das gewünschte Item und mit einem rechts Klick, ","§7  kannst du deine Items verkaufen. "}, "§6Shop"));
 		
-		page.setItem(24, UtilItem.Item(new ItemStack(Material.SIGN), new String[]{"§8»§7 Mit §7'§6[UserStore]§7' in der erste Zeile und den","§7  gewünschten Preis in der zweiten, kannst","§7  du deinen eigenen Shop erstellen. Darunter muss ","§7  eine Kiste, mit nur dem Item, welches du im","§7  Shop anbieten möchtest sein. Sobald du","§7  dies gemacht hast wird dir der Befehl §7'§6/Mystore§7'","§7  freigeschalten. Dies ermöglicht dir die","§7  Administration deiner Shop's.","§7  Du kannst mit '§6/Setusershop§7' deinen","§7  Shop-Warp setzen und dich mit","§7  '§6/Usershop <Spieler>§7' zu denn","§7  jeweiligen Shop telepotieren.","§7  Jeder Spieler kann fünf gratis Shop's erstellen,","§7  jeder weitere kostet dich§a 25 Gems§7.","§7  Diese erhältst du durch §7'§6/Vote§7' oder","§7  im Onlineshop:","§7  »§e shop.ClashMC.eu"}, "§6Usershop"));
+		page.setItem(24, UtilItem.Item(new ItemStack(Material.SIGN), new String[]{"§8»§7 Mit §7'§6[UserStore]§7' in der erste Zeile und den","§7  gewünschten Preis in der zweiten, kannst","§7  du deinen eigenen Shop erstellen. Darunter muss ","§7  eine Kiste, mit nur dem Item, welches du im","§7  Shop anbieten möchtest sein. Sobald du","§7  dies gemacht hast wird dir der Befehl §7'§6/Mystore§7'","§7  freigeschalten. Dies ermöglicht dir die","§7  Administration deiner Shop's.","§7  Du kannst mit '§6/Setusershop§7' deinen","§7  Shop-Warp setzen und dich mit","§7  '§6/Usershop <Spieler>§7' zu denn","§7  jeweiligen Shop telepotieren.","§7  Jeder Spieler kann fünf gratis Shop's erstellen,","§7  jeder weitere kostet dich§a 25 Gems§7.","§7  Diese erhältst du durch §7'§6/Vote§7' oder","§7  im Onlineshop:","§7  »§e shop.EpicPvP.eu"}, "§6Usershop"));
 		
 		page.setItem(42, UtilItem.Item(new ItemStack(Material.TRIPWIRE_HOOK), new String[]{"§8»§7 Mit dem §7'§6/Handel§7' Befehl kannst","§7  du sicher mit anderen Spielern handeln.","§7  Du kannst deine Items in das linke","§7  Feld ziehen und siehst dann im rechten, ","§7  welche Items dir im Tausch dagegen angeboten","§7  werden. Unten kannst du dann auf §7'§6Accept§7'","§7  das Angebot akzeptieren. Sobald das dann","§7  auch der Tauschpartner","§7  macht, ist der Handel abgeschlossen. "}, "§6Handel"));
 		

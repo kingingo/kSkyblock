@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -162,6 +163,8 @@ import eu.epicpvp.kcore.Util.InventorySize;
 import eu.epicpvp.kcore.Util.TimeSpan;
 import eu.epicpvp.kcore.Util.UtilEnt;
 import eu.epicpvp.kcore.Util.UtilEvent.ActionType;
+import eu.epicpvp.kcore.deliverychest.DeliveryChest;
+import eu.epicpvp.kcore.deliverychest.ItemModifier;
 import eu.epicpvp.kcore.Util.UtilException;
 import eu.epicpvp.kcore.Util.UtilInv;
 import eu.epicpvp.kcore.Util.UtilItem;
@@ -312,7 +315,7 @@ public class kSkyBlock extends JavaPlugin {
 									"§7   1x Inventory Repair", "", "§eGame Rewards:", "§7   25 Gems", "§7   100 Coins",
 									"", "§eSkyBlock Rewards:", "§7   200 Epics", "§7   2x Diamonds",
 									"§7   2x Iron Ingot", "§7   2x Gold Ingot" },
-							PermissionType.DELIVERY_PET_VOTE, false, 28, "§aVote for ClashMC", Material.PAPER,
+							PermissionType.DELIVERY_PET_VOTE, false, 28, "§aVote for EpicPvP", Material.PAPER,
 							Material.REDSTONE_BLOCK, new Click() {
 
 								@Override
@@ -322,7 +325,7 @@ public class kSkyBlock extends JavaPlugin {
 											+ "§7-----------------------------------------");
 									p.sendMessage(TranslationHandler.getText(p, "PREFIX") + " ");
 									p.sendMessage(TranslationHandler.getText(p, "PREFIX")
-											+ "Vote Link:§a http://vote.clashmc.eu/");
+											+ "Vote Link:§a http://vote.EpicPvP.eu/");
 									p.sendMessage(TranslationHandler.getText(p, "PREFIX") + " ");
 									p.sendMessage(TranslationHandler.getText(p, "PREFIX")
 											+ "§7-----------------------------------------");
@@ -497,7 +500,7 @@ public class kSkyBlock extends JavaPlugin {
 						Player player = Bukkit.getPlayer(playerName);
 
 						if (UtilServer.getDeliveryPet() != null) {
-							UtilServer.getDeliveryPet().deliveryUSE(player, "§aVote for ClashMC", true);
+							UtilServer.getDeliveryPet().deliveryUSE(player, "§aVote for EpicPvP", true);
 						}
 
 						getStatsManager().addDouble(player, 200, StatsKey.MONEY);
@@ -509,6 +512,37 @@ public class kSkyBlock extends JavaPlugin {
 					}
 				}
 			});
+			
+			new DeliveryChest(this, UtilServer.getUserData(), new ItemModifier() {
+				
+				@Override
+				public void modify(ItemStack itemStack) {
+					switch(itemStack.getType()){
+					case DIAMOND_HELMET:
+						for(Enchantment en : UtilItem.enchantmentsHelm())itemStack.addEnchantment(en, en.getMaxLevel());
+						break;
+					case DIAMOND_CHESTPLATE:
+						for(Enchantment en : UtilItem.enchantmentsChestplate())itemStack.addEnchantment(en, en.getMaxLevel());
+						break;
+					case DIAMOND_LEGGINGS:
+						for(Enchantment en : UtilItem.enchantmentsLeggings())itemStack.addEnchantment(en, en.getMaxLevel());
+						break;
+					case DIAMOND_BOOTS:
+						for(Enchantment en : UtilItem.enchantmentsBoots())itemStack.addEnchantment(en, en.getMaxLevel());
+						break;
+					case DIAMOND_SWORD:
+						for(Enchantment en : UtilItem.enchantmentsSword())itemStack.addEnchantment(en, en.getMaxLevel());
+						break;
+					case DIAMOND_AXE:
+						for(Enchantment en : UtilItem.enchantmentsAxt())itemStack.addEnchantment(en, en.getMaxLevel());
+						break;
+					case BOW:
+						for(Enchantment en : UtilItem.enchantmentsBow())itemStack.addEnchantment(en, en.getMaxLevel());
+						break;
+					}
+				}
+			}, true);
+			
 			DebugLog(time, 45, this.getClass().getName());
 		} catch (Exception e) {
 			UtilException.catchException(e, "skyblock", Bukkit.getIp(), mysql);
@@ -529,7 +563,7 @@ public class kSkyBlock extends JavaPlugin {
 
 		page.setItem(4,
 				UtilItem.Item(new ItemStack(Material.NAME_TAG), new String[] {
-						"§8»§7 Gems und Ränge kannst du im Onlineshop ", "§7  unter §6shop.ClashMC.eu§7 kaufen." },
+						"§8»§7 Gems und Ränge kannst du im Onlineshop ", "§7  unter §6shop.EpicPvP.eu§7 kaufen." },
 						"§bInfo's"));
 
 		page.setItem(20, UtilItem.Item(new ItemStack(Material.BARRIER), new String[] {}, "§cComing soon..."));
@@ -570,7 +604,7 @@ public class kSkyBlock extends JavaPlugin {
 						"§7  '§6/Usershop <Spieler>§7' zu denn", "§7  jeweiligen Shop telepotieren.",
 						"§7  Jeder Spieler kann fünf gratis Shop's erstellen,",
 						"§7  jeder weitere kostet dich§a 25 Gems§7.", "§7  Diese erhältst du durch §7'§6/Vote§7' oder",
-						"§7  im Onlineshop:", "§7  »§e shop.ClashMC.eu" },
+						"§7  im Onlineshop:", "§7  »§e shop.EpicPvP.eu" },
 				"§6Usershop"));
 
 		page.setItem(42,

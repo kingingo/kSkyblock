@@ -262,7 +262,7 @@ public class SkyBlockListener extends kListener{
 	
 	@EventHandler
 	public void Kick(PlayerKickEvent ev){
-		System.out.println("[ClashMC] "+ev.getPlayer().getName()+" L:"+ev.getLeaveMessage()+" R:"+ev.getReason());
+		System.out.println("[EpicPvP] "+ev.getPlayer().getName()+" L:"+ev.getLeaveMessage()+" R:"+ev.getReason());
 	}
 	
 	
@@ -306,7 +306,7 @@ public class SkyBlockListener extends kListener{
 //			if(UtilPlayer.isOnline(ev.getPlayername())){
 //				if(vote_list.contains( UtilPlayer.getPlayerId(Bukkit.getPlayer(ev.getPlayername())) )){
 //					if(UtilServer.getDeliveryPet()!=null){
-//						 UtilServer.getDeliveryPet().deliveryUSE(Bukkit.getPlayer(ev.getPlayername()), "§aVote for ClashMC", true);
+//						 UtilServer.getDeliveryPet().deliveryUSE(Bukkit.getPlayer(ev.getPlayername()), "§aVote for EpicPvP", true);
 //					 }
 //					
 //					vote_list.remove(UtilPlayer.getPlayerId(ev.getPlayername()));
