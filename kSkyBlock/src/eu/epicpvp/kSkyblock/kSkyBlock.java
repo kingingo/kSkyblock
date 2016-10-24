@@ -77,6 +77,7 @@ import eu.epicpvp.kcore.Command.Commands.CommandClearInventory;
 import eu.epicpvp.kcore.Command.Commands.CommandDelHome;
 import eu.epicpvp.kcore.Command.Commands.CommandEnchantmentTable;
 import eu.epicpvp.kcore.Command.Commands.CommandEnderchest;
+import eu.epicpvp.kcore.Command.Commands.CommandEpic;
 import eu.epicpvp.kcore.Command.Commands.CommandExt;
 import eu.epicpvp.kcore.Command.Commands.CommandFeed;
 import eu.epicpvp.kcore.Command.Commands.CommandFill;
@@ -307,6 +308,7 @@ public class kSkyBlock extends JavaPlugin {
 			this.cmd.register(CommandAdminStats.class, new CommandAdminStats(getStatsManager()));
 			this.cmd.register(CommandFlyToggle.class, new CommandFlyToggle());
 			this.cmd.register(CommandK.class, new CommandK());
+			UtilServer.getCommandHandler().register( CommandEpic.class, new CommandEpic() );
 			new FarmBoosterListener(this);
 
 			UtilServer.getDeliveryPet(new DeliveryPet(UtilInv.getBase(), null,
