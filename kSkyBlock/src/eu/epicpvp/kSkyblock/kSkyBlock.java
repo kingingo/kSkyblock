@@ -505,12 +505,7 @@ public class kSkyBlock extends JavaPlugin {
 							UtilServer.getDeliveryPet().deliveryUSE(player, "§aVote for EpicPvP", true);
 						}
 
-						getStatsManager().addDouble(player, 200, StatsKey.MONEY);
-						player.getInventory().addItem(new ItemStack(Material.DIAMOND, 2));
-						player.getInventory().addItem(new ItemStack(Material.GOLD_INGOT, 2));
-						player.getInventory().addItem(new ItemStack(Material.IRON_INGOT, 2));
-						player.sendMessage(TranslationHandler.getText(player, "PREFIX")
-								+ TranslationHandler.getText(player, "VOTE_THX"));
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "cr givekey "+playerName+" vote 1");
 					}
 				}
 			});
